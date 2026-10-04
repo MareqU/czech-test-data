@@ -1,0 +1,12 @@
+{
+  // Library sources only: no Node.js types, so src/ stays platform neutral.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": [],
+    "declaration": true,
+    "isolatedDeclarations": true
+  },
+  "include": ["src"],
+  // The CLI needs Node.js types; it is checked by tsconfig.json.
+  "exclude": ["src/cli.ts"]
+}

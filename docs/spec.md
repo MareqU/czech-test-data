@@ -111,6 +111,10 @@ Knihovna pro testery musí být sama otestovaná lépe než kód, který s ní l
 - **Tree-shaking:** každý identifikátor jako samostatný modul, aby si uživatel natáhl jen to, co používá.
 - **CI na GitHubu:** testy, lint, kontrola typů a publikace na npm s provenance při tagu verze.
 - **Verzování:** semver; změna výstupu pro stejný seed je major verze.
+- **Lightweight jako měřitelné pravidlo:** velikostní rozpočet hlídaný v CI (například nástrojem size-limit); překročení shodí build. Výchozí rozpočet: celá knihovna do 10 kB (minifikováno + gzip), import jednoho identifikátoru do 2 kB. Čísla upřesnit po M1 podle skutečnosti.
+- **`"sideEffects": false`** v package.json a ESM jako primární formát, aby bundlery opravdu odstranily nepoužitý kód.
+- **CLI jako samostatný vstupní bod** (`bin`), který se nikdy nenačte při importu knihovny. Argumenty přes vestavěný `node:util` `parseArgs`, žádná knihovna na CLI.
+- **Větší data jen jako volitelný podimport.** Seznam existujících PSČ (pokud vůbec) v samostatném `czech-test-data/data/postal-codes`; výchozí generátor PSČ ověřuje jen formát. Číselník kódů bank je malý a může být v jádře.
 - **Upozornění v README:** náhodně vygenerované platné rodné číslo může patřit skutečnému člověku; data jsou jen pro testovací systémy.
 
 ## Plán práce

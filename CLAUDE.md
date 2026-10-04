@@ -5,11 +5,22 @@ TypeScript library + CLI that generates valid, edge-case and invalid Czech test 
 Full specification: `docs/spec.md`. Read it before starting any milestone.
 
 ## Commands
-Filled in during M0. Expected:
-- `npm run build` – build ESM + CJS + types
-- `npm test` – Vitest (unit + property-based tests with fast-check)
-- `npm run coverage` – coverage report (validators must have 100 % branch coverage)
-- `npm run lint` / `npm run typecheck`
+- `npm run build` – tsdown: library (ESM + CJS + types) and CLI (`dist/cli.mjs`, ESM only) into `dist/`,
+  then publint and attw check the package
+- `npm test` – Vitest (unit + property-based tests with fast-check); `npm run test:watch`
+- `npm run coverage` – coverage report; fails if any `src/**/validate*.ts` is below 100 % branches
+- `npm run lint` – ESLint (strict type-checked, complexity limits, TSDoc required on public API in `src/`;
+  in `src/` bans `Math.random`, `Date.now`, `fetch`, `node:*` imports and importing the CLI)
+- `npm run typecheck` – `tsc` twice: `tsconfig.build.json` (library, no Node types) and `tsconfig.json` (everything)
+- `npm run knip` – unused files, exports and dependencies
+- `npm run size` – size budget from `.size-limit.ts` (run after `build`)
+- `npm run check` – all of the above, same as CI; runs before `npm publish`
+
+Validator files must be named `validate*.ts` so the 100 % branch threshold applies to them.
+New public entry points go into `tsdown.config.ts` `entry`; the build then updates `exports` in package.json
+and `.size-limit.ts` gives each identifier subpath the 2 kB budget automatically.
+Node.js: users ≥ 22.12 (CI tests 22, 24, 26), development on 24 (`.nvmrc`).
+TypeScript stays on 6.0.x until typescript-eslint supports 7.
 
 ## Conventions
 - **Naming:** English name where an established English term exists, otherwise Czech; never diacritics.
@@ -41,3 +52,7 @@ If tests and rules contradict each other, stop and report the conflict. Do not "
 - ESLint with strict TypeScript rules and complexity limits.
 - No unused exports or files.
 - Shared logic (e.g. weighted mod 11 sums) lives in a shared utility, not duplicated per module.
+- **Lightweight is enforced, not hoped for:** size budget checked in CI (whole library ≤ 10 kB min+gzip,
+  one identifier ≤ 2 kB; revisit after M1). `"sideEffects": false`, ESM first.
+- CLI is a separate entry point, never loaded by library imports; use `node:util` `parseArgs`, no CLI deps.
+- Large data (e.g. full postal code list) only as an optional subpath import, never in the core.
