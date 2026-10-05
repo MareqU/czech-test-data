@@ -1,6 +1,16 @@
 // createCz, the all-in-one entry point – docs/rules/core.md section 3.
+import { createBirthNumber, validateBirthNumber } from './birthNumber/index.js';
+import type { BirthNumberGenerator, BirthNumberReason } from './birthNumber/index.js';
 import { resolveSettings } from './core/settings.js';
-import type { SettingsOptions } from './core/types.js';
+import type { SettingsOptions, ValidationResult } from './core/types.js';
+
+/**
+ * Validators of one {@link Cz} instance; date-dependent rules use the instance's `referenceDate`.
+ */
+export interface CzValidators {
+  /** Validates a birth number (rodné číslo) with `referenceDate` of this instance. Never throws. */
+  readonly birthNumber: (value: string) => ValidationResult<BirthNumberReason>;
+}
 
 /**
  * Czech test data (české testovací údaje) for one seed, returned by {@link createCz}.
@@ -10,8 +20,10 @@ export interface Cz {
   readonly seed: number;
   /** The reference date ("today", `YYYY-MM-DD`) in use; given, or the UTC date when `createCz` ran. */
   readonly referenceDate: string;
-  /** Validators by identifier. Empty until the first identifiers arrive (M2). */
-  readonly validate: Readonly<Record<string, never>>;
+  /** Birth numbers (rodné číslo); the same values as `createBirthNumber` with the same settings. */
+  readonly birthNumber: BirthNumberGenerator;
+  /** Validators by identifier. */
+  readonly validate: CzValidators;
 }
 
 /**
@@ -24,7 +36,8 @@ export interface Cz {
  * @example
  * ```ts
  * const cz = createCz({ seed: 42 });
- * cz.seed; // 42
+ * cz.birthNumber({ gender: 'female' });
+ * cz.validate.birthNumber('9055011234'); // { valid: false, reason: 'badChecksum' }
  * ```
  * @param options - Optional `seed` (default: random) and `referenceDate` (default: today in UTC).
  * @throws RangeError if `seed` is not an integer from 0 to 2^32 − 1, or `referenceDate` is not a real
@@ -32,6 +45,15 @@ export interface Cz {
  */
 export function createCz(options?: SettingsOptions): Cz {
   // Resolved once, so every identifier on this instance shares the same seed and date (amendment A1).
-  const { seed, referenceDate } = resolveSettings(options);
-  return { seed, referenceDate, validate: Object.freeze({}) };
+  // Each identifier has its own stream, so the order of creation does not matter (section 2).
+  const settings = resolveSettings(options);
+  const { seed, referenceDate } = settings;
+  return {
+    seed,
+    referenceDate,
+    birthNumber: createBirthNumber(settings),
+    validate: Object.freeze({
+      birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
+    }),
+  };
 }

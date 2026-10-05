@@ -4,3 +4,5 @@ Czech test data for automated tests: rodné číslo, IČO, DIČ, bank accounts, 
 > **Status:** under development, not published on npm yet.
 
 > **Warning:** a randomly generated valid birth number (rodné číslo) may belong to a real person. Use the generated data only in test systems.
+
+> **Note:** the validators follow the official rules. A few real, legally assigned birth numbers break those rules (for example a number that is not divisible by 11), so they fail validation even though they exist.

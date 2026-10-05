@@ -1,4 +1,5 @@
 // Shared result, settings and generator types – docs/rules/core.md sections 3, 4 and 5.
+import type { Random } from './random.js';
 
 /**
  * Result of a validator (výsledek validace).
@@ -23,8 +24,12 @@ export interface SettingsOptions {
   readonly seed?: number;
   /**
    * "Today" (`YYYY-MM-DD`) for date-dependent rules such as future dates. Omitted: the current UTC date,
-   * exposed as `.referenceDate`. Valid values never depend on it, so the same seed gives the same valid
-   * values on any day.
+   * exposed as `.referenceDate`.
+   *
+   * Generated dates come from fixed ranges written in each identifier's rules; `referenceDate` only cuts
+   * a range where it falls inside it (amendment A3). With any `referenceDate` after those ranges, the same
+   * seed gives the same values on any day. An earlier one changes the values, and if it leaves a range
+   * empty, generating from that range throws `RangeError` naming `referenceDate`.
    */
   readonly referenceDate?: string;
 }
@@ -55,6 +60,12 @@ export interface IdentifierContext {
   /** Reference date ("today") as `YYYY-MM-DD`, already checked. */
   readonly referenceDate: string;
 }
+
+/**
+ * An edge or invalid variant of an identifier: draws from the identifier's stream and returns one value
+ * (docs/rules/core.md section 5).
+ */
+export type IdentifierVariant = (random: Random, context: IdentifierContext) => string;
 
 /**
  * Options type of an identifier without options: passing any option key is a type error
