@@ -1,7 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   // Entries come from package.json "exports" and the Vitest plugin (tests/**/*.test.ts).
-  "project": ["src/**/*.ts"],
-  // Used by the property-based tests from M1 on; drop this line once the first test imports it.
-  "ignoreDependencies": ["fast-check"]
+  "project": ["src/**/*.ts"]
 }
