@@ -13,6 +13,11 @@ updates:
         update-types:
           - 'version-update:semver-major'
           - 'version-update:semver-minor'
+      # Types match the oldest supported Node.js (engines >= 22.12), so APIs missing there fail typecheck.
+      # Bump the major only together with "engines".
+      - dependency-name: '@types/node'
+        update-types:
+          - 'version-update:semver-major'
   - package-ecosystem: github-actions
     directory: /
     schedule:
