@@ -5,13 +5,12 @@ import { resolveReferenceDate } from './settings.js';
 import type {
   IdentifierContext,
   IdentifierGenerator,
+  IdentifierVariant,
   NoOptions,
   Settings,
   ValidationResult,
   ValidatorOptions,
 } from './types.js';
-
-type Variant = (random: Random, context: IdentifierContext) => string;
 
 interface IdentifierDefinition<
   Reason extends string,
@@ -28,8 +27,8 @@ interface IdentifierDefinition<
    * reason code fails to compile (docs/rules/core.md section 4).
    */
   readonly validate: (value: string, context: IdentifierContext) => ValidationResult<Reason>;
-  readonly edge: Readonly<Record<EdgeVariant, Variant>>;
-  readonly invalid: Readonly<Record<InvalidVariant, Variant>>;
+  readonly edge: Readonly<Record<EdgeVariant, IdentifierVariant>>;
+  readonly invalid: Readonly<Record<InvalidVariant, IdentifierVariant>>;
 }
 
 interface Identifier<Reason extends string, EdgeVariant extends string, InvalidVariant extends string, Options extends object> {
@@ -46,7 +45,7 @@ interface VariantRunner<Name extends string> {
 
 function createVariantRunner<Name extends string>(
   kind: 'edge' | 'invalid',
-  variants: Readonly<Record<Name, Variant>>,
+  variants: Readonly<Record<Name, IdentifierVariant>>,
 ): VariantRunner<Name> {
   // Names come from the keys, so a variant cannot be missing from the list (docs/rules/core.md section 5).
   const names = Object.freeze(Object.keys(variants)) as readonly Name[];

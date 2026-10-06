@@ -1,7 +1,7 @@
 # Core (M1) – design proposal
 
 Status: **APPROVED** by Marek on 2026-10-04 (all open questions decided, see Decisions);
-amendments A1 and A2 approved on 2026-10-05.
+amendments A1, A2 and A3 approved on 2026-10-05.
 
 The core has no official source, so this document replaces the rules document for M1: it is the
 contract the test-writer tests against and the implementer implements. Identifier rules (M2+) build on it.
@@ -95,9 +95,19 @@ validateBirthNumber('9055011234');                    // validators need no seed
   the instance's `referenceDate`, so `cz.<id>.invalid('futureDate')` and `cz.validate.<id>` always agree; with
   the standalone functions, pass the same `referenceDate` to `create<Id>` and `validate<Id>`. Validators never throw for any `value`; an invalid
   `referenceDate` option is a programming error and throws `RangeError`.
-- **Valid values never depend on `referenceDate`**: the plain generator must give the same values for the same
-  seed on any day. Edge and invalid variants may use it only where the identifier's rules require it
-  (e.g. `futureDate`, or an upper bound such as "not after the reference date").
+- **Fixed date ranges, cut only by `referenceDate` (amendment A3):** every date-dependent generator or
+  variant draws dates from a **fixed range** written in the identifier's rules. `referenceDate` may only cut
+  that range where it cuts into it (e.g. upper bound = min(fixed end, `referenceDate`)); if nothing is left,
+  it throws `RangeError` naming `referenceDate`. So:
+  - for any `referenceDate` after the end of the fixed ranges, output is the same for the same seed on any
+    day (the plain generator never depends on the date otherwise);
+  - a generator never returns an invalid value because of the date ("never return an invalid value by
+    accident" wins over "never depend on the date");
+  - `generate` may additionally use the date to reject an option with `RangeError` (e.g. a `birthDate`
+    after `referenceDate`).
+- Every identifier's tests include the shared check from `tests/support/`: same seed with two different
+  `referenceDate`s after the fixed ranges gives the same plain values, edge values and date-independent
+  invalid values.
 - Invalid generator options (unknown variant name, malformed date, …) throw `RangeError` with a message
   saying which option is wrong. Generators never return an invalid value by accident.
 - Generators return plain `string`s.
@@ -132,7 +142,7 @@ src/<id>/validate.ts      validate(value, context): ValidationResult<Reason>   �
 src/<id>/edge.ts          Record<EdgeVariant, (random, context) => string>
 src/<id>/invalid.ts       Record<InvalidVariant, (random, context) => string>
 src/<id>/index.ts         subpath entry: create<Id>, validate<Id>, types
-tests/<id>.test.ts
+tests/<id>.<area>.test.ts  e.g. validate, generate, variants, determinism, api
 docs/rules/<id>.md
 ```
 
@@ -238,6 +248,9 @@ docs/rules/<id>.md
 - **A1/A2 clarifications from the test-writer (2026-10-05, derived from the approved text):** `generate`
   without an options parameter defaults to `NoOptions`; the context is exactly `{ referenceDate }`; error
   messages of `create` and the public `validate` name the option (clarification 8 applies to them too).
+- **A3 – Fixed date ranges (2026-10-05, from review S2, approved with `docs/rules/birthNumber.md`):** date
+  ranges are fixed per identifier and only cut by `referenceDate`; empty range → `RangeError` naming
+  `referenceDate`; shared determinism check for every identifier in `tests/support/`.
 - **Q5 – PRNG algorithm:** SplitMix32 variant above. The author of mulberry32 wrote (10 Nov 2022, link in
   section 1) that mulberry32 "isn't equidistributed … and actually can't produce about 1/3 of all possible
   `uint32_t` numbers"; the SplitMix32 variant produces every 32-bit value exactly once per period.

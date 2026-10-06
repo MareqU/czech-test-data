@@ -30,6 +30,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./birthNumber": {
+      "import": "./dist/birthNumber/index.js",
+      "require": "./dist/birthNumber/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "bin": {
