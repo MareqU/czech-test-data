@@ -419,3 +419,18 @@ Original questions:
    range exists)?
 9. **`20…` (e.g. `201 234 567`):** reserved per the ITU table although `2` is Praha. `unknownPrefix`
    (proposed) or valid?
+
+---
+
+## 10. Clarifications (from approved text, recorded 2026-10-06 while writing tests)
+
+1. Step 3 applies literally without a country code too: a value starting with `00` always has the prefix
+   `00`. So `000456789` → `wrongCountryCode` (not `unknownPrefix`); no national number starts with `0`.
+2. `+` alone and `00` alone → `badFormat` (`G` empty); `00420` alone → `wrongLength` (empty national part);
+   `+4200601123456` → `wrongLength` (10 national digits).
+3. `letters` wins over every other fault (step 1), e.g. `++421 A` → `letters`.
+4. Edge variant `newMobileRange` and the invalid variants `letters`, `unknownPrefix`, `specialPrefix` use the
+   default format `+420 ddd ddd ddd`; `wrongCountryCode` is `+CC ddd ddd ddd`; `wrongLength` has no spaces
+   (section 4).
+5. `letters` replaces exactly one digit with one letter matching `\p{L}`.
+6. `validatePhone(value, options?)` accepts and ignores `referenceDate` (section 2).
