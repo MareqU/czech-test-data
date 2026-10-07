@@ -376,3 +376,9 @@ Secondary, **UNVERIFIED**:
    it when bankAccount arrives.
 10. **Base `0000000`** (`00000001` passes the algorithm). Recommendation: **valid**, because no source excludes it.
     The generators do not produce it on purpose. With option 4 they cannot produce it at all.
+
+## 10. Clarifications (from approved text, recorded 2026-10-07 while writing tests)
+
+- **`wrongLength`, 7-digit branch.** "A valid IČO with exactly one leading zero" is drawn exactly like `leadingZeros`
+  with `k = 1` fixed (no `int(1, 4)` draw): `0`, one digit from 1–9, `digits(5)`, check digit. Then the leading
+  `0` is removed. Draw order: the `int(0, 1)` branch draw first, then the base.
