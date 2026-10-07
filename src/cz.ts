@@ -1,9 +1,12 @@
 // createCz, the all-in-one entry point – docs/rules/core.md section 3.
-import { createBirthNumber, validateBirthNumber } from './birthNumber/index.js';
+import { validateBirthNumber } from './birthNumber/index.js';
+import { birthNumber } from './birthNumber/identifier.js';
 import type { BirthNumberGenerator, BirthNumberReason } from './birthNumber/index.js';
-import { createPhone, validatePhone } from './phone/index.js';
+import { validatePhone } from './phone/index.js';
+import { phone } from './phone/identifier.js';
 import type { PhoneGenerator, PhoneReason } from './phone/index.js';
-import { createPostalCode, validatePostalCode } from './postalCode/index.js';
+import { validatePostalCode } from './postalCode/index.js';
+import { postalCode } from './postalCode/identifier.js';
 import type { PostalCodeGenerator, PostalCodeReason } from './postalCode/index.js';
 import { resolveSettings } from './core/settings.js';
 import type { SettingsOptions, ValidationResult } from './core/types.js';
@@ -66,9 +69,9 @@ export function createCz(options?: SettingsOptions): Cz {
   return {
     seed,
     referenceDate,
-    birthNumber: createBirthNumber(settings),
-    phone: createPhone(settings),
-    postalCode: createPostalCode(settings),
+    birthNumber: birthNumber.create(settings),
+    phone: phone.create(settings),
+    postalCode: postalCode.create(settings),
     validate: Object.freeze({
       birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
       phone: (value: string) => validatePhone(value, { referenceDate }),

@@ -1,6 +1,7 @@
 // Invalid variants of the phone number (telefonní číslo) – docs/rules/phone.md section 4 (one fault each).
 // Each variant name is the reason code the validator returns for its values. Reserved and special ranges:
 // ČTÚ communication to the ITU of 5. 1. 2023 (https://www.itu.int/oth/T0202000035/en).
+import { replaceDigitWithLetter } from '../core/letters.js';
 import type { Random } from '../core/random.js';
 import type { IdentifierVariant } from '../core/types.js';
 import { drawMobile, drawNational, formatPhone, group, MOBILE_PREFIXES, range } from './generate.js';
@@ -18,7 +19,7 @@ const SPECIAL_PREFIXES: readonly string[] = [
 ];
 // None of these starts with 420.
 const OTHER_COUNTRY_CODES: readonly string[] = ['421', '49', '48', '43', '1'];
-const LETTERS: readonly string[] = ['A', 'O', 'l'];
+const LETTERS = 'AOl';
 // Character indexes of the nine national digits in `+420 ddd ddd ddd`.
 const DIGIT_POSITIONS: readonly number[] = [5, 6, 7, 9, 10, 11, 13, 14, 15];
 
@@ -31,8 +32,7 @@ function wrongLength(random: Random): string {
 
 function letters(random: Random): string {
   const value = formatPhone(drawMobile(random));
-  const position = random.pick(DIGIT_POSITIONS);
-  return `${value.slice(0, position)}${random.pick(LETTERS)}${value.slice(position + 1)}`;
+  return replaceDigitWithLetter(random, value, DIGIT_POSITIONS, LETTERS);
 }
 
 function wrongCountryCode(random: Random): string {

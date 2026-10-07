@@ -31,7 +31,11 @@ interface IdentifierDefinition<
   readonly invalid: Readonly<Record<InvalidVariant, IdentifierVariant>>;
 }
 
-interface Identifier<Reason extends string, EdgeVariant extends string, InvalidVariant extends string, Options extends object> {
+/**
+ * `create` and `validate` of one identifier, built by {@link defineIdentifier}; internal, shared by the
+ * identifier's subpath entry and `createCz`.
+ */
+export interface Identifier<Reason extends string, EdgeVariant extends string, InvalidVariant extends string, Options extends object> {
   /** Generator for resolved settings; throws `RangeError` naming `seed` or `referenceDate`. */
   readonly create: (settings: Settings) => IdentifierGenerator<Options, EdgeVariant, InvalidVariant>;
   /** Public validator; throws `RangeError` only for an invalid `referenceDate` option, never for `value`. */

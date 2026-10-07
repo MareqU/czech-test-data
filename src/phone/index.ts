@@ -1,16 +1,12 @@
 // Subpath entry `czech-test-data/phone`: the phone number (telefonní číslo) – docs/rules/core.md section 5,
 // docs/rules/phone.md. Legal basis: vyhláška č. 117/2007 Sb., o číslovacích plánech sítí a služeb
 // elektronických komunikací. Generated valid numbers may belong to real subscribers: never call or text them.
-import { defineIdentifier } from '../core/identifier.js';
 import { resolveSettings } from '../core/settings.js';
 import type { IdentifierGenerator, SettingsOptions, ValidationResult, ValidatorOptions } from '../core/types.js';
-import { edge } from './edge.js';
 import type { PhoneEdgeVariant } from './edge.js';
-import { generate } from './generate.js';
 import type { PhoneOptions } from './generate.js';
-import { invalid } from './invalid.js';
 import type { PhoneInvalidVariant } from './invalid.js';
-import { validate } from './validate.js';
+import { phone } from './identifier.js';
 import type { PhoneReason } from './validate.js';
 
 export type { PhoneEdgeVariant, PhoneInvalidVariant, PhoneOptions, PhoneReason };
@@ -20,8 +16,6 @@ export type { PhoneEdgeVariant, PhoneInvalidVariant, PhoneOptions, PhoneReason }
  * `.invalid()` for an invalid one.
  */
 export type PhoneGenerator = IdentifierGenerator<PhoneOptions, PhoneEdgeVariant, PhoneInvalidVariant>;
-
-const phone = defineIdentifier({ id: 'phone', generate, validate, edge, invalid });
 
 /**
  * Creates a generator of Czech phone numbers (telefonní číslo) from the national numbering plan set by the

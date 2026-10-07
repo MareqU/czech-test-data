@@ -130,3 +130,7 @@ used, and only in the same file, so the export can go.
 - Approved by Marek and fixed by the implementer: S1 (also applied to `cz.validate.phone`, same defect), S4, N3, N4.
   Outputs unchanged (seed snapshots pass).
 - N5 (tests): approved, deferred to the shared `letters` helper refactor (phone review S1).
+
+## Follow-up (branch core-shared-helpers, 2026-10-07)
+
+- N5 resolved: `dateArb` lives in `tests/support/helpers.ts`; `POSTAL_CODE_REASONS` is gone (type only).

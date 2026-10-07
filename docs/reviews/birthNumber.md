@@ -346,3 +346,9 @@ YYYY-MM-DD, got "x"`, and birthNumber says `referenceDate "1950-01-01": leaves n
 follow the contract. The shorter style came from the identifier budget, which the core messages do not
 count against. If later identifiers adopt the short style, write it into the template (core §5) so all
 nine stay consistent.
+
+## Follow-up (branch core-shared-helpers, 2026-10-07)
+
+- N3 resolved: each identifier defines itself in an internal module `src/<id>/identifier.ts` (not a package
+  entry), and `createCz` calls `<id>.create(settings)` with its resolved settings. `create` still checks
+  `referenceDate` (no clock read), because `tests/core.identifier.test.ts` requires the `RangeError`.

@@ -1,15 +1,11 @@
 // Subpath entry `czech-test-data/postalCode`: the postal code (PSČ) – docs/rules/postalCode.md.
 // Source: Česká pošta, s.p.; format from the UPU sheet for the Czech Republic (02/2018):
 // https://www.upu.int/UPU/media/upu/PostalEntitiesFiles/addressingUnit/czeEn.pdf
-import { defineIdentifier } from '../core/identifier.js';
 import { resolveSettings } from '../core/settings.js';
 import type { IdentifierGenerator, NoOptions, SettingsOptions, ValidationResult, ValidatorOptions } from '../core/types.js';
-import { edge } from './edge.js';
 import type { PostalCodeEdgeVariant } from './edge.js';
-import { generate } from './generate.js';
-import { invalid } from './invalid.js';
 import type { PostalCodeInvalidVariant } from './invalid.js';
-import { validate } from './validate.js';
+import { postalCode } from './identifier.js';
 import type { PostalCodeReason } from './validate.js';
 
 export type { PostalCodeEdgeVariant, PostalCodeInvalidVariant, PostalCodeReason };
@@ -19,8 +15,6 @@ export type { PostalCodeEdgeVariant, PostalCodeInvalidVariant, PostalCodeReason 
  * edge case, `.invalid()` for an invalid one. It takes no options.
  */
 export type PostalCodeGenerator = IdentifierGenerator<NoOptions, PostalCodeEdgeVariant, PostalCodeInvalidVariant>;
-
-const postalCode = defineIdentifier({ id: 'postalCode', generate, validate, edge, invalid });
 
 /**
  * Creates a generator of Czech postal codes (poštovní směrovací číslo, PSČ), the five-digit routing code

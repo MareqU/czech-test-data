@@ -1,5 +1,6 @@
 // Invalid variants of the birth number (rodné číslo) – docs/rules/birthNumber.md section 4 (one fault each)
 // and section 9 (date ranges). Each variant name is the reason code the validator returns for its values.
+import { replaceDigitWithLetter } from '../core/letters.js';
 import { dateParts, daysInMonth, toDayNumber } from '../core/date.js';
 import type { Random } from '../core/random.js';
 import type { IdentifierContext, IdentifierVariant } from '../core/types.js';
@@ -33,7 +34,7 @@ type DateFault = 'month' | 'dayZero' | 'dayAfterMonthEnd';
 const DATE_FAULTS: readonly DateFault[] = ['month', 'dayZero', 'dayAfterMonthEnd'];
 
 // Letters typed instead of digits: O for 0, l for 1, and a plain A (section 4).
-const LETTERS: readonly string[] = ['A', 'O', 'l'];
+const LETTERS = 'AOl';
 // Character positions of the digits in `RRMMDD/XXXX` (the slash is at index 6).
 const DIGIT_POSITIONS: readonly number[] = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10];
 
@@ -75,8 +76,7 @@ function wrongLength(random: Random, context: IdentifierContext): string {
 /** Exactly one digit of a valid number replaced with a letter (section 9 clarifications). */
 function letters(random: Random, context: IdentifierContext): string {
   const value = plainNumber(random, context);
-  const position = random.pick(DIGIT_POSITIONS);
-  return `${value.slice(0, position)}${random.pick(LETTERS)}${value.slice(position + 1)}`;
+  return replaceDigitWithLetter(random, value, DIGIT_POSITIONS, LETTERS);
 }
 
 /**
