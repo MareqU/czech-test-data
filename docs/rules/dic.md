@@ -564,3 +564,15 @@ Secondary, **UNVERIFIED**:
     order (`AT BE BG CY DE DK EE EL ES FI FR HR HU IE IT LT LU LV MT NL PL PT RO SE SI SK`, with Greece as `EL` per
     Art. 215), one `pick`. Alternative, smaller and more readable in tests: only `SK` (the realistic mix-up). The
     validator treats any two letters other than `CZ` as `foreignPrefix` either way.
+
+---
+
+## 10. Clarifications (from approved text, recorded 2026-10-07 while writing tests)
+
+- `{ from: 'birthNumber' }` without `gender` / `birthDate` makes no form draw; it gives the same value as the
+  birthNumber plain generator path (section 8: the form draw happens only when `from` is omitted and no person
+  option is given).
+- `birthDate` equal to `referenceDate` is accepted (birthNumber rules).
+- `lowercasePrefix` draws the form like the plain inner part: `int(0, 1)`, 0 = IČO, 1 = birth number (section 4).
+- When `from: 'ico'` is combined with both `gender` and `birthDate`, the `RangeError` may name either option; tests
+  pass one at a time.
