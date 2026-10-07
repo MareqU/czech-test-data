@@ -3,6 +3,8 @@ import { createBirthNumber, validateBirthNumber } from './birthNumber/index.js';
 import type { BirthNumberGenerator, BirthNumberReason } from './birthNumber/index.js';
 import { createPhone, validatePhone } from './phone/index.js';
 import type { PhoneGenerator, PhoneReason } from './phone/index.js';
+import { createPostalCode, validatePostalCode } from './postalCode/index.js';
+import type { PostalCodeGenerator, PostalCodeReason } from './postalCode/index.js';
 import { resolveSettings } from './core/settings.js';
 import type { SettingsOptions, ValidationResult } from './core/types.js';
 
@@ -12,8 +14,13 @@ import type { SettingsOptions, ValidationResult } from './core/types.js';
 export interface CzValidators {
   /** Validates a birth number (rodné číslo) with `referenceDate` of this instance. Never throws. */
   readonly birthNumber: (value: string) => ValidationResult<BirthNumberReason>;
-  /** Validates a phone number (telefonní číslo); the date plays no role. Never throws. */
+  /**
+   * Validates a phone number (telefonní číslo); the date plays no role, `referenceDate` is only passed on.
+   * Never throws.
+   */
   readonly phone: (value: string) => ValidationResult<PhoneReason>;
+  /** Validates a postal code (PSČ); the date plays no role, `referenceDate` is only passed on. Never throws. */
+  readonly postalCode: (value: string) => ValidationResult<PostalCodeReason>;
 }
 
 /**
@@ -28,6 +35,8 @@ export interface Cz {
   readonly birthNumber: BirthNumberGenerator;
   /** Phone numbers (telefonní číslo); the same values as `createPhone` with the same settings. */
   readonly phone: PhoneGenerator;
+  /** Postal codes (poštovní směrovací číslo, PSČ); the same values as `createPostalCode` with the same settings. */
+  readonly postalCode: PostalCodeGenerator;
   /** Validators by identifier. */
   readonly validate: CzValidators;
 }
@@ -59,9 +68,11 @@ export function createCz(options?: SettingsOptions): Cz {
     referenceDate,
     birthNumber: createBirthNumber(settings),
     phone: createPhone(settings),
+    postalCode: createPostalCode(settings),
     validate: Object.freeze({
       birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
-      phone: (value: string) => validatePhone(value),
+      phone: (value: string) => validatePhone(value, { referenceDate }),
+      postalCode: (value: string) => validatePostalCode(value, { referenceDate }),
     }),
   };
 }
