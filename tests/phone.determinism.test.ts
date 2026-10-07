@@ -5,14 +5,12 @@
 // The rules fix only the format and the ranges, not how phone spends its draws, so snapshot values cannot be
 // derived from the rules. The four seed snapshots are filled by Marek after the implementation passed every
 // other test. vitest.config.ts sets `update: 'none'`, so Vitest never writes a missing snapshot on its own.
-import fc from 'fast-check';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createPhone } from '../src/phone/index.js';
 import type { PhoneEdgeVariant, PhoneInvalidVariant } from '../src/phone/index.js';
-import { expectSameOutputForLaterReferenceDates } from './support/determinism.js';
-import { calendarDateArb, draw, restoreClock, seedArb, setClock } from './support/helpers.js';
+import { describeDeterminismContract } from './support/identifierContract.js';
+import { calendarDateArb, draw } from './support/helpers.js';
 
-const PROPERTY_RUNS = 200;
 const SNAPSHOT_REFERENCE_DATE = '2026-10-05';
 
 /** Variant order of section 4 of the rules, so named calls run in a fixed order. */
@@ -34,46 +32,19 @@ function firstOutputs(seed: number, referenceDate = SNAPSHOT_REFERENCE_DATE): Re
   };
 }
 
-afterEach(() => {
-  restoreClock();
-  vi.restoreAllMocks();
-});
-
-describe('same seed + same calls = same output (docs/rules/core.md section 2)', () => {
-  it('repeats the whole call sequence for every seed', () => {
-    fc.assert(
-      fc.property(seedArb, (seed) => {
-        expect(firstOutputs(seed)).toEqual(firstOutputs(seed));
-      }),
-      { numRuns: PROPERTY_RUNS },
-    );
-  });
-
-  it('gives different values for different seeds', () => {
-    const firstValues = new Set(Array.from({ length: 100 }, (_, seed) => createPhone({ seed })()));
-    expect(firstValues.size).toBeGreaterThan(95);
-  });
-
-  it('does not read the clock when referenceDate is given, and never uses Math.random', () => {
-    const mathRandom = vi.spyOn(Math, 'random');
-    setClock('2026-10-05T12:00:00Z', 'Europe/Prague');
-    const before = firstOutputs(42);
-    setClock('2045-03-01T23:59:59Z', 'America/Los_Angeles');
-    expect(firstOutputs(42)).toEqual(before);
-    expect(mathRandom).not.toHaveBeenCalled();
-  });
-});
-
-describe('phone does not depend on the date (docs/rules/phone.md section 8)', () => {
-  it('gives the same output for any referenceDate', () => {
-    expectSameOutputForLaterReferenceDates({
-      create: createPhone,
-      plain: (generator) => generator(),
-      laterReferenceDates: calendarDateArb,
-      fixedPair: ['1900-01-01', '2099-12-31'],
-      dateDependentInvalidVariants: [],
-    });
-  });
+describeDeterminismContract({
+  create: createPhone,
+  firstOutputs,
+  snapshotReferenceDate: SNAPSHOT_REFERENCE_DATE,
+  minDistinctFirstValues: 95,
+  a3Title: 'phone does not depend on the date (docs/rules/phone.md section 8)',
+  a3: {
+    create: createPhone,
+    plain: (generator) => generator(),
+    laterReferenceDates: calendarDateArb,
+    fixedPair: ['1900-01-01', '2099-12-31'],
+    dateDependentInvalidVariants: [],
+  },
 });
 
 describe('seed snapshots (docs/rules/core.md section 2: a change is a breaking change)', () => {

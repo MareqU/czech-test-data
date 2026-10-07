@@ -8,11 +8,11 @@
 // The cut-range snapshot (review S6) was filled the same way after the B1 fix. vitest.config.ts sets
 // `update: 'none'`, so Vitest never writes a missing snapshot on its own; values are recorded only with -u.
 import fc from 'fast-check';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createBirthNumber } from '../src/birthNumber/index.js';
 import type { BirthNumberEdgeVariant, BirthNumberInvalidVariant } from '../src/birthNumber/index.js';
-import { expectSameOutputForLaterReferenceDates } from './support/determinism.js';
-import { dateArb, draw, restoreClock, seedArb, setClock } from './support/helpers.js';
+import { describeDeterminismContract } from './support/identifierContract.js';
+import { dateArb, draw, seedArb } from './support/helpers.js';
 
 const PROPERTY_RUNS = 200;
 
@@ -41,54 +41,25 @@ function firstOutputs(seed: number, referenceDate = SNAPSHOT_REFERENCE_DATE): Re
   };
 }
 
-afterEach(() => {
-  restoreClock();
-  vi.restoreAllMocks();
+describeDeterminismContract({
+  create: createBirthNumber,
+  firstOutputs,
+  snapshotReferenceDate: SNAPSHOT_REFERENCE_DATE,
+  repeatDates: dateArb('2004-04-01', '2053-12-30'),
+  minDistinctFirstValues: 95,
+  a3Title: 'shared A3 check: referenceDates after the fixed ranges do not change the output',
+  a3: {
+    create: createBirthNumber,
+    plain: (generator) => generator(),
+    // After 2025-12-31, the end of every fixed range of valid values and of the other invalid variants.
+    laterReferenceDates: dateArb('2026-01-01', '2099-12-31'),
+    fixedPair: ['2026-01-01', '2099-12-31'],
+    dateDependentInvalidVariants: ['futureDate'],
+  },
 });
 
-describe('same seed + same calls + same referenceDate = same output (docs/rules/core.md section 2)', () => {
-  it('repeats the whole call sequence for every seed and referenceDate', () => {
-    fc.assert(
-      fc.property(seedArb, dateArb('2004-04-01', '2053-12-30'), (seed, referenceDate) => {
-        expect(firstOutputs(seed, referenceDate)).toEqual(firstOutputs(seed, referenceDate));
-      }),
-      { numRuns: PROPERTY_RUNS },
-    );
-  });
-
-  it('gives different values for different seeds', () => {
-    const firstValues = new Set(Array.from({ length: 100 }, (_, seed) => createBirthNumber({ seed, referenceDate: SNAPSHOT_REFERENCE_DATE })()));
-    expect(firstValues.size).toBeGreaterThan(95);
-  });
-
-  it('does not read the clock when referenceDate is given', () => {
-    setClock('2026-10-05T12:00:00Z', 'Europe/Prague');
-    const before = firstOutputs(42);
-    setClock('2045-03-01T23:59:59Z', 'America/Los_Angeles');
-    expect(firstOutputs(42)).toEqual(before);
-  });
-
-  it('never uses Math.random', () => {
-    const mathRandom = vi.spyOn(Math, 'random');
-    firstOutputs(42);
-    firstOutputs(7, '2010-01-01');
-    expect(mathRandom).not.toHaveBeenCalled();
-  });
-});
-
-describe('shared A3 check: referenceDates after the fixed ranges do not change the output', () => {
-  it('gives the same plain values, edge values and date-independent invalid values for two later referenceDates', () => {
-    expectSameOutputForLaterReferenceDates({
-      create: createBirthNumber,
-      plain: (generator) => generator(),
-      // After 2025-12-31, the end of every fixed range of valid values and of the other invalid variants.
-      laterReferenceDates: dateArb('2026-01-01', '2099-12-31'),
-      fixedPair: ['2026-01-01', '2099-12-31'],
-      dateDependentInvalidVariants: ['futureDate'],
-    });
-  });
-
-  it('also keeps futureDate unchanged while referenceDate stays before 2039-12-31 (its range starts 2040-01-01)', () => {
+describe('shared A3 check, date-dependent invalid variant', () => {
+  it('keeps futureDate unchanged while referenceDate stays before 2039-12-31 (its range starts 2040-01-01)', () => {
     fc.assert(
       fc.property(seedArb, dateArb('2026-01-01', '2039-12-31'), dateArb('2026-01-01', '2039-12-31'), (seed, a, b) => {
         expect(firstOutputs(seed, a)).toEqual(firstOutputs(seed, b));
