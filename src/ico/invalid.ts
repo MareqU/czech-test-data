@@ -1,10 +1,9 @@
-// Invalid variants of the IČO (one fault each), rules for ico section 4.
+// Invalid variants of the IČO (one fault each) – docs/rules/ico.md section 4.
 // Each variant name is the reason code the validator returns for its values.
 import { replaceDigitWithLetter } from '../core/letters.js';
 import type { Random } from '../core/random.js';
 import type { IdentifierVariant } from '../core/types.js';
-import { leadingZerosBase } from './edge.js';
-import { generate, withCheckDigit } from './generate.js';
+import { generate, leadingZerosBase, withCheckDigit } from './generate.js';
 
 /** Names of the invalid variants (neplatné varianty IČO); each is also a reason code of the validator. */
 export type IcoInvalidVariant = 'badChecksum' | 'wrongLength' | 'letters';

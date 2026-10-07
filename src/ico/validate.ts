@@ -1,4 +1,4 @@
-// Validator of the IČO, rules for ico section 2 with the decisions of section 9.
+// Validator of the IČO – docs/rules/ico.md section 2 with the decisions of section 9.
 // Format: ARES REST API, `ico` pattern ^\d{8}$ (https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/v3/api-docs);
 // the check digit has no official text, it is confirmed by ARES records (see the caveat in the rules).
 import { hasLetter } from '../core/letters.js';

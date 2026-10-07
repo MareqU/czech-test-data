@@ -1,4 +1,5 @@
-// Subpath entry `czech-test-data/ico`: the IČO (identifikační číslo osoby).
+// Subpath entry `czech-test-data/ico`: the IČO (identifikační číslo osoby) – docs/rules/core.md section 5,
+// docs/rules/ico.md.
 // Source: zákon č. 111/2009 Sb. § 24–26 (no format); format from ARES, check digit confirmed by ARES records:
 // https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/v3/api-docs
 import { resolveSettings } from '../core/settings.js';

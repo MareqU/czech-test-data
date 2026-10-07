@@ -106,3 +106,10 @@ alphabetical (`birthNumber`, `phone`, `postalCode`), and `package.json` `exports
   precedence. The examples match the spec (`createIco({ seed: 42 })`, `cz.ico()`).
 - The tests read like a specification. Section numbers sit in the describe names, the samples carry their ARES
   subject and remainder, and `tests/support/ico.ts` is an oracle written only from the rules.
+
+## Follow-up (branch m3-ico-review-fixes, 2026-10-07)
+
+- Fixed: S1 (`leadingZerosBase` moved to `generate.ts`), S2 (citations name `docs/rules/ico.md`, `index.ts` also
+  `docs/rules/core.md` section 5), N3 (7-digit `wrongLength` must start with 1–9), N4 (`entry` alphabetical).
+  Outputs unchanged (seed snapshots pass).
+- N1 and N2: deferred to bankAccount (decide padding contract of `weightedSum`; core spec and test for it).
