@@ -47,7 +47,7 @@ function plainNumber(random: Random, context: IdentifierContext): string {
  * The last digit of a plain number is the normal check digit `N9 mod 11` ≤ 9, so `N9 mod 11 ≠ 10` and no
  * other last digit can make it a valid mod11Exception (section 4).
  */
-function badChecksum(random: Random, context: IdentifierContext): string {
+export function badChecksum(random: Random, context: IdentifierContext): string {
   const value = plainNumber(random, context);
   const changed = (Number(value.slice(-1)) + random.int(1, 9)) % 10;
   return `${value.slice(0, -1)}${String(changed)}`;

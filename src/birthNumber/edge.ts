@@ -36,6 +36,11 @@ const LEAP_DAYS: readonly string[] = Array.from({ length: 2024 - 1900 + 1 }, (_,
   .filter((year) => isLeapYear(year))
   .map((year) => `${String(year)}-02-29`);
 
+/** A 9-digit number born 1900-01-01 … 1953-12-31, cut at `referenceDate`. */
+export function pre1954(random: Random, context: IdentifierContext): string {
+  return formatBirthNumber(random, drawDateUpTo(random, NINE_DIGIT_RANGE, context), drawGenderOffset(random));
+}
+
 function additionalSeries(monthOffset: number): IdentifierVariant {
   return (random, context) => formatBirthNumber(random, drawDateUpTo(random, ADDITIONAL_SERIES_RANGE, context), monthOffset);
 }
@@ -63,8 +68,7 @@ function leapDay(random: Random, context: IdentifierContext): string {
 
 /** Edge variants by name; each draws its birth date from the fixed range of section 9. */
 export const edge: Readonly<Record<BirthNumberEdgeVariant, IdentifierVariant>> = {
-  pre1954: (random, context) =>
-    formatBirthNumber(random, drawDateUpTo(random, NINE_DIGIT_RANGE, context), drawGenderOffset(random)),
+  pre1954,
   mod11Exception,
   'month+20': additionalSeries(MONTH_OFFSETS.additionalMale),
   'month+70': additionalSeries(MONTH_OFFSETS.additionalFemale),

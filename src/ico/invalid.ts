@@ -13,7 +13,7 @@ const LETTERS = 'AOl';
 const POSITIONS: readonly number[] = [0, 1, 2, 3, 4, 5, 6, 7];
 
 /** A valid IČO whose last digit is replaced by a different digit, drawn uniformly. */
-function badChecksum(random: Random): string {
+export function badChecksum(random: Random): string {
   const value = generate(random);
   const correct = Number(value.charAt(7));
   const drawn = random.int(0, 8);

@@ -115,7 +115,8 @@ describe('options gender, birthDate and from: birthNumber (decision 8, consisten
       fc.property(seedArb, genderArb, birthDateArb, (seed, gender, birthDate) => {
         const value = createDic({ seed, referenceDate: REFERENCE_DATE })({ gender, birthDate });
         expect(value).toMatch(birthDate < '1954-01-01' ? /^CZ[0-9]{9}$/ : /^CZ[0-9]{10}$/);
-        expect(value).not.toMatch(/^CZ6/);
+        // only a 9-digit inner part starting with 6 would be read as an assigned number (decision 4)
+        expect(value).not.toMatch(/^CZ6[0-9]{8}$/);
         const decoded = decodeOrFail(value.slice(2));
         expect(decoded.gender).toBe(gender);
         expect(decoded.date).toBe(birthDate);
