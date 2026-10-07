@@ -7,11 +7,10 @@ import { describe, expect, it } from 'vitest';
 import { createBirthNumber, validateBirthNumber } from '../src/birthNumber/index.js';
 import type { BirthNumberEdgeVariant, BirthNumberInvalidVariant } from '../src/birthNumber/index.js';
 import { expectSameOutputForLaterReferenceDates } from './support/determinism.js';
-import { addDays, draw, seedArb } from './support/helpers.js';
+import { addDays, dateArb, draw, seedArb } from './support/helpers.js';
 import {
   LEAP_DAY_YEARS,
   RANGES,
-  dateArb,
   decodeBirthNumber,
   decodeOrFail,
   isWithin,

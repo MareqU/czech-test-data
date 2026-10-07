@@ -2,9 +2,7 @@
 // decisions of section 8), never from src/.
 
 /** The reason codes of section 2 in the precedence order `letters` → `badFormat` → `wrongLength` → `foreignRange`. */
-export const POSTAL_CODE_REASONS = ['letters', 'badFormat', 'wrongLength', 'foreignRange'] as const;
-
-export type OracleReason = (typeof POSTAL_CODE_REASONS)[number];
+export type OracleReason = 'letters' | 'badFormat' | 'wrongLength' | 'foreignRange';
 
 export type OracleResult = { readonly valid: true } | { readonly valid: false; readonly reason: OracleReason };
 

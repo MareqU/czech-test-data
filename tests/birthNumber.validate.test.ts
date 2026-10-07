@@ -11,11 +11,12 @@ import {
   IMPOSSIBLE_DATES,
   MALFORMED_DATES,
   addDays,
+  dateArb,
   localDateOf,
   restoreClock,
   setClock,
 } from './support/helpers.js';
-import { dateArb, decodeBirthNumber, mod11, oracleValidate } from './support/birthNumber.js';
+import { decodeBirthNumber, mod11, oracleValidate } from './support/birthNumber.js';
 
 /** The reference date ("today") of every sample in section 5 of the rules. */
 const REFERENCE_DATE = '2026-10-04';
