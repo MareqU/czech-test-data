@@ -3,14 +3,12 @@
 // dependence). The snapshot values cannot be derived from the rules (they depend on how many draws the
 // generator spends), so they are filled by the main session after the implementation passes. vitest.config.ts
 // sets `update: 'none'`, so values are recorded only with -u.
-import fc from 'fast-check';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { createPostalCode } from '../src/postalCode/index.js';
 import type { PostalCodeEdgeVariant, PostalCodeInvalidVariant } from '../src/postalCode/index.js';
-import { expectSameOutputForLaterReferenceDates } from './support/determinism.js';
-import { dateArb, draw, restoreClock, seedArb, setClock } from './support/helpers.js';
+import { describeDeterminismContract } from './support/identifierContract.js';
+import { dateArb, draw } from './support/helpers.js';
 
-const PROPERTY_RUNS = 200;
 const SNAPSHOT_REFERENCE_DATE = '2026-10-05';
 
 /** Variant order of section 4 of the rules, so named calls run in a fixed order. */
@@ -30,51 +28,19 @@ function firstOutputs(seed: number, referenceDate = SNAPSHOT_REFERENCE_DATE): Re
   };
 }
 
-afterEach(() => {
-  restoreClock();
-  vi.restoreAllMocks();
-});
-
-describe('same seed + same calls = same output (docs/rules/core.md section 2)', () => {
-  it('repeats the whole call sequence for every seed', () => {
-    fc.assert(
-      fc.property(seedArb, (seed) => {
-        expect(firstOutputs(seed)).toEqual(firstOutputs(seed));
-      }),
-      { numRuns: PROPERTY_RUNS },
-    );
-  });
-
-  it('gives different values for different seeds', () => {
-    const firstValues = new Set(Array.from({ length: 100 }, (_, seed) => createPostalCode({ seed })()));
-    expect(firstValues.size).toBeGreaterThan(90);
-  });
-
-  it('does not read the clock when referenceDate is given', () => {
-    setClock('2026-10-05T12:00:00Z', 'Europe/Prague');
-    const before = firstOutputs(42);
-    setClock('2045-03-01T23:59:59Z', 'America/Los_Angeles');
-    expect(firstOutputs(42)).toEqual(before);
-  });
-
-  it('never uses Math.random', () => {
-    const mathRandom = vi.spyOn(Math, 'random');
-    firstOutputs(42);
-    firstOutputs(7, '2010-01-01');
-    expect(mathRandom).not.toHaveBeenCalled();
-  });
-});
-
-describe('shared A3 check: the referenceDate never changes the output (no date dependence, section 9)', () => {
-  it('gives identical plain, edge and invalid values for any two referenceDates', () => {
-    expectSameOutputForLaterReferenceDates({
-      create: createPostalCode,
-      plain: (generator) => generator(),
-      laterReferenceDates: dateArb('1900-01-01', '2099-12-31'),
-      fixedPair: ['1900-01-01', '2099-12-31'],
-      dateDependentInvalidVariants: [],
-    });
-  });
+describeDeterminismContract({
+  create: createPostalCode,
+  firstOutputs,
+  snapshotReferenceDate: SNAPSHOT_REFERENCE_DATE,
+  minDistinctFirstValues: 90,
+  a3Title: 'shared A3 check: the referenceDate never changes the output (no date dependence, section 9)',
+  a3: {
+    create: createPostalCode,
+    plain: (generator) => generator(),
+    laterReferenceDates: dateArb('1900-01-01', '2099-12-31'),
+    fixedPair: ['1900-01-01', '2099-12-31'],
+    dateDependentInvalidVariants: [],
+  },
 });
 
 describe('seed snapshots (referenceDate 2026-10-05) – filled by the main session after the implementation passes', () => {
