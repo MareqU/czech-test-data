@@ -1,6 +1,8 @@
 # dic (DIČ, daňové identifikační číslo)
 
-Status: **DRAFT**, waiting for Marek's approval · researched 2026-10-07 · rules-researcher
+Status: **APPROVED** by Marek on 2026-10-07 (all recommendations in section 9 accepted, question 1 in the amended
+form recorded there; they override every "proposed", "proposal", "optional" and "open question" marker below)
+· researched 2026-10-07 · rules-researcher
 
 Czech meaning: *daňové identifikační číslo* (DIČ) is the tax identification number that the tax administrator
 (*správce daně*, a *finanční úřad*) assigns to a registered tax subject. Zákon č. 280/2009 Sb., daňový řád,
@@ -275,7 +277,7 @@ section 9: range 1954-01-01 … 2025-12-31, cut at `referenceDate`) and remove t
 | Variant | Definition | Generator (draw order) |
 | --- | --- | --- |
 | `fromIco` | `CZ` + IČO (8 digits) | ico plain generator draws, then `CZ` + value |
-| `fromRc` (rename to `fromBirthNumber`? open question 7) | `CZ` + 10-digit birth number, no slash | birthNumber plain generator draws (date, gender, ending), remove `/`, `CZ` + value |
+| `fromBirthNumber` (spec: `fromRc`, renamed by decision 7) | `CZ` + 10-digit birth number, no slash | birthNumber plain generator draws (date, gender, ending), remove `/`, `CZ` + value |
 | `lowercasePrefix` (**disputed**, open question 2) | `cz` + a valid inner part | plain inner part (form draw, then inner), then `cz` + value |
 | `pre1954` (**new**, open question 9) | `CZ` + 9-digit birth number (born before 1954). It breaks apps that allow only 8 or 10 digits. | birthNumber `pre1954` edge draws (1900-01-01 … 1953-12-31, cut at `referenceDate`), remove `/`, `CZ` + value. `RR` is 00–53, so it never starts with `6`. |
 | `vatGroup` (**new**, open question 9) | `CZ699nnnnnk`, an assigned number of a VAT group | `digits(5)` for `nnnnn`, then the check digit of section 2.4 |
@@ -498,12 +500,12 @@ Secondary, **UNVERIFIED**:
 - **Date ranges** (core rules A3): only the birth-number paths are date-dependent. They use birthNumber's fixed
   ranges (plain 1954–2025, `pre1954` 1900–1953), cut by `referenceDate`. The shared determinism check from
   `tests/support/identifierContract.ts` must pass.
-- Edge variants, in definition order: `fromIco`, `fromRc` (or `fromBirthNumber`), `lowercasePrefix`, then
-  `pre1954` and `vatGroup` if accepted. Invalid variants: `missingPrefix`, `foreignPrefix`, `badInnerChecksum`.
+- Edge variants, in definition order: `fromIco`, `fromBirthNumber`, `lowercasePrefix`, `pre1954`,
+  `vatGroup`. Invalid variants: `missingPrefix`, `foreignPrefix`, `badInnerChecksum`.
 
 ---
 
-## 9. Open questions for Marek (each with a recommendation)
+## 9. Decisions (approved 2026-10-07: every recommendation below was accepted, question 1 as amended)
 
 1. **Size budget.** `.size-limit.ts` measures `src/dic/index.ts` with only `../core` external. dic must bundle the
    ico code (~0.78 kB) and the birthNumber code (~1.98 kB), plus its own code (estimated 0.4–0.7 kB, not measured).
@@ -516,6 +518,14 @@ Secondary, **UNVERIFIED**:
    Either way, record the change next to the 2026-10-05 decision in CLAUDE.md. Note: dic may import the variant
    records `invalid` from ico and birthNumber, which pulls in all their invalid variants. The implementer should
    measure that before refactoring anything.
+   **Approved in amended form (2026-10-07, Marek):**
+   - *Reuse, never copy*; and import **fine-grained**: `src/dic/` imports only `generate` / `validate` and the
+     individual variant functions it needs (`pre1954`, `badChecksum`), never `identifier.ts` or the whole `edge` /
+     `invalid` records (objects are not tree-shaken). The needed variant functions get named exports in
+     `src/birthNumber/` and `src/ico/`; their records keep using them, so outputs and seeds do not change.
+   - Budget: every identifier's **own code** ≤ 2 kB (core and other identifier folders external), and the
+     standalone subpath `czech-test-data/dic` (core external, ico and birthNumber included) ≤ **3 kB**.
+     Measured 2026-10-07: fine-grained dependencies ≈ 2.06 kB, whole records ≈ 2.5 kB. Whole library stays ≤ 10 kB.
 2. **Lowercase prefix and spaces.** **Recommendation:** the prefix is **case-insensitive** (`cz`, `Cz`, `cZ` valid),
    and `lowercasePrefix` stays an edge variant marked "disputed" in TSDoc and the README. The spec puts it under
    valid. No source makes lowercase a different number, and VIES accepts it. **Spaces stay `badFormat`**
