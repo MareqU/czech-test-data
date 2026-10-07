@@ -127,4 +127,6 @@ used, and only in the same file, so the export can go.
 ## 5. Resolution (main session, 2026-10-07)
 
 - Fixed (doc and comment only): S2, S3, S5, N1, N2.
-- Open for Marek: S1, S4, N3, N4 (code, implementer) and N5 (tests, test-writer).
+- Approved by Marek and fixed by the implementer: S1 (also applied to `cz.validate.phone`, same defect), S4, N3, N4.
+  Outputs unchanged (seed snapshots pass).
+- N5 (tests): approved, deferred to the shared `letters` helper refactor (phone review S1).

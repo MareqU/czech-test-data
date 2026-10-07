@@ -2,7 +2,7 @@
 // Each variant name is the reason code the validator returns for its values.
 import type { Random } from '../core/random.js';
 import type { IdentifierVariant } from '../core/types.js';
-import { drawDigits, formatPostalCode } from './generate.js';
+import { drawDigits, FOREIGN_FIRST_DIGITS, formatPostalCode } from './generate.js';
 
 /**
  * Names of the invalid variants (neplatné varianty PSČ); each is also a reason code of the validator.
@@ -27,7 +27,7 @@ const BAD_FORMATS: readonly ((digits: string) => string)[] = [
 /** 4 or 6 digits, with or without the correctly placed space, so the length is the only fault. */
 function wrongLength(random: Random): string {
   const digits = random.int(0, 1) === 0 ? drawDigits(random).slice(0, 4) : `${drawDigits(random)}${random.digits(1)}`;
-  return random.int(0, 1) === 0 ? digits : `${digits.slice(0, 3)} ${digits.slice(3)}`;
+  return random.int(0, 1) === 0 ? digits : formatPostalCode(digits);
 }
 
 /** Exactly one digit of a valid `NNN NN` replaced with an ASCII letter. */
@@ -44,5 +44,5 @@ export const invalid: Readonly<Record<PostalCodeInvalidVariant, IdentifierVarian
   badFormat: (random) => random.pick(BAD_FORMATS)(drawDigits(random)),
   // Slovak zones 8, 9 and 0 share the format (Česká pošta, Poštovní podmínky, Příloha č. 3: 948 01 Lučenec,
   // https://www.ceskaposta.cz/documents/d/guest/postovni-podminky-zakladni-postovni-sluzby).
-  foreignRange: (random) => formatPostalCode(`${String(random.pick([0, 8, 9]))}${random.digits(4)}`),
+  foreignRange: (random) => formatPostalCode(`${String(random.pick(FOREIGN_FIRST_DIGITS))}${random.digits(4)}`),
 };

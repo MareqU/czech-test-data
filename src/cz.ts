@@ -14,9 +14,12 @@ import type { SettingsOptions, ValidationResult } from './core/types.js';
 export interface CzValidators {
   /** Validates a birth number (rodné číslo) with `referenceDate` of this instance. Never throws. */
   readonly birthNumber: (value: string) => ValidationResult<BirthNumberReason>;
-  /** Validates a phone number (telefonní číslo); the date plays no role. Never throws. */
+  /**
+   * Validates a phone number (telefonní číslo); the date plays no role, `referenceDate` is only passed on.
+   * Never throws.
+   */
   readonly phone: (value: string) => ValidationResult<PhoneReason>;
-  /** Validates a postal code (PSČ). Never throws. */
+  /** Validates a postal code (PSČ); the date plays no role, `referenceDate` is only passed on. Never throws. */
   readonly postalCode: (value: string) => ValidationResult<PostalCodeReason>;
 }
 
@@ -68,8 +71,8 @@ export function createCz(options?: SettingsOptions): Cz {
     postalCode: createPostalCode(settings),
     validate: Object.freeze({
       birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
-      phone: (value: string) => validatePhone(value),
-      postalCode: (value: string) => validatePostalCode(value),
+      phone: (value: string) => validatePhone(value, { referenceDate }),
+      postalCode: (value: string) => validatePostalCode(value, { referenceDate }),
     }),
   };
 }
