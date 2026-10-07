@@ -406,3 +406,8 @@ possible later. It is not proposed, to keep the API small.
   has exactly one fault, as defined in section 4.
 - Size: no data tables. The validator is a few comparisons and the generator draws 5 digits, so it should be far
   below the 2 kB identifier budget (min+gzip on top of core).
+
+Clarifications from the main session (2026-10-07, derived from the approved text):
+
+- `badFormat` variant, leading or trailing space: the space is added to the machine form (`' 62300'`, `'62300 '`),
+  as in the section 5 samples, so the value has exactly one fault. The tests accept either form.

@@ -38,6 +38,10 @@
       "import": "./dist/phone/index.js",
       "require": "./dist/phone/index.cjs"
     },
+    "./postalCode": {
+      "import": "./dist/postalCode/index.js",
+      "require": "./dist/postalCode/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "bin": {
