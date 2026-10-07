@@ -131,3 +131,8 @@ The tests read like a specification. Section 5 samples are copied verbatim, the 
 - S2 fixed: `createPhone` example shows the real seed-42 value `'+420 606 367 819'`.
 - N4 fixed: links to 22/2022 Sb. and 267/2009 Sb. added in `src/phone/edge.ts`.
 - Open for Marek: S1 (shared `letters` helper in core, together with N3 of birthNumber before IČO), N1–N3, N5.
+
+## Follow-up (branch core-shared-helpers, 2026-10-07)
+
+- S1 resolved: `src/core/letters.ts` (`hasLetter`, `replaceDigitWithLetter`) is used by birthNumber, phone and
+  postalCode. Draw order is unchanged, so no seed snapshot changed.

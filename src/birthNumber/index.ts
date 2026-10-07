@@ -1,15 +1,11 @@
 // Subpath entry `czech-test-data/birthNumber`: the birth number (rodné číslo) – docs/rules/core.md section 5,
 // docs/rules/birthNumber.md. Legal basis: § 13 zákona č. 133/2000 Sb., o evidenci obyvatel a rodných číslech.
-import { defineIdentifier } from '../core/identifier.js';
 import { resolveSettings } from '../core/settings.js';
 import type { IdentifierGenerator, SettingsOptions, ValidationResult, ValidatorOptions } from '../core/types.js';
-import { edge } from './edge.js';
 import type { BirthNumberEdgeVariant } from './edge.js';
-import { generate } from './generate.js';
 import type { BirthNumberOptions } from './generate.js';
-import { invalid } from './invalid.js';
 import type { BirthNumberInvalidVariant } from './invalid.js';
-import { validate } from './validate.js';
+import { birthNumber } from './identifier.js';
 import type { BirthNumberReason } from './validate.js';
 
 export type { BirthNumberEdgeVariant, BirthNumberInvalidVariant, BirthNumberOptions, BirthNumberReason };
@@ -19,8 +15,6 @@ export type { BirthNumberEdgeVariant, BirthNumberInvalidVariant, BirthNumberOpti
  * `.invalid()` for an invalid one.
  */
 export type BirthNumberGenerator = IdentifierGenerator<BirthNumberOptions, BirthNumberEdgeVariant, BirthNumberInvalidVariant>;
-
-const birthNumber = defineIdentifier({ id: 'birthNumber', generate, validate, edge, invalid });
 
 /**
  * Creates a generator of Czech birth numbers (rodné číslo), the personal identifier assigned by the

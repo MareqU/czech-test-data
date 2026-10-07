@@ -1,5 +1,6 @@
 // Invalid variants of the postal code (PSČ) – docs/rules/postalCode.md section 4 (one fault each).
 // Each variant name is the reason code the validator returns for its values.
+import { replaceDigitWithLetter } from '../core/letters.js';
 import type { Random } from '../core/random.js';
 import type { IdentifierVariant } from '../core/types.js';
 import { drawDigits, FOREIGN_FIRST_DIGITS, formatPostalCode } from './generate.js';
@@ -33,8 +34,7 @@ function wrongLength(random: Random): string {
 /** Exactly one digit of a valid `NNN NN` replaced with an ASCII letter. */
 function letters(random: Random): string {
   const value = formatPostalCode(drawDigits(random));
-  const position = random.pick(DIGIT_POSITIONS);
-  return `${value.slice(0, position)}${LETTERS.charAt(random.int(0, LETTERS.length - 1))}${value.slice(position + 1)}`;
+  return replaceDigitWithLetter(random, value, DIGIT_POSITIONS, LETTERS);
 }
 
 /** Invalid variants by name. */

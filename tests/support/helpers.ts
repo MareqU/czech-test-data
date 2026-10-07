@@ -20,6 +20,13 @@ export function utcDateOf(date: Date): string {
   return `${pad(date.getUTCFullYear(), 4)}-${pad(date.getUTCMonth() + 1, 2)}-${pad(date.getUTCDate(), 2)}`;
 }
 
+/** Every real calendar date `from` … `to` (inclusive) as `YYYY-MM-DD`. */
+export function dateArb(from: string, to: string): fc.Arbitrary<string> {
+  return fc
+    .date({ min: new Date(`${from}T00:00:00Z`), max: new Date(`${to}T00:00:00Z`), noInvalidDate: true })
+    .map(utcDateOf);
+}
+
 /** Formats the local calendar date of `date` (in the current `process.env['TZ']`) as `YYYY-MM-DD`. */
 export function localDateOf(date: Date): string {
   return `${pad(date.getFullYear(), 4)}-${pad(date.getMonth() + 1, 2)}-${pad(date.getDate(), 2)}`;

@@ -11,9 +11,8 @@ import fc from 'fast-check';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createBirthNumber } from '../src/birthNumber/index.js';
 import type { BirthNumberEdgeVariant, BirthNumberInvalidVariant } from '../src/birthNumber/index.js';
-import { dateArb } from './support/birthNumber.js';
 import { expectSameOutputForLaterReferenceDates } from './support/determinism.js';
-import { draw, restoreClock, seedArb, setClock } from './support/helpers.js';
+import { dateArb, draw, restoreClock, seedArb, setClock } from './support/helpers.js';
 
 const PROPERTY_RUNS = 200;
 

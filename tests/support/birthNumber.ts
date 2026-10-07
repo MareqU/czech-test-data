@@ -1,8 +1,7 @@
 // Independent oracle for birthNumber (rodné číslo), written from docs/rules/birthNumber.md only, never from
 // src/. It decodes and validates exactly as the approved algorithm of section 2 with the decisions of
 // section 8, so property tests can compare the library against it and check what generated values decode to.
-import fc from 'fast-check';
-import { addDays, utcDateOf } from './helpers.js';
+import { addDays } from './helpers.js';
 
 /** The reason codes of section 2 in the precedence order of decision 7. */
 export const BIRTH_NUMBER_REASONS = [
@@ -194,13 +193,6 @@ export function minDate(a: string, b: string): string {
 
 export function maxDate(a: string, b: string): string {
   return a > b ? a : b;
-}
-
-/** Every real calendar date `from` … `to` (inclusive) as `YYYY-MM-DD`. */
-export function dateArb(from: string, to: string): fc.Arbitrary<string> {
-  return fc
-    .date({ min: new Date(`${from}T00:00:00Z`), max: new Date(`${to}T00:00:00Z`), noInvalidDate: true })
-    .map(utcDateOf);
 }
 
 /** The day after a `YYYY-MM-DD` date. */

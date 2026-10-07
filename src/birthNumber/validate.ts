@@ -2,6 +2,7 @@
 // decisions of section 8. Legal basis: § 13 zákona č. 133/2000 Sb., o evidenci obyvatel a rodných číslech
 // (https://www.zakonyprolidi.cz/cs/2000-133), century mapping from the ČSSZ "Standardní kontrola rodného
 // čísla" (https://www.cssz.gov.cz/standardni-kontrola-rodneho-cisla-a-evidencniho-cisla-pojistence).
+import { hasLetter } from '../core/letters.js';
 import { daysInMonth, formatDate } from '../core/date.js';
 import type { IdentifierContext, ValidationResult } from '../core/types.js';
 import { MONTH_OFFSETS } from './generate.js';
@@ -19,7 +20,6 @@ export type BirthNumberReason =
   | 'futureDate';
 
 // Step 1 (decision 4): only Unicode letters count as letters; any other foreign character is badFormat.
-const LETTER = /\p{L}/u;
 // Digits only, or exactly six digits, one slash and digits. Length is checked separately (step 2).
 const DIGITS_WITH_OPTIONAL_SLASH = /^(?:[0-9]*|[0-9]{6}\/[0-9]*)$/;
 
@@ -33,7 +33,7 @@ const TEN_DIGIT_MONTH_OFFSETS: readonly number[] = Object.values(MONTH_OFFSETS);
 const LAST_MOD11_EXCEPTION_YEAR = 1985;
 
 function formatFault(value: string): 'letters' | 'badFormat' | undefined {
-  if (LETTER.test(value)) {
+  if (hasLetter(value)) {
     return 'letters';
   }
   return DIGITS_WITH_OPTIONAL_SLASH.test(value) ? undefined : 'badFormat';

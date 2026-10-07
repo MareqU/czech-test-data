@@ -2,6 +2,7 @@
 // Format: UPU "Postal addressing systems – Czech Rep." (02/2018, data from Česká pošta): 5 digits, one space
 // between the 3rd and 4th digit; no checksum exists.
 // https://www.upu.int/UPU/media/upu/PostalEntitiesFiles/addressingUnit/czeEn.pdf
+import { hasLetter } from '../core/letters.js';
 import type { ValidationResult } from '../core/types.js';
 import { FOREIGN_FIRST_DIGITS } from './generate.js';
 
@@ -11,7 +12,6 @@ import { FOREIGN_FIRST_DIGITS } from './generate.js';
  */
 export type PostalCodeReason = 'letters' | 'badFormat' | 'wrongLength' | 'foreignRange';
 
-const LETTER = /\p{L}/u;
 const NOT_DIGIT_OR_SPACE = /[^0-9 ]/;
 const SPACE_INDEX = 3;
 
@@ -23,7 +23,7 @@ function hasValidSpace(value: string): boolean {
 
 /** Validates the postal code; the first failing step gives the reason. Existence is not checked. */
 export function validate(value: string): ValidationResult<PostalCodeReason> {
-  if (LETTER.test(value)) {
+  if (hasLetter(value)) {
     return { valid: false, reason: 'letters' };
   }
   if (NOT_DIGIT_OR_SPACE.test(value) || !hasValidSpace(value)) {

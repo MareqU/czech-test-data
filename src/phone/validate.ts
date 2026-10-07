@@ -2,6 +2,7 @@
 // decisions of section 9 and the clarifications of section 10. Numbering plan: příloha č. 1 and § 4 of
 // vyhláška č. 117/2007 Sb. (https://www.zakonyprolidi.cz/cs/2007-117), ČTÚ communication to the ITU of
 // 5. 1. 2023 (https://www.itu.int/oth/T0202000035/en). Phone numbers have no checksum.
+import { hasLetter } from '../core/letters.js';
 import type { ValidationResult } from '../core/types.js';
 import { EMERGENCY_SMS } from './generate.js';
 
@@ -11,7 +12,6 @@ import { EMERGENCY_SMS } from './generate.js';
  */
 export type PhoneReason = 'letters' | 'badFormat' | 'wrongCountryCode' | 'wrongLength' | 'unknownPrefix' | 'specialPrefix';
 
-const LETTER = /\p{L}/u;
 // Step 2: digits, a leading `+`, single ASCII spaces between digit groups; the empty string is left to step 5.
 const ALLOWED_CHARACTERS = /^(?:\+?[0-9]+(?: [0-9]+)*)?$/;
 const NATIONAL_SHAPE = /^(?:[0-9]{9}|[0-9]{3} [0-9]{3} [0-9]{3})$/;
@@ -63,7 +63,7 @@ function nationalPart(value: string): { national: string } | { reason: PhoneReas
  * Validates a phone number; the first failing step gives the reason. The date plays no role.
  */
 export function validate(value: string): ValidationResult<PhoneReason> {
-  if (LETTER.test(value)) {
+  if (hasLetter(value)) {
     return { valid: false, reason: 'letters' };
   }
   if (!ALLOWED_CHARACTERS.test(value)) {

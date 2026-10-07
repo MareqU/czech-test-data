@@ -7,9 +7,8 @@ import fc from 'fast-check';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createPostalCode } from '../src/postalCode/index.js';
 import type { PostalCodeEdgeVariant, PostalCodeInvalidVariant } from '../src/postalCode/index.js';
-import { dateArb } from './support/birthNumber.js';
 import { expectSameOutputForLaterReferenceDates } from './support/determinism.js';
-import { draw, restoreClock, seedArb, setClock } from './support/helpers.js';
+import { dateArb, draw, restoreClock, seedArb, setClock } from './support/helpers.js';
 
 const PROPERTY_RUNS = 200;
 const SNAPSHOT_REFERENCE_DATE = '2026-10-05';

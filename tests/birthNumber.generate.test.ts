@@ -6,10 +6,9 @@ import fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { createBirthNumber, validateBirthNumber } from '../src/birthNumber/index.js';
 import type { BirthNumberOptions } from '../src/birthNumber/index.js';
-import { IMPOSSIBLE_DATES, MALFORMED_DATES, addDays, draw, seedArb } from './support/helpers.js';
+import { IMPOSSIBLE_DATES, MALFORMED_DATES, addDays, dateArb, draw, seedArb } from './support/helpers.js';
 import {
   RANGES,
-  dateArb,
   decodeOrFail,
   isWithin,
   isZeroEnding,
