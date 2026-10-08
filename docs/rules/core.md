@@ -135,6 +135,7 @@ src/core/settings.ts      resolveSettings, todayUtc (the only clock read), defau
 src/core/date.ts          Gregorian calendar helpers (date check, leap years, days in month)
 src/core/types.ts         ValidationResult, IdentifierGenerator, IdentifierContext, Settings
 src/core/identifier.ts    defineIdentifier(): builds create() and validate() of an identifier
+src/core/checksum.ts      weightedSum: shared weighted digit sum of the mod 11 identifiers (ico, bankAccount)
 src/cz.ts                 createCz
 src/index.ts              root entry: createCz + public types
 src/<id>/generate.ts      generate(random, options, context): string
@@ -198,6 +199,7 @@ docs/rules/<id>.md
 | `src/core/types.ts` | `ValidationResult`, `IdentifierGenerator`, `IdentifierContext`, `Settings`, `NoOptions` (types) | sections 4 and 5 |
 | `src/core/types.ts` | `SettingsOptions` (type) | `{ seed?: number; referenceDate?: string }`, options of `createCz` and `create<Id>`; public |
 | `src/core/types.ts` | `ValidatorOptions` (type) | `{ referenceDate?: string }`, options of the public validators; public from M2 |
+| `src/core/checksum.ts` | `weightedSum` | `(digits: string, weights: readonly number[]) => number` – Σ `digit · weight` with `digits` **right-aligned** to `weights`: a shorter `digits` counts as left-padded with `0`. Preconditions (TSDoc, not checked at runtime): ASCII `0-9` only, `digits.length ≤ weights.length`; a longer `digits` gives an unspecified result. Internal (not public API). Added 2026-10-08 with `docs/rules/bankAccount.md` section 9 / recommendation 1 (ico review N1/N2); **pending approval** together with that file. |
 | `src/index.ts` | `createCz` | `(options?: { seed?: number; referenceDate?: string }) => Cz` with `seed`, `referenceDate`, `validate` |
 
 `digits(length)` throws `RangeError` for a negative or non-integer length; `digits(0)` is `''`.
