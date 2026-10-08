@@ -1,6 +1,8 @@
 # bankAccount (číslo účtu, domestic Czech bank account number)
 
-Status: **DRAFT**, awaiting Marek's approval · researched 2026-10-08 · rules-researcher
+Status: **APPROVED** by Marek on 2026-10-08 (all 15 recommendations in section 10 accepted; they override every
+"proposed", "proposal", "Recommendation", "Alternative" and "open question" marker below) · researched 2026-10-08
+· rules-researcher
 
 Czech meaning: *číslo účtu* (in the national format, *v národním formátu*) is the domestic number of a payment
 account. Vyhláška ČNB č. 169/2011 Sb., § 2 odst. 1: *"Číslo účtu je jedinečným identifikátorem podle § 2 odst. 3
@@ -541,8 +543,7 @@ result.
 
 The divisibility rule (`S mod 11 = 0`) stays in `src/bankAccount/`; IČO keeps its `(11 − a) mod 10`.
 
-`docs/rules/core.md` section 5 now lists `src/core/checksum.ts` / `weightedSum` with this contract, marked as pending
-approval together with this file.
+`docs/rules/core.md` section 5 now lists `src/core/checksum.ts` / `weightedSum` with this contract (approved 2026-10-08).
 
 ### What IBAN (next identifier) will reuse
 
@@ -561,7 +562,7 @@ Per CLAUDE.md, only fine-grained imports, never the `edge` / `invalid` records:
 
 ---
 
-## 10. Recommendations (for Marek's decision)
+## 10. Decisions (approved 2026-10-08: every recommendation below was accepted, alternatives rejected)
 
 1. **`weightedSum` padding contract.** Recommendation: **right-align inside `weightedSum`** (pad on the left), with
    `digits.length ≤ weights.length` as a documented precondition. It removes the N1 footgun, IČO is unaffected, and
@@ -604,4 +605,4 @@ Per CLAUDE.md, only fine-grained imports, never the `edge` / `invalid` records:
 ### Open items outside this identifier
 
 - `docs/rules/core.md` section 5 also does not list `src/core/letters.ts` (`hasLetter`, `replaceDigitWithLetter`).
-  I did not add it (my brief allows only the `weightedSum` entry).
+  Added by the main session on 2026-10-08 (Marek approved).

@@ -136,6 +136,7 @@ src/core/date.ts          Gregorian calendar helpers (date check, leap years, da
 src/core/types.ts         ValidationResult, IdentifierGenerator, IdentifierContext, Settings
 src/core/identifier.ts    defineIdentifier(): builds create() and validate() of an identifier
 src/core/checksum.ts      weightedSum: shared weighted digit sum of the mod 11 identifiers (ico, bankAccount)
+src/core/letters.ts       hasLetter, replaceDigitWithLetter: shared `letters` reason and variant
 src/cz.ts                 createCz
 src/index.ts              root entry: createCz + public types
 src/<id>/generate.ts      generate(random, options, context): string
@@ -199,7 +200,8 @@ docs/rules/<id>.md
 | `src/core/types.ts` | `ValidationResult`, `IdentifierGenerator`, `IdentifierContext`, `Settings`, `NoOptions` (types) | sections 4 and 5 |
 | `src/core/types.ts` | `SettingsOptions` (type) | `{ seed?: number; referenceDate?: string }`, options of `createCz` and `create<Id>`; public |
 | `src/core/types.ts` | `ValidatorOptions` (type) | `{ referenceDate?: string }`, options of the public validators; public from M2 |
-| `src/core/checksum.ts` | `weightedSum` | `(digits: string, weights: readonly number[]) => number` – Σ `digit · weight` with `digits` **right-aligned** to `weights`: a shorter `digits` counts as left-padded with `0`. Preconditions (TSDoc, not checked at runtime): ASCII `0-9` only, `digits.length ≤ weights.length`; a longer `digits` gives an unspecified result. Internal (not public API). Added 2026-10-08 with `docs/rules/bankAccount.md` section 9 / recommendation 1 (ico review N1/N2); **pending approval** together with that file. |
+| `src/core/letters.ts` | `hasLetter`, `replaceDigitWithLetter` | `hasLetter(value)` – true if `value` contains a Unicode letter (`\p{L}`); `replaceDigitWithLetter(random, value, positions, letters)` – draws a position, then a letter, and replaces that character. Internal (not public API). Added in PR #8 (phone review S1); entry recorded 2026-10-08. |
+| `src/core/checksum.ts` | `weightedSum` | `(digits: string, weights: readonly number[]) => number` – Σ `digit · weight` with `digits` **right-aligned** to `weights`: a shorter `digits` counts as left-padded with `0`. Preconditions (TSDoc, not checked at runtime): ASCII `0-9` only, `digits.length ≤ weights.length`; a longer `digits` gives an unspecified result. Internal (not public API). Added 2026-10-08 with `docs/rules/bankAccount.md` section 9 / decision 1 (ico review N1/N2); approved 2026-10-08. |
 | `src/index.ts` | `createCz` | `(options?: { seed?: number; referenceDate?: string }) => Cz` with `seed`, `referenceDate`, `validate` |
 
 `digits(length)` throws `RangeError` for a negative or non-integer length; `digits(0)` is `''`.
