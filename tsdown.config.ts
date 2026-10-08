@@ -4,7 +4,7 @@ export default defineConfig([
   {
     // Library. ESM is the primary format; CJS is only a fallback for require().
     // Each identifier gets its own entry from M2 on, so consumers can tree-shake per module.
-    entry: ['src/index.ts', 'src/birthNumber/index.ts', 'src/ico/index.ts', 'src/phone/index.ts', 'src/postalCode/index.ts'],
+    entry: ['src/index.ts', 'src/bankAccount/index.ts', 'src/birthNumber/index.ts', 'src/ico/index.ts', 'src/phone/index.ts', 'src/postalCode/index.ts'],
     format: ['esm', 'cjs'],
     platform: 'neutral',
     tsconfig: 'tsconfig.build.json',

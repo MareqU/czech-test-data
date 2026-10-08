@@ -30,6 +30,10 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
+    "./bankAccount": {
+      "import": "./dist/bankAccount/index.js",
+      "require": "./dist/bankAccount/index.cjs"
+    },
     "./birthNumber": {
       "import": "./dist/birthNumber/index.js",
       "require": "./dist/birthNumber/index.cjs"
@@ -67,7 +71,8 @@
     "knip": "knip",
     "check": "npm run typecheck && npm run lint && npm run knip && npm run coverage && npm run build && npm run size",
     "prepublishOnly": "npm run check",
-    "size": "size-limit"
+    "size": "size-limit",
+    "update:bank-codes": "node scripts/update-bank-codes.ts"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "^0.18.5",

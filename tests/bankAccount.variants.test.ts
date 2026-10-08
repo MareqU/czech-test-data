@@ -194,12 +194,12 @@ describe('invalid variants (section 4): each fails with exactly its own reason',
     for (const value of draw(100, () => generator.invalid('badChecksumNumber'))) {
       const { number, code } = partsOf(value);
       const fixed = correctLastDigit(number.slice(0, -1)) ?? 0;
-      expect(validateBankAccount(`${number.slice(0, -1)}${fixed}/${code}`)).toEqual({ valid: true });
+      expect(validateBankAccount(`${number.slice(0, -1)}${String(fixed)}/${code}`)).toEqual({ valid: true });
     }
     for (const value of draw(100, () => generator.invalid('badChecksumPrefix'))) {
       const { prefix, number, code } = partsOf(value);
       const fixed = correctLastDigit((prefix ?? '').slice(0, -1)) ?? 0;
-      expect(validateBankAccount(`${(prefix ?? '').slice(0, -1)}${fixed}-${number}/${code}`)).toEqual({ valid: true });
+      expect(validateBankAccount(`${(prefix ?? '').slice(0, -1)}${String(fixed)}-${number}/${code}`)).toEqual({ valid: true });
     }
   });
 
@@ -213,7 +213,7 @@ describe('invalid variants (section 4): each fails with exactly its own reason',
     expect(codes).toEqual(new Set(UNKNOWN_BANK_CODES));
     const lengths = new Set(draw(100, () => generator.invalid('wrongLength')).map((v) => partsOf(v).number.length));
     expect(lengths).toEqual(new Set([1, 11]));
-    const letters = new Set(draw(600, () => generator.invalid('letters')).map((v) => v.match(/[AOl]/)?.[0]));
+    const letters = new Set(draw(600, () => generator.invalid('letters')).map((v) => /[AOl]/.exec(v)?.[0]));
     expect(letters).toEqual(new Set(['A', 'O', 'l']));
   });
 });
