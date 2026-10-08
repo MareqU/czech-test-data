@@ -34,6 +34,10 @@
       "import": "./dist/birthNumber/index.js",
       "require": "./dist/birthNumber/index.cjs"
     },
+    "./dic": {
+      "import": "./dist/dic/index.js",
+      "require": "./dist/dic/index.cjs"
+    },
     "./ico": {
       "import": "./dist/ico/index.js",
       "require": "./dist/ico/index.cjs"
