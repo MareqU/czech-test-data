@@ -26,7 +26,8 @@ export function isValidPart(part: string): boolean {
 
 /** True if `code` is in the bundled ČNB snapshot (whole token). */
 export function isKnownBankCode(code: string): boolean {
-  return ` ${BANK_CODES} `.includes(` ${code} `);
+  // The 4-digit check stops a run like '0100 0300' from matching as one token.
+  return /^\d{4}$/.test(code) && ` ${BANK_CODES} `.includes(` ${code} `);
 }
 
 /** A bank code of the frozen generator list. */
