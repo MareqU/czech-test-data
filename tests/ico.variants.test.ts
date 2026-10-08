@@ -37,9 +37,9 @@ const INVALID_CHECKS: Readonly<Record<IcoInvalidVariant, (value: string) => void
     expect(value).toMatch(/^[1-9][0-9]{7}$/);
     expect(Number(value.charAt(7))).not.toBe(checkDigitOf(value));
   },
-  // 7 digits (a valid IČO with its leading zero removed) or 9 digits (a valid IČO plus one digit)
+  // 7 digits (a valid IČO with its one leading zero removed, k = 1) or 9 digits (a valid IČO plus one digit), section 10
   wrongLength: (value) => {
-    expect(value).toMatch(/^(?:[0-9]{7}|[0-9]{9})$/);
+    expect(value).toMatch(/^(?:[1-9][0-9]{6}|[0-9]{9})$/);
     if (value.length === 7) {
       expect(validateIco(`0${value}`)).toEqual({ valid: true });
     } else {

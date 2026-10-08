@@ -1,18 +1,12 @@
-// Edge variants of the IČO (valid but unusual), rules for ico section 4.
-import type { Random } from '../core/random.js';
+// Edge variants of the IČO (valid but unusual) – docs/rules/ico.md section 4.
 import type { IdentifierVariant } from '../core/types.js';
-import { drawBase, remainderOf, withCheckDigit } from './generate.js';
+import { drawBase, leadingZerosBase, remainderOf, withCheckDigit } from './generate.js';
 
 /**
  * Names of the edge variants (okrajové případy IČO): `leadingZeros` starts with `0`, `checkDigitZero` has
  * the wrap-around remainder 1 (check digit 0), `checkDigitOne` the wrap-around remainder 0 (check digit 1).
  */
 export type IcoEdgeVariant = 'leadingZeros' | 'checkDigitZero' | 'checkDigitOne';
-
-/** A 7-digit base of `zeros` zeros, one digit 1–9, then random digits. */
-export function leadingZerosBase(random: Random, zeros: number): string {
-  return `${'0'.repeat(zeros)}${String(random.int(1, 9))}${random.digits(6 - zeros)}`;
-}
 
 // Rejection sampling: about 11 draws on average (decision 8).
 function withRemainder(remainder: number): IdentifierVariant {
