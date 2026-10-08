@@ -1,4 +1,7 @@
 // createCz, the all-in-one entry point – docs/rules/core.md section 3.
+import { validateBankAccount } from './bankAccount/index.js';
+import { bankAccount } from './bankAccount/identifier.js';
+import type { BankAccountGenerator, BankAccountReason } from './bankAccount/index.js';
 import { validateBirthNumber } from './birthNumber/index.js';
 import { birthNumber } from './birthNumber/identifier.js';
 import type { BirthNumberGenerator, BirthNumberReason } from './birthNumber/index.js';
@@ -18,6 +21,8 @@ import type { SettingsOptions, ValidationResult } from './core/types.js';
  * Validators of one {@link Cz} instance; date-dependent rules use the instance's `referenceDate`.
  */
 export interface CzValidators {
+  /** Validates a bank account number (číslo účtu); the date plays no role. Never throws. */
+  readonly bankAccount: (value: string) => ValidationResult<BankAccountReason>;
   /** Validates a birth number (rodné číslo) with `referenceDate` of this instance. Never throws. */
   readonly birthNumber: (value: string) => ValidationResult<BirthNumberReason>;
   /** Validates an IČO; the date plays no role, `referenceDate` is only passed on. Never throws. */
@@ -39,6 +44,8 @@ export interface Cz {
   readonly seed: number;
   /** The reference date ("today", `YYYY-MM-DD`) in use; given, or the UTC date when `createCz` ran. */
   readonly referenceDate: string;
+  /** Bank account numbers (číslo účtu); the same values as `createBankAccount` with the same settings. */
+  readonly bankAccount: BankAccountGenerator;
   /** Birth numbers (rodné číslo); the same values as `createBirthNumber` with the same settings. */
   readonly birthNumber: BirthNumberGenerator;
   /** IČO (identifikační číslo osoby); the same values as `createIco` with the same settings. */
@@ -76,11 +83,13 @@ export function createCz(options?: SettingsOptions): Cz {
   return {
     seed,
     referenceDate,
+    bankAccount: bankAccount.create(settings),
     birthNumber: birthNumber.create(settings),
     ico: ico.create(settings),
     phone: phone.create(settings),
     postalCode: postalCode.create(settings),
     validate: Object.freeze({
+      bankAccount: (value: string) => validateBankAccount(value, { referenceDate }),
       birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
       ico: (value: string) => validateIco(value, { referenceDate }),
       phone: (value: string) => validatePhone(value, { referenceDate }),
