@@ -1,12 +1,11 @@
 // Generator of valid DIČ (rules for dic, sections 1, 2.4 and 8). Law: § 130 zákona č. 280/2009 Sb., daňový řád
 // (https://www.zakonyprolidi.cz/cs/2009-280): "CZ" + IČO, birth number or an assigned number.
 // Inner values come from ico and birthNumber (fine-grained imports, decision 1) and the dic stream.
-import { generate as generateBirthNumber } from '../birthNumber/generate.js';
+import { generate as generateBirthNumber, optionError } from '../birthNumber/generate.js';
 import type { BirthNumberOptions } from '../birthNumber/generate.js';
-import { weightedSum } from '../core/checksum.js';
 import type { Random } from '../core/random.js';
 import type { IdentifierContext } from '../core/types.js';
-import { generate as generateIco } from '../ico/generate.js';
+import { generate as generateIco, remainderOf } from '../ico/generate.js';
 
 /**
  * Options of the DIČ generator (volby generátoru DIČ): `from: 'ico'` alone, or a birth number DIČ with an
@@ -26,8 +25,6 @@ export type DicOptions =
 /** Prefix of a complete DIČ (§ 130 odst. 1 daňového řádu; Directive 2006/112/EC art. 215: ISO 3166 alpha-2). */
 export const PREFIX = 'CZ';
 
-// d2–d8 of an assigned number; the leading 6 is not weighted (python-stdnum, confirmed by ARES records).
-const ASSIGNED_WEIGHTS: readonly number[] = [8, 7, 6, 5, 4, 3, 2];
 const MIN_BIRTH_DATE = '1900-01-01';
 
 interface WideOptions {
@@ -38,7 +35,9 @@ interface WideOptions {
 
 /** Appends the check digit `(a + 8) mod 10` (a = S mod 11) to the first 8 digits of an assigned number. */
 export function withAssignedCheckDigit(first8: string): string {
-  return `${first8}${String(((weightedSum(first8.slice(1), ASSIGNED_WEIGHTS) % 11) + 8) % 10)}`;
+  // d2–d8 carry the IČO weights 8…2 and the leading 6 is not weighted (rules for dic section 2.4; python-stdnum,
+  // confirmed by ARES records); only the mapping of the remainder differs from IČO.
+  return `${first8}${String((remainderOf(first8.slice(1)) + 8) % 10)}`;
 }
 
 /** Removes the slash of a birth number; a DIČ never contains one. */
@@ -65,7 +64,7 @@ function checkFrom({ from, gender, birthDate }: WideOptions): void {
       throw new RangeError('birthDate is not allowed with from "ico"');
     }
   } else if (from !== undefined && from !== 'birthNumber') {
-    throw new RangeError(`from ${JSON.stringify(from)}: ico or birthNumber`);
+    throw optionError('from', from, 'ico or birthNumber');
   }
 }
 
@@ -80,10 +79,8 @@ export function generate(random: Random, options: DicOptions, context: Identifie
     return `${PREFIX}${plainInner(random, context)}`;
   }
   if (birthDate !== undefined && birthDate < MIN_BIRTH_DATE) {
-    throw new RangeError(`birthDate ${JSON.stringify(birthDate)}: not before ${MIN_BIRTH_DATE}`);
+    // Also catches malformed dates that sort before the minimum, so the message names the format.
+    throw optionError('birthDate', birthDate, `YYYY-MM-DD from ${MIN_BIRTH_DATE}`);
   }
-  return `${PREFIX}${plainBirthNumber(random, context, {
-    ...(gender === undefined ? {} : { gender }),
-    ...(birthDate === undefined ? {} : { birthDate }),
-  })}`;
+  return `${PREFIX}${plainBirthNumber(random, context, options)}`;
 }

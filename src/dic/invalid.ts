@@ -1,6 +1,6 @@
 // Invalid variants of the DIČ (one fault each), rules for dic section 4.
 // Each variant name is the reason code the validator returns for its values.
-import { badChecksum as birthNumberBadChecksum } from '../birthNumber/invalid.js';
+import { badChecksum as birthNumberBadChecksum } from '../birthNumber/generate.js';
 import type { IdentifierVariant } from '../core/types.js';
 import { badChecksum as icoBadChecksum } from '../ico/invalid.js';
 import { PREFIX, plainInner, withoutSlash } from './generate.js';

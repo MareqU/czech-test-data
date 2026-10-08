@@ -115,3 +115,11 @@ None.
    but should cite §3.5 / decision 4, as the other comments cite their sections.
 6. **The README does not mark `lowercasePrefix` as disputed yet.** Decision 2 asks for this in the README as well as
    the TSDoc. The README has only 10 lines, so this belongs to M5 (documentation). Do not lose it there.
+
+## Follow-up (branch m3-dic, 2026-10-08)
+
+- Approved by Marek and fixed by the implementer: should-fix 1, 2, 3 (code moved to `birthNumber/generate.ts`,
+  smaller than `/* @__PURE__ */`: standalone 2.26 kB vs 2.28 kB) and nits 2, 3, 4 (`hasNonDigit` exported from
+  `ico/validate.ts`), 5. Outputs unchanged (seed snapshots pass), tests unchanged (checksums).
+- Sizes: dic own 1.25 → 1.20 kB, dic standalone 2.40 → 2.26 kB, birthNumber own 1.99 kB, ico own 790 B.
+- Nit 1 (birthNumber headroom ~10 B) stays open; nit 6 (README marks `lowercasePrefix` disputed) moves to M5.

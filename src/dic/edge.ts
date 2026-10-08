@@ -1,5 +1,5 @@
 // Edge variants of the DIČ (valid but unusual), rules for dic section 4.
-import { pre1954 } from '../birthNumber/edge.js';
+import { pre1954 } from '../birthNumber/generate.js';
 import type { IdentifierVariant } from '../core/types.js';
 import { generate as generateIco } from '../ico/generate.js';
 import { PREFIX, plainBirthNumber, plainInner, withAssignedCheckDigit, withoutSlash } from './generate.js';

@@ -50,9 +50,11 @@ const FIRST_TEN_DIGIT_DAY = '1954-01-01';
 
 const GENDERS: readonly BirthNumberGender[] = ['male', 'female'];
 
-// Messages are short to fit the per-identifier size budget (Marek's variant B). They always name the option
-// and show its value; the reason behind each check lives in the comments.
-function optionError(name: string, value: unknown, expected: string): RangeError {
+/**
+ * `RangeError` naming the option and its value. Messages are short to fit the per-identifier size budget
+ * (Marek's variant B); the reason behind each check lives in the comments.
+ */
+export function optionError(name: string, value: unknown, expected: string): RangeError {
   return new RangeError(`${name} ${JSON.stringify(value)}: ${expected}`);
 }
 
@@ -156,4 +158,27 @@ export function generate(random: Random, options: BirthNumberOptions, context: I
     options.birthDate === undefined ? drawDateUpTo(random, PLAIN_RANGE, context) : checkBirthDate(options.birthDate, context);
   const monthOffset = options.gender === undefined ? drawGenderOffset(random) : monthOffsetOf(options.gender);
   return formatBirthNumber(random, date, monthOffset);
+}
+
+/** 9-digit numbers from 1900 on: the 1854–1899 mapping is valid but debatable (section 4). */
+export const NINE_DIGIT_RANGE: DateRange = { from: '1900-01-01', to: '1953-12-31' };
+
+/** A 9-digit number born 1900-01-01 … 1953-12-31, cut at `referenceDate`. */
+export function pre1954(random: Random, context: IdentifierContext): string {
+  return formatBirthNumber(random, drawDateUpTo(random, NINE_DIGIT_RANGE, context), drawGenderOffset(random));
+}
+
+/** A valid plain number from the plain range, the base of the date-independent invalid variants (section 9). */
+export function plainNumber(random: Random, context: IdentifierContext): string {
+  return generate(random, {}, context);
+}
+
+/**
+ * The last digit of a plain number is the normal check digit `N9 mod 11` ≤ 9, so `N9 mod 11 ≠ 10` and no
+ * other last digit can make it a valid mod11Exception (section 4).
+ */
+export function badChecksum(random: Random, context: IdentifierContext): string {
+  const value = plainNumber(random, context);
+  const changed = (Number(value.slice(-1)) + random.int(1, 9)) % 10;
+  return `${value.slice(0, -1)}${String(changed)}`;
 }

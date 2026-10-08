@@ -4,7 +4,7 @@
 import { validate as validateBirthNumber } from '../birthNumber/validate.js';
 import { hasLetter } from '../core/letters.js';
 import type { IdentifierContext, ValidationResult } from '../core/types.js';
-import { validate as validateIco } from '../ico/validate.js';
+import { hasNonDigit, validate as validateIco } from '../ico/validate.js';
 import { withAssignedCheckDigit } from './generate.js';
 
 /**
@@ -23,7 +23,7 @@ export type DicReason =
 
 const CZ_PREFIX = /^[Cc][Zz]/;
 const TWO_LETTERS = /^\p{L}\p{L}/u;
-const NOT_DIGIT = /[^0-9]/;
+const LEADING_DIGIT = /^[0-9]/;
 
 type InnerReason = Exclude<DicReason, 'missingPrefix' | 'foreignPrefix' | 'badInnerChecksum'> | 'badChecksum';
 
@@ -36,14 +36,14 @@ function prefixFault(value: string): ValidationResult<DicReason> {
   if (TWO_LETTERS.test(value)) {
     return { valid: false, reason: 'foreignPrefix' };
   }
-  return { valid: false, reason: value === '' || /^[0-9]/.test(value) ? 'missingPrefix' : 'badFormat' };
+  return { valid: false, reason: value === '' || LEADING_DIGIT.test(value) ? 'missingPrefix' : 'badFormat' };
 }
 
 function validateInner(inner: string, context: IdentifierContext): ValidationResult<DicReason> {
   if (hasLetter(inner)) {
     return { valid: false, reason: 'letters' };
   }
-  if (NOT_DIGIT.test(inner)) {
+  if (hasNonDigit(inner)) {
     return { valid: false, reason: 'badFormat' };
   }
   if (inner.length < 8 || inner.length > 10) {
@@ -52,7 +52,8 @@ function validateInner(inner: string, context: IdentifierContext): ValidationRes
   if (inner.length === 8) {
     return mapInner(validateIco(inner));
   }
-  // 9 digits starting with 6 are always an assigned number, never a birth number.
+  // 9 digits starting with 6 are always an assigned number, never a birth number (rules for dic section 3.5,
+  // decision 4).
   if (inner.length === 9 && inner.startsWith('6')) {
     return withAssignedCheckDigit(inner.slice(0, 8)) === inner ? { valid: true } : { valid: false, reason: 'badInnerChecksum' };
   }

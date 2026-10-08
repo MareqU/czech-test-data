@@ -11,7 +11,8 @@ import {
   drawGenderOffset,
   encodePrefix,
   formatBirthNumber,
-  generate,
+  badChecksum,
+  plainNumber,
   MONTH_OFFSETS,
   PLAIN_RANGE,
 } from './generate.js';
@@ -37,21 +38,6 @@ const DATE_FAULTS: readonly DateFault[] = ['month', 'dayZero', 'dayAfterMonthEnd
 const LETTERS = 'AOl';
 // Character positions of the digits in `RRMMDD/XXXX` (the slash is at index 6).
 const DIGIT_POSITIONS: readonly number[] = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10];
-
-/** A valid plain number from the plain range, the base of the date-independent variants (section 9). */
-function plainNumber(random: Random, context: IdentifierContext): string {
-  return generate(random, {}, context);
-}
-
-/**
- * The last digit of a plain number is the normal check digit `N9 mod 11` ≤ 9, so `N9 mod 11 ≠ 10` and no
- * other last digit can make it a valid mod11Exception (section 4).
- */
-export function badChecksum(random: Random, context: IdentifierContext): string {
-  const value = plainNumber(random, context);
-  const changed = (Number(value.slice(-1)) + random.int(1, 9)) % 10;
-  return `${value.slice(0, -1)}${String(changed)}`;
-}
 
 /** 10 digits with a correct checksum, so the impossible month or day is the only fault (section 4). */
 function impossibleDate(random: Random, context: IdentifierContext): string {
