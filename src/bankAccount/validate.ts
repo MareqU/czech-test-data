@@ -1,4 +1,4 @@
-// Validator of the bank account.
+// Validator of the bank account – docs/rules/bankAccount.md section 2 (algorithm and reason precedence).
 // Format and check: vyhláška ČNB č. 169/2011 Sb., § 5, § 6 and Příloha (https://www.zakonyprolidi.cz/cs/2011-169);
 // bank codes: ČNB Číselník ČKPS (https://www.cnb.cz/cs/platebni-styk/ucty-kody-bank/).
 import { hasLetter } from '../core/letters.js';

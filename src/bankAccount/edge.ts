@@ -1,4 +1,4 @@
-// Edge variants of the bank account (valid but unusual).
+// Edge variants of the bank account (valid but unusual) – docs/rules/bankAccount.md sections 4 and 9.
 import type { IdentifierVariant } from '../core/types.js';
 import { drawCode, generate, part } from './generate.js';
 

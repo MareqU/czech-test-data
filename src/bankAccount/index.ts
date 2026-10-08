@@ -1,4 +1,5 @@
-// Subpath entry `czech-test-data/bankAccount`: the bank account number (číslo účtu).
+// Subpath entry `czech-test-data/bankAccount`: the bank account number (číslo účtu) – docs/rules/core.md
+// section 5, docs/rules/bankAccount.md.
 // Source: vyhláška ČNB č. 169/2011 Sb. (https://www.zakonyprolidi.cz/cs/2011-169); bank codes: ČNB Číselník ČKPS.
 import { resolveSettings } from '../core/settings.js';
 import type { IdentifierGenerator, SettingsOptions, ValidationResult, ValidatorOptions } from '../core/types.js';

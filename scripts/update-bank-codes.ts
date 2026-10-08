@@ -65,9 +65,13 @@ function parseEdition(html: string): Edition | undefined {
 
 async function edition(): Promise<Edition> {
   const { values } = parseArgs({ options: { version: { type: 'string' }, 'valid-from': { type: 'string' } } });
-  const validFrom = values['valid-from'];
-  if (values.version !== undefined && validFrom !== undefined) {
-    return { version: values.version, validFrom };
+  const { version, 'valid-from': validFrom } = values;
+  if (version !== undefined || validFrom !== undefined) {
+    // Both or neither: one flag alone would silently mix a typed value with the page.
+    if (!/^[1-9][0-9]*$/.test(version ?? '') || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(validFrom ?? '')) {
+      throw new Error('Pass both --version <N> and --valid-from <YYYY-MM-DD>');
+    }
+    return { version: version ?? '', validFrom: validFrom ?? '' };
   }
   const found = parseEdition(await download(PAGE_URL));
   if (found === undefined) {
@@ -106,7 +110,8 @@ async function main(): Promise<void> {
   const removed = before.filter((code) => !codes.includes(code));
   process.stdout.write(
     `ČKPS ${current.version} (valid from ${current.validFrom}): ${String(codes.length)} codes\n` +
-      `added: ${added.join(' ') || '–'}\nremoved: ${removed.join(' ') || '–'}\n`,
+      `added: ${added.join(' ') || '–'}\nremoved: ${removed.join(' ') || '–'}\n` +
+      'If anything changed: update the oracle copy in tests/support/bankAccount.ts and the CHANGELOG.\n',
   );
 }
 

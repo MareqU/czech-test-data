@@ -144,3 +144,13 @@ compares only the first value without its code. That test would not catch an ext
   `docs/spec.md` line 75.
 - The tests read like a specification. Samples carry their source and sum, the precedence pairs are named, and
   the oracle in `tests/support/bankAccount.ts` is written from the rules only.
+
+## 5. Resolution (Marek, 2026-10-08)
+
+- B1 fixed: `isKnownBankCode` requires `^\d{4}$` before the token lookup; test rows `'0100 0300'`, `'8620 8660'`
+  added to `tests/bankAccount.generate.test.ts`. Outputs unchanged (seed snapshots pass).
+- S1 fixed: every module header cites `docs/rules/bankAccount.md` (section), `index.ts` also `docs/rules/core.md`
+  section 5.
+- N2 fixed: `--version` and `--valid-from` are both-or-neither and format-checked; the script reminds to update the
+  test oracle and the CHANGELOG after a change.
+- N1 (shared "different digit" step, `LETTERS`) and N3 (no-draw test precision): accepted as is.
