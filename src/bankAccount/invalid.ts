@@ -1,4 +1,4 @@
-// Invalid variants of the bank account (one fault each).
+// Invalid variants of the bank account (one fault each) – docs/rules/bankAccount.md sections 4 and 9.
 // Each variant name is the reason code the validator returns for its values.
 import { replaceDigitWithLetter } from '../core/letters.js';
 import type { Random } from '../core/random.js';

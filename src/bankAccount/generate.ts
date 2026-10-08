@@ -1,4 +1,4 @@
-// Generator of the bank account number (číslo účtu), draw order fixed by the approved rules.
+// Generator of the bank account number (číslo účtu), draw order fixed by docs/rules/bankAccount.md section 9.
 // Check: vyhláška č. 169/2011 Sb., Příloha (https://www.zakonyprolidi.cz/cs/2011-169); weights apply from the right.
 import { weightedSum } from '../core/checksum.js';
 import type { Random } from '../core/random.js';
