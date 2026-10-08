@@ -99,11 +99,15 @@ describe('bankCode option (decision 11)', () => {
 });
 
 describe('invalid options throw RangeError naming the option (docs/rules/core.md section 3)', () => {
-  it.each(['6100', '0000', '9999', '800', '08000', '', 'abcd', '0800 '])('rejects bankCode %j', (bankCode) => {
-    const generator = createBankAccount({ seed: 1 });
-    expect(() => generator({ bankCode })).toThrow(RangeError);
-    expect(() => generator({ bankCode })).toThrow(/bankCode/);
-  });
+  // '0100 0300' and '8620 8660': runs of snapshot codes must not pass a substring lookup (review B1, section 8.2).
+  it.each(['6100', '0000', '9999', '800', '08000', '', 'abcd', '0800 ', '0100 0300', '8620 8660'])(
+    'rejects bankCode %j',
+    (bankCode) => {
+      const generator = createBankAccount({ seed: 1 });
+      expect(() => generator({ bankCode })).toThrow(RangeError);
+      expect(() => generator({ bankCode })).toThrow(/bankCode/);
+    },
+  );
 
   it.each([800, null])('rejects the non-string bankCode %j', (bankCode) => {
     const generator = createBankAccount({ seed: 1 });
