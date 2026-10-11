@@ -549,12 +549,14 @@ draws. It equals the ENTSO-E formula.
     test data, never allocated codes; add a README note. (b) Ask ENTSO-E first (`cio-admin@entsoe.eu`, or `cim@entsoe.eu`
     as the IG maintainer) and hold the eic generator until they answer. (c) Ship the validator only (contradicts spec
     line 13). Suggestion: (b) in parallel with implementation on the branch, and decide before publishing v1.
+    **Marek decided (2026-10-11): (a).** Proceed with the generator; the README states that generated EICs are test
+    data, not allocated codes.
 
 ---
 
 ## Open questions for Marek
 
-A. **ENTSO-E restriction** (decision 10): proceed, ask ENTSO-E, or validator only?
+A. ~~**ENTSO-E restriction** (decision 10): proceed, ask ENTSO-E, or validator only?~~ Answered: (a), proceed.
 B. ~~Answered by the main session (2026-10-11): the text layer reads exactly `27ZG---VPB-----E`; dropped from the
    samples.~~ Original question: please let the main session copy the exact text of OTE's *"EIC kód VOB CZ pro XML výměnu zpráv"* from the PDF text
    layer (OTE OPP rev. 25, page 2). I read `27ZG---VPB-----E`, which fails the ENTSO-E check (expected `V`). If the
