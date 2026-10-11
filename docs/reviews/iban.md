@@ -134,3 +134,14 @@ convenience only; the run-time check is what the rules require.
 - The tests read like a specification. The samples carry their source, the precedence pairs are named after the
   decision, every variant has a shape check plus its reason, and the oracle in `tests/support/iban.ts` computes
   MOD 97 with BigInt (fine in tests), independently of the implementation's digit-by-digit loop.
+
+## 5. Resolution (Marek, 2026-10-11)
+
+- S1 fixed: every module header cites `docs/rules/iban.md` (section), `index.ts` also `docs/rules/core.md` section 5.
+- N1 fixed: with `account`, only `bankCode` / `withPrefix` other than `undefined` throw; other keys are ignored
+  (clarification in rules section 9, tests in `tests/iban.generate.test.ts`).
+- N4 fixed: `IbanOptions` is a union, `account` is exclusive with `bankCode` / `withPrefix` at compile time; the
+  run-time test of that combination now casts its options (JavaScript callers).
+- N3 fixed after the rebase onto main: `.size-limit.ts` has iban own code ≤ 2 kB (1.28 kB) and standalone ≤ 3 kB
+  (1.98 kB); CLAUDE.md records the iban standalone budget.
+- N2 (shared "different digit" step, `LETTERS`): accepted as is; revisit if the core budget changes.
