@@ -1,6 +1,8 @@
 # iban (IBAN, Czech account number in the international format)
 
-Status: **DRAFT**, waiting for Marek's approval · researched 2026-10-08 · rules-researcher
+Status: **APPROVED** by Marek on 2026-10-11 (all 15 recommendations in section 10 accepted; they override every
+"proposed", "proposal", "Recommendation", "Alternative" and "open question" marker below) · researched 2026-10-08
+· rules-researcher
 
 Czech meaning: *číslo účtu ve formátu IBAN* (International Bank Account Number) is the Czech payment account number
 written in the international form of ISO 13616. Vyhláška ČNB č. 169/2011 Sb., § 2: *"Číslo účtu se používá a) v
@@ -581,7 +583,7 @@ of the account that bankAccount would draw from the same state.
 
 ---
 
-## 10. Recommendations (questions for Marek)
+## 10. Decisions (approved 2026-10-11: every recommendation below was accepted, alternatives rejected)
 
 1. **Reason precedence** `badFormat → wrongCountry → letters → wrongLength → badChecksum → badChecksumPrefix →
    badChecksumNumber → zeroNumber → unknownBankCode`. Recommendation: **yes**. Format comes first (unlike other
@@ -618,6 +620,7 @@ of the account that bankAccount would draw from the same state.
 13. **`badChecksum` = check digits replaced by another value from 02–98** (account untouched). Recommendation: **yes**.
     Alternative: a digit typo in the BBAN (would also break mod 11 or the bank code).
 14. **Size budget amendment**: iban own code ≤ 2 kB (core and `../bankAccount` external), standalone `/iban` ≤ 3 kB on
-    top of the core, recorded in CLAUDE.md like dic. Recommendation: **yes**. Please also note the whole-library risk
+    top of the core, recorded in CLAUDE.md like dic. Recommendation: **yes**. CLAUDE.md and the `.size-limit.ts` rows
+    are added when this branch is rebased onto main with the dic amendment (PR #12). Please also note the whole-library risk
     in 8.2 before EAN/EIC.
 15. **Plain output in the electronic upper-case form.** Recommendation: **yes** (EBS204 § 5.1 is the basic form).
