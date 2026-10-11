@@ -33,7 +33,7 @@ const INVALID_CHECKS: Readonly<Record<EanInvalidVariant, (value: string) => void
   },
   // 17 digits (check digit dropped) or 19 digits (a digit appended), digits only, correct prefix
   wrongLength: (value) => {
-    expect(value).toMatch(/^859182400[1-8][0-9]{6,8}$/);
+    expect(value).toMatch(/^859182400[1-8][0-9]{7,9}$/);
     expect([17, 19]).toContain(value.length);
   },
   // one of the 18 characters replaced by A, O or l
