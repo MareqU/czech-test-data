@@ -112,7 +112,7 @@ describe('option distributor (decision 8, section 9)', () => {
 });
 
 describe('invalid options throw RangeError naming the option (docs/rules/core.md section 3, section 9)', () => {
-  it.each(['', 'CEZ', 'eon', 'gas', 'cez ', 1, {}])('rejects distributor %j', (distributor) => {
+  it.each(['', 'CEZ', 'eon', 'gas', 'cez ', 'default', 1, null, {}])('rejects distributor %j', (distributor) => {
     const generator = createEan({ seed: 1 });
     const options = { distributor } as unknown as { distributor: 'cez' };
     expect(() => generator(options)).toThrow(RangeError);
