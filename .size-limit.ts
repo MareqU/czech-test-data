@@ -34,7 +34,10 @@ const ids = Object.keys(exports)
   .map((key) => key.slice(2));
 
 // Identifiers that reuse other identifiers: what importing their subpath alone costs on top of the core.
-const standaloneLimits = new Map([['dic', '3 kB']]);
+const standaloneLimits = new Map([
+  ['dic', '3 kB'],
+  ['iban', '3 kB'],
+]);
 
 const identifiers: SizeLimitConfig = ids.flatMap((id) => {
   const ownCode = {
