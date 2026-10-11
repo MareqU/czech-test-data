@@ -255,7 +255,7 @@ docs/rules/<id>.md
 - **A3 – Fixed date ranges (2026-10-05, from review S2, approved with `docs/rules/birthNumber.md`):** date
   ranges are fixed per identifier and only cut by `referenceDate`; empty range → `RangeError` naming
   `referenceDate`; shared determinism check for every identifier in `tests/support/`.
-- **A4 – Shared fault helpers (2026-10-11, DRAFT, waiting for Marek; core budget raised to 2.5 kB the same day):**
+- **A4 – Shared fault helpers (2026-10-11, approved by Marek the same day; core budget raised to 2.5 kB):**
   helpers copied across identifiers move into `src/core/`. Internal, not public API. **No output may change:** every
   seed snapshot of every identifier stays byte-for-byte the same, and that is the acceptance test of the refactor.
   1. `intExcept(random, min, max, except)` in `src/core/random.ts`, a standalone function (not a `Random` method,
