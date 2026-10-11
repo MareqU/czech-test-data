@@ -27,11 +27,25 @@ function replaceDigitBefore(random: Random, value: string, separator: string): s
   return `${value.slice(0, at)}${String(drawn >= correct ? drawn + 1 : drawn)}${value.slice(at + 1)}`;
 }
 
+/** Invalid variant `badChecksumPrefix`; also reused by iban. */
+export const badChecksumPrefix: IdentifierVariant = (random) =>
+  replaceDigitBefore(random, generate(random, { withPrefix: true }), '-');
+
+/** Invalid variant `badChecksumNumber`; also reused by iban. */
+export const badChecksumNumber: IdentifierVariant = (random) => replaceDigitBefore(random, generate(random, {}), '/');
+
+/** Invalid variant `unknownBankCode`; also reused by iban. */
+export const unknownBankCode: IdentifierVariant = (random) =>
+  `${generate(random, {}).slice(0, -4)}${random.pick(UNKNOWN_BANK_CODES)}`;
+
+/** Invalid variant `zeroNumber`; also reused by iban. */
+export const zeroNumber: IdentifierVariant = (random) => `0000000000/${drawCode(random)}`;
+
 /** Invalid variants by name. */
 export const invalid: Readonly<Record<BankAccountInvalidVariant, IdentifierVariant>> = {
-  badChecksumPrefix: (random) => replaceDigitBefore(random, generate(random, { withPrefix: true }), '-'),
-  badChecksumNumber: (random) => replaceDigitBefore(random, generate(random, {}), '/'),
-  unknownBankCode: (random) => `${generate(random, {}).slice(0, -4)}${random.pick(UNKNOWN_BANK_CODES)}`,
+  badChecksumPrefix,
+  badChecksumNumber,
+  unknownBankCode,
   // A 1-digit number or an 11-digit one.
   wrongLength: (random) => {
     const number = random.int(0, 1) === 0 ? String(random.int(1, 9)) : `${part(random, 10)}${random.digits(1)}`;
@@ -42,5 +56,5 @@ export const invalid: Readonly<Record<BankAccountInvalidVariant, IdentifierVaria
     const positions = Array.from(value, (_, i) => i).filter((i) => value.charAt(i) !== '/');
     return replaceDigitWithLetter(random, value, positions, LETTERS);
   },
-  zeroNumber: (random) => `0000000000/${drawCode(random)}`,
+  zeroNumber,
 };
