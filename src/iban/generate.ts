@@ -6,16 +6,23 @@ import { validate as validateAccount } from '../bankAccount/validate.js';
 import type { Random } from '../core/random.js';
 
 /**
- * Options of the IBAN generator.
+ * Options of the IBAN generator: either draw an account (`bankCode`, `withPrefix`) or convert a given one
+ * (`account`); the two modes are exclusive.
  */
-export interface IbanOptions {
-  /** A bank code from the bundled ČNB snapshot, as in bankAccount; cannot be combined with `account`. */
-  readonly bankCode?: string;
-  /** Adds a prefix (předčíslí) of 2–6 digits, as in bankAccount; cannot be combined with `account`. */
-  readonly withPrefix?: boolean;
-  /** A valid national account `[prefix-]number/code` to convert; nothing is drawn. */
-  readonly account?: string;
-}
+export type IbanOptions =
+  | {
+      /** A valid national account `[prefix-]number/code` to convert; nothing is drawn. */
+      readonly account: string;
+      readonly bankCode?: never;
+      readonly withPrefix?: never;
+    }
+  | {
+      readonly account?: undefined;
+      /** A bank code from the bundled ČNB snapshot, as in bankAccount. */
+      readonly bankCode?: string;
+      /** Adds a prefix (předčíslí) of 2–6 digits, as in bankAccount. */
+      readonly withPrefix?: boolean;
+    };
 
 /** Remainder modulo 97 of digits and letters (A = 10 … Z = 35), digit by digit: no BigInt, no 26-digit Number. */
 export function mod97(value: string): number {
@@ -41,11 +48,14 @@ export function toIban(account: string, country: string, padded = true): string 
 
 /** Generates a plain IBAN: electronic form, upper case, 24 characters. */
 export function generate(random: Random, options: IbanOptions): string {
-  const { account, ...rest } = options;
+  const { account } = options;
   if (account === undefined) {
-    return toIban(generateAccount(random, rest), 'CZ');
+    return toIban(generateAccount(random, options), 'CZ');
   }
-  if ((Object.values(rest) as unknown[]).some((value) => value !== undefined)) {
+  // Widened view: JavaScript callers can pass both, which the union forbids. Other keys are ignored; only these
+  // two conflict (docs/rules/iban.md section 9).
+  const conflicting: { bankCode?: unknown; withPrefix?: unknown } = options;
+  if (conflicting.bankCode !== undefined || conflicting.withPrefix !== undefined) {
     throw new RangeError('account cannot be combined with bankCode or withPrefix');
   }
   // JavaScript callers may pass a non-string.

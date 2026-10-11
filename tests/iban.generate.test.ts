@@ -194,8 +194,10 @@ describe('invalid options throw RangeError naming the option (docs/rules/core.md
     'rejects account combined with %j',
     (others) => {
       const generator = createIban({ seed: 1 });
-      expect(() => generator({ account: '19-2000145399/0800', ...others })).toThrow(RangeError);
-      expect(() => generator({ account: '19-2000145399/0800', ...others })).toThrow(/account/);
+      // A type error since review N4; JavaScript callers can still pass it, so the run-time check stays tested.
+      const options = { account: '19-2000145399/0800', ...others } as { account: string };
+      expect(() => generator(options)).toThrow(RangeError);
+      expect(() => generator(options)).toThrow(/account/);
     },
   );
 });
