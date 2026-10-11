@@ -1,6 +1,7 @@
 # eic (EIC kód odběrného místa plynu, Czech gas supply point code)
 
-Status: **DRAFT**, awaiting Marek's approval · researched 2026-10-11 · rules-researcher
+Status: **APPROVED** by Marek 2026-10-11 (decisions 1–9 as recommended, decision 10 = (a)) · researched 2026-10-11 ·
+rules-researcher
 
 Czech meaning: *EIC kód* (*Energy Identification Code*) is the 16-character code that identifies one gas supply or
 transfer point (*odběrné nebo předávací místo*, OPM) in the Czech gas market. The law defines it as an *"identifikační
@@ -568,5 +569,5 @@ C. ~~Answered by the main session (2026-10-11): verified verbatim, see 1.3; `900
    EG.D** and whether `800` exists. Most useful are `rpdsrwegasnetp5eic.pdf` and the current EG.D and PPD appendices.
    Is there a public OTE list of gas network identifiers (*"číselné identifikátory distribučních sítí"*, § 5 odst. 1),
    like `ciselnik_siti.xlsx` for electricity? I found none.
-D. Do you have a real `27ZG` EIC of a **legal person or public body** (e.g. from a public tender's list of supply
+D. ~~Answered: no; constructed samples only.~~ Original question: do you have a real `27ZG` EIC of a **legal person or public body** (e.g. from a public tender's list of supply
    points) that we may use as a fixture? I used none, as in ean.
