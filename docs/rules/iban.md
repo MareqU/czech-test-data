@@ -513,7 +513,8 @@ included) and iban (~1.1–1.5 kB) bring it to roughly 8.2–8.6 kB, leaving ~1.
   bankAccount's `generate`).
 - `account` (proposal, recommendation 7): a national account `[prefix-]number/code`. It must be a string that
   bankAccount's validator accepts, and it must not be combined with `bankCode` or `withPrefix`; otherwise `RangeError`
-  naming `account`. **Nothing is drawn**; the result is the conversion of that account. Enables
+  naming `account` (clarification 2026-10-11: "combined" means any value other than `undefined`, so `withPrefix: false`
+  with `account` also throws). **Nothing is drawn**; the result is the conversion of that account. Enables
   `cz.iban({ account: cz.bankAccount() })` in user tests (spec lines 42, 101).
 - Output: electronic form, upper case, 24 characters (`withSpaces` / `lowercase` are the other shapes).
 - No date dependence. Stream id `iban`. Subpath `czech-test-data/iban`, exports `createIban`, `validateIban` and the
