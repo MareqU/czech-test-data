@@ -1,6 +1,8 @@
 # ean (EAN odběrného místa elektřiny, Czech electricity supply point code)
 
-Status: **DRAFT, waiting for Marek's approval** · researched 2026-10-11 · rules-researcher
+Status: **APPROVED** by Marek on 2026-10-11 (all 10 recommendations in section 10 accepted; they override every
+"proposed", "proposal", "Recommendation", "Alternative" and "open question" marker below; B: no real EAN fixture, only
+OTE's examples and constructed values; C: no `numberPrecision` in v1) · researched 2026-10-11 · rules-researcher
 
 Czech meaning: *EAN odběrného místa* (also *EAN OPM*, *EAN kód*) is the 18-digit code that identifies one electricity
 supply or transfer point (*odběrné nebo předávací místo*, OPM) in the Czech grid. The law calls it *osmnáctimístný
@@ -472,7 +474,7 @@ Whole library: 6.55 / 10 kB was measured before dic (iban review); with dic and 
 
 ---
 
-## 10. Decisions for Marek (proposed; nothing approved yet)
+## 10. Decisions (approved 2026-10-11: every recommendation below was accepted, alternatives rejected)
 
 1. **Prefix rule = exactly `8591824`** (positions 1–7). Recommendation: **yes** (OTE fixed part, ČEZ Distribuce).
    Alternatives: `859182400` (rejects real LDS EANs); only `859` (accepts any Czech GS1 number).
