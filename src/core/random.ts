@@ -121,6 +121,19 @@ export function createRandom(seed: number): Random {
   return { uint32, int, pick, digits };
 }
 
+/**
+ * Uniform integer from `min` to `max` without `except`: one `int(min, max − 1)` draw, shifted up past `except`.
+ *
+ * @throws RangeError if `except` is not an integer within `min…max`, or for the `int` range errors.
+ */
+export function intExcept(random: Random, min: number, max: number, except: number): number {
+  if (!Number.isInteger(except) || except < min || except > max) {
+    throw new RangeError(`intExcept needs an integer except within min..max, got ${String(except)}`);
+  }
+  const drawn = random.int(min, max - 1);
+  return drawn >= except ? drawn + 1 : drawn;
+}
+
 /** 32-bit FNV-1a over the UTF-16 code units of `text` (docs/rules/core.md section 2). */
 function fnv1a32(text: string): number {
   let hash = FNV_OFFSET_BASIS;

@@ -1,6 +1,7 @@
 // Invalid variants of the bank account (one fault each) – docs/rules/bankAccount.md sections 4 and 9.
 // Each variant name is the reason code the validator returns for its values.
 import { replaceDigitWithLetter } from '../core/letters.js';
+import { intExcept } from '../core/random.js';
 import type { Random } from '../core/random.js';
 import type { IdentifierVariant } from '../core/types.js';
 import { drawCode, generate, part } from './generate.js';
@@ -14,8 +15,6 @@ export type BankAccountInvalidVariant =
   | 'letters'
   | 'zeroNumber';
 
-// Look-alikes of 0 and 1, as in ico.
-const LETTERS = 'AOl';
 // Never assigned (0000, 9999) or cancelled by ČNB in 2022–2025 (2020, 4000, 6100).
 const UNKNOWN_BANK_CODES: readonly string[] = ['0000', '2020', '4000', '6100', '9999'];
 
@@ -23,8 +22,7 @@ const UNKNOWN_BANK_CODES: readonly string[] = ['0000', '2020', '4000', '6100', '
 function replaceDigitBefore(random: Random, value: string, separator: string): string {
   const at = value.indexOf(separator) - 1;
   const correct = Number(value.charAt(at));
-  const drawn = random.int(0, 8);
-  return `${value.slice(0, at)}${String(drawn >= correct ? drawn + 1 : drawn)}${value.slice(at + 1)}`;
+  return `${value.slice(0, at)}${String(intExcept(random, 0, 9, correct))}${value.slice(at + 1)}`;
 }
 
 /** Invalid variant `badChecksumPrefix`; also reused by iban. */
@@ -54,7 +52,7 @@ export const invalid: Readonly<Record<BankAccountInvalidVariant, IdentifierVaria
   letters: (random) => {
     const value = generate(random, {});
     const positions = Array.from(value, (_, i) => i).filter((i) => value.charAt(i) !== '/');
-    return replaceDigitWithLetter(random, value, positions, LETTERS);
+    return replaceDigitWithLetter(random, value, positions);
   },
   zeroNumber,
 };

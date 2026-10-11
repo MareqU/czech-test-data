@@ -35,7 +35,6 @@ type DateFault = 'month' | 'dayZero' | 'dayAfterMonthEnd';
 const DATE_FAULTS: readonly DateFault[] = ['month', 'dayZero', 'dayAfterMonthEnd'];
 
 // Letters typed instead of digits: O for 0, l for 1, and a plain A (section 4).
-const LETTERS = 'AOl';
 // Character positions of the digits in `RRMMDD/XXXX` (the slash is at index 6).
 const DIGIT_POSITIONS: readonly number[] = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10];
 
@@ -62,7 +61,7 @@ function wrongLength(random: Random, context: IdentifierContext): string {
 /** Exactly one digit of a valid number replaced with a letter (section 9 clarifications). */
 function letters(random: Random, context: IdentifierContext): string {
   const value = plainNumber(random, context);
-  return replaceDigitWithLetter(random, value, DIGIT_POSITIONS, LETTERS);
+  return replaceDigitWithLetter(random, value, DIGIT_POSITIONS);
 }
 
 /**

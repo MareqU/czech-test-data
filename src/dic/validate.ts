@@ -2,9 +2,9 @@
 // (https://www.zakonyprolidi.cz/cs/2009-280); prefix: Directive 2006/112/EC art. 215. The assigned-number check
 // digit has no official text (python-stdnum, confirmed by ARES records, UNVERIFIED).
 import { validate as validateBirthNumber } from '../birthNumber/validate.js';
-import { hasLetter } from '../core/letters.js';
+import { hasLetter, hasNonDigit } from '../core/letters.js';
 import type { IdentifierContext, ValidationResult } from '../core/types.js';
-import { hasNonDigit, validate as validateIco } from '../ico/validate.js';
+import { validate as validateIco } from '../ico/validate.js';
 import { withAssignedCheckDigit } from './generate.js';
 
 /**

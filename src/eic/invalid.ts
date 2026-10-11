@@ -1,5 +1,6 @@
 // Invalid variants of the EIC (one fault each) – docs/rules/eic.md section 4.
 // Each variant name is the reason code the validator returns for its values.
+import { intExcept } from '../core/random.js';
 import type { IdentifierVariant } from '../core/types.js';
 import { ALPHABET, DASH, checkValue, drawBody, generate, withCheck } from './generate.js';
 
@@ -14,8 +15,7 @@ export const invalid: Readonly<Record<EicInvalidVariant, IdentifierVariant>> = {
   badChecksum: (random) => {
     const value = generate(random);
     const correct = ALPHABET.indexOf(value.charAt(15));
-    const drawn = random.int(0, 34);
-    return `${value.slice(0, 15)}${ALPHABET.charAt(drawn >= correct ? drawn + 1 : drawn)}`;
+    return `${value.slice(0, 15)}${ALPHABET.charAt(intExcept(random, 0, 35, correct))}`;
   },
   // 15 characters (check character forgotten) or 17.
   wrongLength: (random) => {
