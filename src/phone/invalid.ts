@@ -19,7 +19,6 @@ const SPECIAL_PREFIXES: readonly string[] = [
 ];
 // None of these starts with 420.
 const OTHER_COUNTRY_CODES: readonly string[] = ['421', '49', '48', '43', '1'];
-const LETTERS = 'AOl';
 // Character indexes of the nine national digits in `+420 ddd ddd ddd`.
 const DIGIT_POSITIONS: readonly number[] = [5, 6, 7, 9, 10, 11, 13, 14, 15];
 
@@ -32,7 +31,7 @@ function wrongLength(random: Random): string {
 
 function letters(random: Random): string {
   const value = formatPhone(drawMobile(random));
-  return replaceDigitWithLetter(random, value, DIGIT_POSITIONS, LETTERS);
+  return replaceDigitWithLetter(random, value, DIGIT_POSITIONS);
 }
 
 function wrongCountryCode(random: Random): string {

@@ -1,7 +1,7 @@
 // Specification of the seeded PRNG and stream seeds – docs/rules/core.md sections 1, 2 and 6.
 import fc from 'fast-check';
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import { createRandom, streamSeed } from '../src/core/random.js';
+import { createRandom, intExcept, streamSeed } from '../src/core/random.js';
 import type { Random } from '../src/core/random.js';
 import {
   MAX_UINT32,
@@ -623,5 +623,47 @@ describe('streamSeed(seed, id) = (seed XOR fnv1a32(id)) >>> 0', () => {
       }),
       { numRuns: PROPERTY_RUNS },
     );
+  });
+});
+
+describe('intExcept (amendment A4)', () => {
+  const rangeArb = fc
+    .tuple(fc.integer({ min: -50, max: 50 }), fc.integer({ min: 1, max: 100 }))
+    .chain(([min, span]) => fc.integer({ min, max: min + span }).map((except) => ({ min, max: min + span, except })));
+
+  it('equals int(min, max - 1) shifted up when it reaches except, on the same stream', () => {
+    fc.assert(
+      fc.property(seedArb, rangeArb, (seed, { min, max, except }) => {
+        const actual = createRandom(seed);
+        const reference = createRandom(seed);
+        for (let i = 0; i < 20; i++) {
+          const d = reference.int(min, max - 1);
+          expect(intExcept(actual, min, max, except)).toBe(d >= except ? d + 1 : d);
+        }
+      }),
+      { numRuns: PROPERTY_RUNS },
+    );
+  });
+
+  it('never returns except and reaches both ends of the range', () => {
+    const random = createRandom(7);
+    const values = draw(500, () => intExcept(random, 0, 9, 4));
+    expect(values).not.toContain(4);
+    expect(Math.min(...values)).toBe(0);
+    expect(Math.max(...values)).toBe(9);
+    const edge = createRandom(7);
+    const atEnd = draw(500, () => intExcept(edge, 0, 9, 9));
+    expect(atEnd).not.toContain(9);
+    expect(Math.max(...atEnd)).toBe(8);
+  });
+
+  it.each([
+    { name: 'except below min', min: 2, max: 98, except: 1 },
+    { name: 'except above max', min: 2, max: 98, except: 99 },
+    { name: 'non-integer except', min: 0, max: 9, except: 1.5 },
+    { name: 'NaN except', min: 0, max: 9, except: Number.NaN },
+    { name: 'min equal to max', min: 5, max: 5, except: 5 },
+  ])('throws RangeError for $name', ({ min, max, except }) => {
+    expect(() => intExcept(createRandom(1), min, max, except)).toThrow(RangeError);
   });
 });

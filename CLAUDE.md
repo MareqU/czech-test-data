@@ -58,6 +58,8 @@ If tests and rules contradict each other, stop and report the conflict. Do not "
   Amended 2026-10-07 for identifiers that reuse others (dic): the 2 kB counts the identifier's **own code** (core and
   other identifier folders external); a reusing subpath also has a standalone budget (`dic` ≤ 3 kB on top of the core;
   `iban` ≤ 3 kB, added 2026-10-11).
+  Amended 2026-10-11: shared core ≤ **2.5 kB**, so helpers copied across identifiers (the "draw a different value"
+  step, the `letters` fault characters, the non-digit test) can move into `src/core/`.
   Reuse via fine-grained imports (`generate`, `validate`, single variant functions), never whole `edge`/`invalid` records.
   `"sideEffects": false`, ESM first.
 - CLI is a separate entry point, never loaded by library imports; use `node:util` `parseArgs`, no CLI deps.
