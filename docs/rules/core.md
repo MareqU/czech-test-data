@@ -136,7 +136,7 @@ src/core/date.ts          Gregorian calendar helpers (date check, leap years, da
 src/core/types.ts         ValidationResult, IdentifierGenerator, IdentifierContext, Settings
 src/core/identifier.ts    defineIdentifier(): builds create() and validate() of an identifier
 src/core/checksum.ts      weightedSum: shared weighted digit sum of the mod 11 identifiers (ico, bankAccount)
-src/core/letters.ts       hasLetter, replaceDigitWithLetter: shared `letters` reason and variant
+src/core/letters.ts       hasLetter, hasNonDigit, replaceDigitWithLetter: shared `letters` reason and variant
 src/cz.ts                 createCz
 src/index.ts              root entry: createCz + public types
 src/<id>/generate.ts      generate(random, options, context): string
@@ -200,7 +200,7 @@ docs/rules/<id>.md
 | `src/core/types.ts` | `ValidationResult`, `IdentifierGenerator`, `IdentifierContext`, `Settings`, `NoOptions` (types) | sections 4 and 5 |
 | `src/core/types.ts` | `SettingsOptions` (type) | `{ seed?: number; referenceDate?: string }`, options of `createCz` and `create<Id>`; public |
 | `src/core/types.ts` | `ValidatorOptions` (type) | `{ referenceDate?: string }`, options of the public validators; public from M2 |
-| `src/core/letters.ts` | `hasLetter`, `replaceDigitWithLetter` | `hasLetter(value)` – true if `value` contains a Unicode letter (`\p{L}`); `replaceDigitWithLetter(random, value, positions, letters)` – draws a position, then a letter, and replaces that character. Internal (not public API). Added in PR #8 (phone review S1); entry recorded 2026-10-08. |
+| `src/core/letters.ts` | `hasLetter`, `replaceDigitWithLetter` | `hasLetter(value)` – true if `value` contains a Unicode letter (`\p{L}`); `replaceDigitWithLetter(random, value, positions, letters)` – draws a position, then a letter, and replaces that character. Internal (not public API). Added in PR #8 (phone review S1); entry recorded 2026-10-08.A4 (2026-10-11): `hasNonDigit`; default `letters = 'AOl'`. |
 | `src/core/checksum.ts` | `weightedSum` | `(digits: string, weights: readonly number[]) => number` – Σ `digit · weight` with `digits` **right-aligned** to `weights`: a shorter `digits` counts as left-padded with `0`. Preconditions (TSDoc, not checked at runtime): ASCII `0-9` only, `digits.length ≤ weights.length`; a longer `digits` gives an unspecified result. Internal (not public API). Added 2026-10-08 with `docs/rules/bankAccount.md` section 9 / decision 1 (ico review N1/N2); approved 2026-10-08. |
 | `src/index.ts` | `createCz` | `(options?: { seed?: number; referenceDate?: string }) => Cz` with `seed`, `referenceDate`, `validate` |
 
@@ -255,6 +255,21 @@ docs/rules/<id>.md
 - **A3 – Fixed date ranges (2026-10-05, from review S2, approved with `docs/rules/birthNumber.md`):** date
   ranges are fixed per identifier and only cut by `referenceDate`; empty range → `RangeError` naming
   `referenceDate`; shared determinism check for every identifier in `tests/support/`.
+- **A4 – Shared fault helpers (2026-10-11, DRAFT, waiting for Marek; core budget raised to 2.5 kB the same day):**
+  helpers copied across identifiers move into `src/core/`. Internal, not public API. **No output may change:** every
+  seed snapshot of every identifier stays byte-for-byte the same, and that is the acceptance test of the refactor.
+  1. `intExcept(random, min, max, except)` in `src/core/random.ts`, a standalone function (not a `Random` method,
+     so identifiers that do not use it do not carry it). Exactly `d = random.int(min, max − 1)`, then
+     `d >= except ? d + 1 : d`: one `int` call, uniform over `min…max` without `except`. Throws `RangeError` if
+     `except` is not an integer within `min…max` (the `int` errors apply as well, e.g. `min = max`). Replaces the six
+     copies: ico, ean and bankAccount `badChecksum`-style digit (`0…9`), ean `wrongPrefix` block (`0…9999` except
+     `1824`), iban `badChecksum` (`2…98`), eic `badChecksum` (`0…35`).
+  2. `replaceDigitWithLetter(random, value, positions, letters = 'AOl')`: the six identical `LETTERS = 'AOl'`
+     constants become the default (A and O as lookalikes of 0, `l` of 1). postalCode keeps passing `A–Z`. Draw order
+     unchanged.
+  3. `hasNonDigit(value)` in `src/core/letters.ts` (true if `value` contains anything but `0–9`), moved from
+     `src/ico/validate.ts`. ico, dic and ean use it; dic no longer imports from `src/ico/` for it.
+  Closes review nits ean N1/N2, iban N2, eic N2.
 - **Q5 – PRNG algorithm:** SplitMix32 variant above. The author of mulberry32 wrote (10 Nov 2022, link in
   section 1) that mulberry32 "isn't equidistributed … and actually can't produce about 1/3 of all possible
   `uint32_t` numbers"; the SplitMix32 variant produces every 32-bit value exactly once per period.
