@@ -11,7 +11,9 @@ import {
   emptyRangeError,
   formatBirthNumber,
   MONTH_OFFSETS,
+  NINE_DIGIT_RANGE,
   PLAIN_RANGE,
+  pre1954,
 } from './generate.js';
 
 /**
@@ -19,8 +21,6 @@ import {
  */
 export type BirthNumberEdgeVariant = 'pre1954' | 'mod11Exception' | 'month+20' | 'month+70' | 'leapDay' | 'withoutSlash';
 
-// 9-digit numbers from 1900 on: the 1854–1899 mapping is valid but debatable (section 4).
-const NINE_DIGIT_RANGE = { from: '1900-01-01', to: '1953-12-31' } as const;
 // The remainder-10 exception was assigned only until 1985 (DASTA, FSÚ ČVK 2898/1985,
 // https://dastacr.cz/dasta/hypertext/DSBET.htm; decision 1).
 const MOD11_EXCEPTION_RANGE = { from: '1954-01-01', to: '1985-12-31' } as const;
@@ -63,8 +63,7 @@ function leapDay(random: Random, context: IdentifierContext): string {
 
 /** Edge variants by name; each draws its birth date from the fixed range of section 9. */
 export const edge: Readonly<Record<BirthNumberEdgeVariant, IdentifierVariant>> = {
-  pre1954: (random, context) =>
-    formatBirthNumber(random, drawDateUpTo(random, NINE_DIGIT_RANGE, context), drawGenderOffset(random)),
+  pre1954,
   mod11Exception,
   'month+20': additionalSeries(MONTH_OFFSETS.additionalMale),
   'month+70': additionalSeries(MONTH_OFFSETS.additionalFemale),

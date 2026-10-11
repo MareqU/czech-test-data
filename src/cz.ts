@@ -2,6 +2,9 @@
 import { validateBirthNumber } from './birthNumber/index.js';
 import { birthNumber } from './birthNumber/identifier.js';
 import type { BirthNumberGenerator, BirthNumberReason } from './birthNumber/index.js';
+import { validateDic } from './dic/index.js';
+import { dic } from './dic/identifier.js';
+import type { DicGenerator, DicReason } from './dic/index.js';
 import { validateIco } from './ico/index.js';
 import { ico } from './ico/identifier.js';
 import type { IcoGenerator, IcoReason } from './ico/index.js';
@@ -20,6 +23,8 @@ import type { SettingsOptions, ValidationResult } from './core/types.js';
 export interface CzValidators {
   /** Validates a birth number (rodné číslo) with `referenceDate` of this instance. Never throws. */
   readonly birthNumber: (value: string) => ValidationResult<BirthNumberReason>;
+  /** Validates a complete DIČ with `referenceDate` of this instance. Never throws. */
+  readonly dic: (value: string) => ValidationResult<DicReason>;
   /** Validates an IČO; the date plays no role, `referenceDate` is only passed on. Never throws. */
   readonly ico: (value: string) => ValidationResult<IcoReason>;
   /**
@@ -41,6 +46,8 @@ export interface Cz {
   readonly referenceDate: string;
   /** Birth numbers (rodné číslo); the same values as `createBirthNumber` with the same settings. */
   readonly birthNumber: BirthNumberGenerator;
+  /** DIČ (daňové identifikační číslo); the same values as `createDic` with the same settings. */
+  readonly dic: DicGenerator;
   /** IČO (identifikační číslo osoby); the same values as `createIco` with the same settings. */
   readonly ico: IcoGenerator;
   /** Phone numbers (telefonní číslo); the same values as `createPhone` with the same settings. */
@@ -77,11 +84,13 @@ export function createCz(options?: SettingsOptions): Cz {
     seed,
     referenceDate,
     birthNumber: birthNumber.create(settings),
+    dic: dic.create(settings),
     ico: ico.create(settings),
     phone: phone.create(settings),
     postalCode: postalCode.create(settings),
     validate: Object.freeze({
       birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
+      dic: (value: string) => validateDic(value, { referenceDate }),
       ico: (value: string) => validateIco(value, { referenceDate }),
       phone: (value: string) => validatePhone(value, { referenceDate }),
       postalCode: (value: string) => validatePostalCode(value, { referenceDate }),

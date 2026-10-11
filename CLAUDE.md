@@ -55,6 +55,9 @@ If tests and rules contradict each other, stop and report the conflict. Do not "
 - Shared logic (e.g. weighted mod 11 sums) lives in a shared utility, not duplicated per module.
 - **Lightweight is enforced, not hoped for:** size budget checked in CI, min+gzip (decided 2026-10-05):
   whole library ≤ 10 kB, shared core (`src/core/`) ≤ 2 kB, each identifier ≤ 2 kB **on top of the core**.
+  Amended 2026-10-07 for identifiers that reuse others (dic): the 2 kB counts the identifier's **own code** (core and
+  other identifier folders external); a reusing subpath also has a standalone budget (`dic` ≤ 3 kB on top of the core).
+  Reuse via fine-grained imports (`generate`, `validate`, single variant functions), never whole `edge`/`invalid` records.
   `"sideEffects": false`, ESM first.
 - CLI is a separate entry point, never loaded by library imports; use `node:util` `parseArgs`, no CLI deps.
 - Large data (e.g. full postal code list) only as an optional subpath import, never in the core.
