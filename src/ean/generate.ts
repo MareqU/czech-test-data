@@ -14,10 +14,16 @@ export interface EanOptions {
   readonly distributor?: EanDistributor;
 }
 
-/** Fixed part (pevná část EAN): GS1 Czech Republic `859` + OTE `1824`. */
+/**
+ * Fixed part (pevná část EAN): GS1 Czech Republic `859` + OTE `1824`.
+ * Source: OTE, https://www.ote-cr.cz/cs/dokumentace/dokumentace-elektrina/files_dokumentace/podklady_k_seminari.pdf;
+ * ČEZ Distribuce, https://www.cezdistribuce.cz/cs/pro-zakazniky/potrebuji-vyresit/stavajici-pripojeni/ean
+ */
 export const PREFIX = '8591824';
 
-// 17 data digits, the rightmost has weight 3 (GS1 rule for every key length).
+// 17 data digits, the rightmost has weight 3 (GS1 rule for every key length). Source: GS1 Syntax Engine,
+// https://github.com/gs1/gs1-syntax-engine/blob/main/src/c-lib/syntax/lint_csum.c; AI 8017 in
+// https://github.com/gs1/gs1-syntax-dictionary
 const WEIGHTS: readonly number[] = Array.from({ length: 17 }, (_, i) => (i % 2 === 0 ? 3 : 1));
 
 // Position 10 of the big distributors (OTE číselník sítí, ČEZ Distribuce); the default repeats the digits by share.
@@ -25,8 +31,8 @@ const DIGITS: Readonly<Record<string, readonly number[]>> = {
   egd: [1, 2],
   pre: [3],
   cez: [4, 5, 6, 7, 8],
-  default: [1, 2, 3, 4, 5, 6, 7, 8],
 };
+const DEFAULT_DIGITS: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8];
 
 /** The GS1 check digit of a 17-digit body. */
 export function checkDigitOf(body: string): number {
@@ -45,10 +51,10 @@ export function generate(random: Random, options: EanOptions): string {
     // Networks 0300–0999 are all allocated in the OTE číselník sítí.
     return withCheckDigit(`${PREFIX}${String(random.int(300, 999)).padStart(4, '0')}0${random.digits(5)}`);
   }
-  const key = distributor ?? 'default';
-  if (!Object.hasOwn(DIGITS, key)) {
+  // Only a missing option means the default; null and other values from JavaScript callers are errors.
+  if (distributor !== undefined && !Object.hasOwn(DIGITS, distributor)) {
     throw new RangeError(`distributor must be one of: cez, egd, pre, lds, got ${JSON.stringify(distributor)}`);
   }
-  const position10 = random.pick(DIGITS[key] ?? []);
+  const position10 = random.pick(distributor === undefined ? DEFAULT_DIGITS : (DIGITS[distributor] ?? []));
   return withCheckDigit(`${PREFIX}00${String(position10)}${random.digits(7)}`);
 }

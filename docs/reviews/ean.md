@@ -111,3 +111,11 @@ this can be done at the same time.
 - The tests read like a specification. Each sample carries its reason. Each precedence pair is named after
   decision 2. Each variant gets a shape check, its reason, and a check that it is derived from the plain value of the
   same stream. The oracle in `tests/support/ean.ts` is independent of `src/` and also checks the §2.2 shortcut.
+
+## 5. Resolution (main session, 2026-10-11; open nits for Marek)
+
+- B1 fixed: `distributor: null` and `'default'` throw `RangeError` naming `distributor`; the default digit list is a
+  separate constant (values and draw order unchanged, seed snapshots pass). Tests added in `tests/ean.generate.test.ts`.
+- S1 fixed: the prefix and GS1 check-digit comments link the sources from rules §6; `index.ts` cites
+  `docs/rules/core.md` section 5.
+- N1, N2, N3: not changed; left for Marek (N2 as iban N2, core budget ~70 B left).

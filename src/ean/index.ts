@@ -1,5 +1,6 @@
 // Subpath entry `czech-test-data/ean`: the EAN of an electricity supply point (EAN odběrného místa) –
-// docs/rules/ean.md sections 1, 2 and 9. Source: vyhláška č. 408/2015 Sb., § 16 (https://www.zakonyprolidi.cz/cs/2015-408).
+// docs/rules/core.md section 5, docs/rules/ean.md sections 1, 2 and 9.
+// Source: vyhláška č. 408/2015 Sb., § 16 (https://www.zakonyprolidi.cz/cs/2015-408).
 import { resolveSettings } from '../core/settings.js';
 import type { IdentifierGenerator, SettingsOptions, ValidationResult, ValidatorOptions } from '../core/types.js';
 import type { EanEdgeVariant } from './edge.js';
