@@ -1,6 +1,8 @@
 // Subpath entry `czech-test-data/eic`: the EIC of a gas supply point (EIC kód odběrného místa plynu) –
 // docs/rules/core.md section 5, docs/rules/eic.md sections 1, 2 and 9.
-// Sources: ENTSO-E EIC Data Exchange Implementation Guide v1.2, § 5.3; vyhláška č. 349/2015 Sb., § 2 a § 5.
+// Sources: ENTSO-E EIC Data Exchange Implementation Guide v1.2, § 5.3
+// (https://eepublicdownloads.entsoe.eu/clean-documents/EDI/Library/cim_based/EIC_Data_Exchange_IG_v1.2.pdf);
+// vyhláška č. 349/2015 Sb., § 2 a § 5 (https://www.zakonyprolidi.cz/cs/2015-349).
 import { resolveSettings } from '../core/settings.js';
 import type { IdentifierGenerator, NoOptions, SettingsOptions, ValidationResult, ValidatorOptions } from '../core/types.js';
 import type { EicEdgeVariant } from './edge.js';

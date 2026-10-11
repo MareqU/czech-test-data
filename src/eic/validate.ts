@@ -1,7 +1,10 @@
 // Validator of the EIC – docs/rules/eic.md sections 2.4 and 10 (decisions 1–4).
-// Sources: ENTSO-E EIC Reference Manual 5.5, § 5.2 (alphabet); IG v1.2, § 5.3 (check character, never "-").
+// Sources: ENTSO-E EIC Reference Manual 5.5, § 5.2 (alphabet),
+// https://transgaz.ro/sites/default/files/users/user822/EIC_Reference_Manual_Release_5_5.pdf;
+// EIC Data Exchange Implementation Guide v1.2, § 5.3 (check character, never "-"),
+// https://eepublicdownloads.entsoe.eu/clean-documents/EDI/Library/cim_based/EIC_Data_Exchange_IG_v1.2.pdf
 import type { ValidationResult } from '../core/types.js';
-import { ALPHABET, PREFIX } from './generate.js';
+import { ALPHABET, PREFIX, checkValue } from './generate.js';
 
 /** Reason codes of the EIC validator (důvody neplatnosti EIC), in precedence order. `badFormat` has no invalid variant. */
 export type EicReason = 'badFormat' | 'wrongLength' | 'wrongPrefix' | 'dashCheckCharacter' | 'badChecksum';
@@ -23,12 +26,8 @@ export function validate(value: string): ValidationResult<EicReason> {
   if (value.endsWith('-')) {
     return { valid: false, reason: 'dashCheckCharacter' };
   }
-  // Check character has weight 1, so the whole weighted sum must be divisible by 37.
-  let sum = 0;
-  for (let i = 0; i < LENGTH; i++) {
-    sum += (LENGTH - i) * ALPHABET.indexOf(value.charAt(i));
-  }
-  if (sum % 37 !== 0) {
+  // Same as "whole weighted sum divisible by 37"; the dash case is already handled above.
+  if (ALPHABET.indexOf(value.charAt(15)) !== checkValue(value.slice(0, 15))) {
     return { valid: false, reason: 'badChecksum' };
   }
   return { valid: true };

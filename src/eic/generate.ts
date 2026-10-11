@@ -6,10 +6,14 @@
 // https://eru.gov.cz/sites/default/files/obsah/prilohy/rpdsrwegasnetp5eic.pdf
 import type { Random } from '../core/random.js';
 
-/** Fixed prefix (pevný prefix): LIO 27, object type Z (measurement point), G (gas series managed by OTE). */
+/**
+ * Fixed prefix (pevný prefix): LIO 27, object type Z (measurement point), G (gas series managed by OTE).
+ * Source: ERÚ grid code appendix "EIC kódy", https://eru.gov.cz/sites/default/files/obsah/prilohy/rpdsrwegasnetp5eic.pdf
+ */
 export const PREFIX = '27ZG';
 const POINT_TYPE = 'Z';
-// Position 5 = first digit of the 3-digit distribution system code; 8 is unused in every source. Order frozen.
+// Position 5 = first digit of the 3-digit distribution system code (100 PPD, 200–700 GasNet, 900 E.ON/EG.D in the
+// same ERÚ appendix); 8 is unused in every source. Order frozen.
 const REGION_DIGITS: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 9];
 const BIG_DSO_SUFFIX = '00';
 const MAX_LDS = 99;
