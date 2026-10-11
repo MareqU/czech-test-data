@@ -1,4 +1,4 @@
-// Generator of the Czech IBAN (číslo účtu ve formátu IBAN), draw order fixed by the iban rules, section 9.
+// Generator of the Czech IBAN (číslo účtu ve formátu IBAN), draw order fixed by docs/rules/iban.md section 9.
 // Structure: vyhláška ČNB č. 169/2011 Sb., § 4 (https://www.zakonyprolidi.cz/cs/2011-169); check digits:
 // ISO 7064 MOD 97-10 as in ECBS EBS204 § 6 (https://www.cnb.cz/export/sites/cnb/cs/platebni-styk/.galleries/iban/download/EBS204.pdf).
 import { generate as generateAccount } from '../bankAccount/generate.js';

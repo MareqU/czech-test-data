@@ -1,4 +1,4 @@
-// Invalid variants of the IBAN (one fault each) – iban rules, sections 4 and 9.
+// Invalid variants of the IBAN (one fault each) – docs/rules/iban.md sections 4 and 9.
 // Each variant name is the reason code the validator returns for its values.
 import { generate as generateAccount } from '../bankAccount/generate.js';
 import { badChecksumNumber, badChecksumPrefix, unknownBankCode, zeroNumber } from '../bankAccount/invalid.js';

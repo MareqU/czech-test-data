@@ -1,4 +1,4 @@
-// Validator of the Czech IBAN – reason precedence from the iban rules, section 2.5.
+// Validator of the Czech IBAN – reason precedence from docs/rules/iban.md section 2.5.
 // Format: vyhláška ČNB č. 169/2011 Sb., § 4 (https://www.zakonyprolidi.cz/cs/2011-169); written form and
 // MOD 97-10: ECBS EBS204 § 5.2 and § 6.1 (https://www.cnb.cz/export/sites/cnb/cs/platebni-styk/.galleries/iban/download/EBS204.pdf).
 import { validate as validateAccount } from '../bankAccount/validate.js';

@@ -1,4 +1,4 @@
-// Edge variants of the IBAN (valid but unusual) – iban rules, sections 4 and 9.
+// Edge variants of the IBAN (valid but unusual) – docs/rules/iban.md sections 4 and 9.
 import type { IdentifierVariant } from '../core/types.js';
 import { generate } from './generate.js';
 

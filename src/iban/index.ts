@@ -1,5 +1,5 @@
 // Subpath entry `czech-test-data/iban`: the Czech account number in the international format (číslo účtu ve
-// formátu IBAN) – iban rules, sections 1, 2 and 9.
+// formátu IBAN) – docs/rules/core.md section 5, docs/rules/iban.md sections 1, 2 and 9.
 // Source: vyhláška ČNB č. 169/2011 Sb., § 4 (https://www.zakonyprolidi.cz/cs/2011-169); ISO 13616 via ECBS EBS204.
 import { resolveSettings } from '../core/settings.js';
 import type { IdentifierGenerator, SettingsOptions, ValidationResult, ValidatorOptions } from '../core/types.js';
