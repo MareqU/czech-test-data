@@ -3,7 +3,8 @@
 // - each identifier is budgeted by what it adds on top of the core, so the numbers stay comparable;
 //   amended 2026-10-07 (docs/rules/dic.md decision 1): that budget counts the identifier's own code (other
 //   identifiers it reuses are external too), and a reusing identifier also gets a standalone budget;
-// - the whole published library keeps its overall budget.
+// - the whole published library keeps its overall budget;
+// - core raised from 2 kB to 2.5 kB by Marek on 2026-10-11, so helpers copied across identifiers can move into it.
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -58,6 +59,6 @@ const identifiers: SizeLimitConfig = ids.flatMap((id) => {
 
 export default [
   { name: 'whole library', path: 'dist/index.js', import: '*', limit: '10 kB', gzip: true },
-  { name: 'core', path: coreEntry, import: '*', limit: '2 kB', gzip: true },
+  { name: 'core', path: coreEntry, import: '*', limit: '2.5 kB', gzip: true },
   ...identifiers,
 ] satisfies SizeLimitConfig;
