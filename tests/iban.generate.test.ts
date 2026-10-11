@@ -2,7 +2,7 @@
 // conversion, consistency tests) and decisions 7 and 15; docs/rules/core.md section 3 (invalid options throw
 // RangeError).
 import fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { createBankAccount } from '../src/bankAccount/index.js';
 import { createIban, validateIban } from '../src/iban/index.js';
 import { draw, seedArb } from './support/helpers.js';
@@ -135,6 +135,24 @@ describe('account option converts a national account (consistency IBAN ↔ bankA
     expect(createIban({ seed: 1 })({ account: '19-2000145399/0800' })).toBe(
       createIban({ seed: 999 })({ account: '19-2000145399/0800' }),
     );
+  });
+
+  it.each([{ bankCode: undefined }, { withPrefix: undefined }, { foo: 1 }])(
+    'converts normally when account is combined with the ignored %j',
+    (others) => {
+      const generator = createIban({ seed: 1 });
+      expect(generator({ account: '19-2000145399/0800', ...others } as { account: string })).toBe(
+        'CZ6508000000192000145399',
+      );
+    },
+  );
+
+  it('types account as exclusive with bankCode and withPrefix', () => {
+    type Options = NonNullable<Parameters<ReturnType<typeof createIban>>[0]>;
+    expectTypeOf<{ account: string }>().toExtend<Options>();
+    expectTypeOf<{ bankCode: string; withPrefix: boolean }>().toExtend<Options>();
+    expectTypeOf<{ account: string; bankCode: string }>().not.toExtend<Options>();
+    expectTypeOf<{ account: string; withPrefix: boolean }>().not.toExtend<Options>();
   });
 });
 
