@@ -42,6 +42,10 @@
       "import": "./dist/dic/index.js",
       "require": "./dist/dic/index.cjs"
     },
+    "./ean": {
+      "import": "./dist/ean/index.js",
+      "require": "./dist/ean/index.cjs"
+    },
     "./iban": {
       "import": "./dist/iban/index.js",
       "require": "./dist/iban/index.cjs"
