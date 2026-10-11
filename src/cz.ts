@@ -11,6 +11,9 @@ import type { DicGenerator, DicReason } from './dic/index.js';
 import { validateEan } from './ean/index.js';
 import { ean } from './ean/identifier.js';
 import type { EanGenerator, EanReason } from './ean/index.js';
+import { validateEic } from './eic/index.js';
+import { eic } from './eic/identifier.js';
+import type { EicGenerator, EicReason } from './eic/index.js';
 import { validateIban } from './iban/index.js';
 import { iban } from './iban/identifier.js';
 import type { IbanGenerator, IbanReason } from './iban/index.js';
@@ -38,6 +41,8 @@ export interface CzValidators {
   readonly dic: (value: string) => ValidationResult<DicReason>;
   /** Validates an electricity EAN (EAN odběrného místa); the date plays no role. Never throws. */
   readonly ean: (value: string) => ValidationResult<EanReason>;
+  /** Validates a gas supply point EIC (EIC kód odběrného místa plynu); the date plays no role. Never throws. */
+  readonly eic: (value: string) => ValidationResult<EicReason>;
   /** Validates a Czech IBAN; the date plays no role. Never throws. */
   readonly iban: (value: string) => ValidationResult<IbanReason>;
   /** Validates an IČO; the date plays no role, `referenceDate` is only passed on. Never throws. */
@@ -67,6 +72,8 @@ export interface Cz {
   readonly dic: DicGenerator;
   /** Electricity EANs (EAN odběrného místa); the same values as `createEan` with the same settings. */
   readonly ean: EanGenerator;
+  /** Gas supply point EICs (EIC kód odběrného místa plynu); the same values as `createEic` with the same settings. */
+  readonly eic: EicGenerator;
   /** Czech IBANs (číslo účtu ve formátu IBAN); the same values as `createIban` with the same settings. */
   readonly iban: IbanGenerator;
   /** IČO (identifikační číslo osoby); the same values as `createIco` with the same settings. */
@@ -108,6 +115,7 @@ export function createCz(options?: SettingsOptions): Cz {
     birthNumber: birthNumber.create(settings),
     dic: dic.create(settings),
     ean: ean.create(settings),
+    eic: eic.create(settings),
     iban: iban.create(settings),
     ico: ico.create(settings),
     phone: phone.create(settings),
@@ -117,6 +125,7 @@ export function createCz(options?: SettingsOptions): Cz {
       birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
       dic: (value: string) => validateDic(value, { referenceDate }),
       ean: (value: string) => validateEan(value, { referenceDate }),
+      eic: (value: string) => validateEic(value, { referenceDate }),
       iban: (value: string) => validateIban(value, { referenceDate }),
       ico: (value: string) => validateIco(value, { referenceDate }),
       phone: (value: string) => validatePhone(value, { referenceDate }),
