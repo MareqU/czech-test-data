@@ -147,6 +147,10 @@ Shell completion, colours, `--output FILE`, config files, NDJSON, `--list` comma
 - `--version` prints the `package.json` version (exact wording free, tests check it is contained).
 - `--help` wins also over an unknown identifier or option (`foo --help`, `--bogus --help`): top-level help, exit 0.
 - The seed notice shows the effective reference date: the given `--reference-date`, otherwise the library default.
+- Review B1 (2026-10-12): whether the bin reads stdin is decided by a pure `needsStdin(args): boolean`, exported from
+  `src/cli/run.ts`, with the same parsing as `run`: true only for `validate` with no positional values (options may
+  stand anywhere, also before `validate`), false for `--help`/`--version` and for any usage error. `src/cli.ts` reads
+  stdin only when it returns true (and stdin is not a TTY).
 - A library `RangeError` prints `czech-test-data: <its message>` plus the identifier hint line, exit 2.
 
 ## Decisions (approved 2026-10-12: every recommendation below was accepted, alternatives rejected)
