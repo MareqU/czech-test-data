@@ -28,6 +28,8 @@ jobs:
       - run: npm run knip
       - run: npm run coverage
       - run: npm run build
+      # CLI end-to-end tests spawn the built dist/cli.mjs (docs/rules/cli.md section 7).
+      - run: npm run test:e2e
       # Size budget (docs/spec.md): exceeding it fails the build.
       - run: npm run size
       - uses: actions/upload-artifact@v7
