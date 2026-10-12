@@ -14,7 +14,8 @@ function find(id: string | undefined): CliIdentifier | undefined {
   return IDENTIFIERS.find((entry) => entry.id === id);
 }
 
-// The identifier the arguments are about, for help and for the error hint.
+// The identifier the arguments are about, for help and for the error hint. Raw positions on purpose: help must work
+// without parsing (section 6), so options before the identifier (`-f json ico --help`) fall back to the general help.
 function target(args: readonly string[]): CliIdentifier | undefined {
   return find(args[0] === 'validate' ? args[1] : args[0]);
 }

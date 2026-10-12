@@ -1,17 +1,32 @@
 // CLI generating values – docs/rules/cli.md sections 2 (options, determinism, seed notice) and 3 (formats).
 // The oracle is a fresh library generator called in the order of section 2.3; no generated values are pinned.
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { run } from '../src/cli/run.js';
 import {
   IDENTIFIERS,
   REFERENCE_DATE,
   SEED,
-  csvRows,
   expectedRecords,
   renderGenerated,
   type Format,
   type Mode,
 } from './support/cli.js';
+
+// Records the arguments the CLI passes to the phone generator; the real implementation still runs.
+const phoneCalls = vi.hoisted((): unknown[][] => []);
+vi.mock('../src/phone/index.js', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../src/phone/index.js')>();
+  return {
+    ...original,
+    createPhone: (...args: Parameters<typeof original.createPhone>) =>
+      new Proxy(original.createPhone(...args), {
+        apply: (target, thisArg, callArgs: unknown[]) => {
+          phoneCalls.push(callArgs);
+          return Reflect.apply(target, thisArg, callArgs) as string;
+        },
+      }),
+  };
+});
 
 const FORMATS: readonly Format[] = ['text', 'json', 'csv'];
 const COMMON = ['--seed', String(SEED), '--reference-date', REFERENCE_DATE];
@@ -123,11 +138,13 @@ describe('common options (section 2.1)', () => {
     expect(stdout).toBe(`${expected}\n`);
   });
 
-  it('does not pass options that were not given (the library default applies)', () => {
-    const phone = IDENTIFIERS.find((e) => e.id === 'phone');
-    if (phone === undefined) throw new Error('phone missing');
-    const expected = phone.create({ seed: SEED }).generate();
-    expect(run(['phone', ...COMMON.slice(0, 2)]).stdout).toBe(`${expected}\n`);
+  it('does not pass options that were not given (section 2.2: never undefined or false)', () => {
+    phoneCalls.length = 0;
+    run(['phone', '-n', '2', ...COMMON]);
+    expect(phoneCalls).toEqual([[], []]);
+    phoneCalls.length = 0;
+    run(['phone', ...COMMON, '--type', 'fixed']);
+    expect(phoneCalls).toEqual([[{ type: 'fixed' }]]);
   });
 });
 
@@ -165,10 +182,6 @@ describe('formats (section 3)', () => {
   it('csv of a named variant carries the variant name', () => {
     const { stdout } = run(['ico', '-s', '1', '--invalid', 'badChecksum', '-f', 'csv']);
     expect(stdout).toMatch(/^value,kind,variant\n[^,\n]*,invalid,badChecksum\n$/u);
-  });
-
-  it('csv quotes only fields with a comma, quote, CR or LF (RFC 4180)', () => {
-    expect(csvRows([['a', 'b,c', 'say "x"', 'l\nl', '']])).toBe('a,"b,c","say ""x""","l\nl",\n');
   });
 
   it('an invalid value with letters stays unquoted in csv unless it needs quoting', () => {

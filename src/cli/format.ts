@@ -14,11 +14,9 @@ export interface GeneratedRecord {
 }
 
 /** The result of validating one value. */
-export interface ValidatedRecord {
-  readonly value: string;
-  readonly valid: boolean;
-  readonly reason?: string;
-}
+export type ValidatedRecord =
+  | { readonly value: string; readonly valid: true }
+  | { readonly value: string; readonly valid: false; readonly reason: string };
 
 function csvField(field: string): string {
   return /[",\r\n]/u.test(field) ? `"${field.replaceAll('"', '""')}"` : field;
@@ -42,8 +40,8 @@ export function renderGenerated(records: readonly GeneratedRecord[], format: For
 /** Renders validation results. */
 export function renderValidated(records: readonly ValidatedRecord[], format: Format): string {
   if (format === 'text') {
-    return records.map((r) => `${r.value}\t${r.valid ? 'valid' : `invalid\t${r.reason ?? ''}`}\n`).join('');
+    return records.map((r) => `${r.value}\t${r.valid ? 'valid' : `invalid\t${r.reason}`}\n`).join('');
   }
   if (format === 'json') return json(records);
-  return csv(['value', 'valid', 'reason'], records.map((r) => [r.value, String(r.valid), r.reason ?? '']));
+  return csv(['value', 'valid', 'reason'], records.map((r) => [r.value, String(r.valid), r.valid ? '' : r.reason]));
 }
