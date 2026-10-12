@@ -34,24 +34,25 @@ function record(value: string, kind: 'edge' | 'invalid', variant: string | undef
 function variantRecords(generator: LooseGenerator, kind: 'edge' | 'invalid', choice: string, count: number): GeneratedRecord[] {
   const call = (name?: string): string => (kind === 'edge' ? generator.edge(name) : generator.invalid(name));
   const names = kind === 'edge' ? generator.edgeVariants : generator.invalidVariants;
-  const plan = choice === 'all' ? names.map((name) => [name]) : [[choice === 'random' ? undefined : choice]];
-  return plan.flatMap(([name]) =>
+  const plan: readonly (string | undefined)[] = choice === 'all' ? names : [choice === 'random' ? undefined : choice];
+  return plan.flatMap((name) =>
     Array.from({ length: count }, () => record(call(name), kind, choice === 'random' ? undefined : name)),
   );
 }
 
-function checkCombination(entry: CliIdentifier, parsed: Parsed): void {
+function checkCombination(entry: CliIdentifier, parsed: Parsed, options: GeneratorOptions): void {
   allowOnly(parsed, [...GENERATE_COMMON, ...Object.keys(entry.options)], `for ${entry.id}`);
   const hasVariant = parsed.given.has('edge') || parsed.given.has('invalid');
   if (parsed.given.has('edge') && parsed.given.has('invalid')) throw new UsageError('--edge and --invalid exclude each other');
-  if (hasVariant && Object.keys(generatorOptions(entry, parsed)).length > 0) {
+  if (hasVariant && Object.keys(options).length > 0) {
     throw new UsageError('generator options cannot be combined with --edge or --invalid');
   }
 }
 
 /** Generates values for one identifier. */
 export function generate(entry: CliIdentifier, parsed: Parsed): CliResult {
-  checkCombination(entry, parsed);
+  const options = generatorOptions(entry, parsed);
+  checkCombination(entry, parsed, options);
   const format = formatOf(parsed);
   const count = countOf(parsed);
   const seed = seedOf(parsed);
@@ -62,7 +63,6 @@ export function generate(entry: CliIdentifier, parsed: Parsed): CliResult {
   });
   const edge = stringOption(parsed, 'edge');
   const invalid = stringOption(parsed, 'invalid');
-  const options = generatorOptions(entry, parsed);
   const hasOptions = Object.keys(options).length > 0;
   let records: GeneratedRecord[];
   if (edge !== undefined) records = variantRecords(generator, 'edge', edge, count);
