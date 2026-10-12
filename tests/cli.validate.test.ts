@@ -62,6 +62,12 @@ describe('validate details', () => {
     );
   });
 
+  it('quotes csv fields containing LF or CR', () => {
+    expect(run(['validate', 'ico', 'a\nb', 'a\rb', '-f', 'csv']).stdout).toMatch(
+      /^value,valid,reason\n"a\nb",false,\w+\n"a\rb",false,\w+\n$/u,
+    );
+  });
+
   it('reads stdin with \\n or \\r\\n and skips empty lines', () => {
     const result = run(['validate', 'ico', '-f', 'csv'], '00177041\r\n\r\n00177042\n\n');
     expect(result.stdout).toBe('value,valid,reason\n00177041,true,\n00177042,false,badChecksum\n');
