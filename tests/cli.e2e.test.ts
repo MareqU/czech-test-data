@@ -113,7 +113,7 @@ describe('built CLI', () => {
       child.stdout.setEncoding('utf8').on('data', (chunk: string) => (stdout += chunk));
       const timer = setTimeout(() => {
         child.kill();
-        reject(new Error(`did not finish within ${timeout} ms`));
+        reject(new Error(`did not finish within ${String(timeout)} ms`));
       }, timeout);
       child.on('close', (status) => {
         clearTimeout(timer);
@@ -125,7 +125,7 @@ describe('built CLI', () => {
     expect(await openStdin(['validate', 'ico', '00177041'])).toEqual({ stdout: '00177041\tvalid\n', status: 0 });
   });
 
-  it('reads stdin for validate with options before the command', async () => {
+  it('reads stdin for validate with options before the command', () => {
     const result = cli(['-f', 'json', 'validate', 'ico'], '00177041\n');
     expect(result.status).toBe(0);
     expect(JSON.parse(result.stdout)).toEqual([{ value: '00177041', valid: true }]);
