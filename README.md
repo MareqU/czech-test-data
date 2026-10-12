@@ -1,5 +1,7 @@
 # czech-test-data
 
+**English** · [Česky](README.cs.md)
+
 Valid, edge-case and invalid Czech test data for automated tests: rodné číslo (birth number), IČO, DIČ,
 bank account, IBAN, phone number, PSČ (postal code), electricity EAN and gas EIC.
 
