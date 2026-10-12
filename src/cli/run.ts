@@ -66,3 +66,22 @@ export function run(args: readonly string[], stdin?: string): CliResult {
     return { stdout: '', stderr: `czech-test-data: ${error.message}\n${hint}\n`, exitCode: 2 };
   }
 }
+
+/**
+ * Whether the bin must read stdin for `args`: only `validate <id>` without values and without a usage error
+ * (help and version never do). Reuses {@link run}, so parsing and option rules stay in one place.
+ *
+ * @param args - Command line arguments.
+ */
+export function needsStdin(args: readonly string[]): boolean {
+  if (args.includes('--help') || args.includes('-h')) return false;
+  try {
+    const parsed = parse(args);
+    const [command, , ...values] = parsed.positionals;
+    if (parsed.given.has('version') || command !== 'validate' || values.length > 0) return false;
+    // A placeholder line runs the option checks of `validate` without waiting for real input.
+    return run(args, 'x').exitCode !== 2;
+  } catch {
+    return false;
+  }
+}

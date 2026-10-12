@@ -126,3 +126,11 @@ or be moved into the support file's own sanity checks.
   a mismatch, so this is a note only.
 - `generate.test.ts:126-131`: "does not pass options that were not given" compares against `generate()` for `phone`.
   It would also pass if the CLI called `generator({})`, so it does not check the §2.2 "never passed as undefined" rule.
+
+## 4. Resolution (2026-10-12, main session)
+
+- **B1 fixed:** `needsStdin(args)` in `src/cli/run.ts`, `src/cli.ts` reads stdin only when it is true. Tests: `needsStdin`
+  table in `tests/cli.validate.test.ts`, e2e cases for open stdin and options before `validate`. Verified on the built
+  CLI: with a never-closing stdin the fixed CLI exits at once, the previous build waited for the pipe.
+- **S1, S2 fixed** in tests (`500101/4788` with two reference dates; missing identifier, unexpected argument).
+- Nits left open for Marek.
