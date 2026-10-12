@@ -139,6 +139,16 @@ czech-test-data validate <identifier> [value...] [--reference-date D] [--format 
 
 Shell completion, colours, `--output FILE`, config files, NDJSON, `--list` commands (help covers it).
 
+## Clarifications (2026-10-12, from the test-writer, derived from the approved text)
+
+- `run(args: string[], stdin?: string) → { stdout, stderr, exitCode }` in `src/cli/run.ts`; `stdin` is the whole
+  piped text, `undefined` when stdin is not piped (a TTY). `validate` with no positional values and `undefined` stdin
+  is the "no values" usage error of section 4.
+- `--version` prints the `package.json` version (exact wording free, tests check it is contained).
+- `--help` wins also over an unknown identifier or option (`foo --help`, `--bogus --help`): top-level help, exit 0.
+- The seed notice shows the effective reference date: the given `--reference-date`, otherwise the library default.
+- A library `RangeError` prints `czech-test-data: <its message>` plus the identifier hint line, exit 2.
+
 ## Decisions (approved 2026-10-12: every recommendation below was accepted, alternatives rejected)
 
 1. **Q1 Identifier names:** kebab-case only (`birth-number`), as in the spec examples, while values and variant
