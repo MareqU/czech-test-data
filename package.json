@@ -81,11 +81,12 @@
     "build": "tsdown",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "coverage": "vitest run --coverage",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.build.json && tsc",
     "knip": "knip",
-    "check": "npm run typecheck && npm run lint && npm run knip && npm run coverage && npm run build && npm run size",
+    "check": "npm run typecheck && npm run lint && npm run knip && npm run coverage && npm run build && npm run test:e2e && npm run size",
     "prepublishOnly": "npm run check",
     "size": "size-limit",
     "update:bank-codes": "node scripts/update-bank-codes.ts"
