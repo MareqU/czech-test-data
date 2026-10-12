@@ -1,6 +1,6 @@
 // End-to-end CLI smoke tests (docs/rules/cli.md section 7): spawn the built dist/cli.mjs. Run by `npm run test:e2e`
 // after `npm run build`; excluded from `npm test`.
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import {
@@ -103,5 +103,31 @@ describe('built CLI', () => {
     expect(cli([]).status).toBe(0);
     expect(cli(['ico', '--help']).stdout).toContain('badChecksum');
     expect(cli(['--version']).status).toBe(0);
+  });
+
+  // Stdin is a pipe that is never ended: the CLI must not wait for it unless `validate` has no values.
+  const openStdin = (args: string[], timeout = 5000) =>
+    new Promise<{ stdout: string; status: number | null }>((resolve, reject) => {
+      const child = spawn(process.execPath, [CLI, ...args], { stdio: 'pipe' });
+      let stdout = '';
+      child.stdout.setEncoding('utf8').on('data', (chunk: string) => (stdout += chunk));
+      const timer = setTimeout(() => {
+        child.kill();
+        reject(new Error(`did not finish within ${timeout} ms`));
+      }, timeout);
+      child.on('close', (status) => {
+        clearTimeout(timer);
+        resolve({ stdout, status });
+      });
+    });
+
+  it('does not wait for stdin when validate has values (stdin left open)', async () => {
+    expect(await openStdin(['validate', 'ico', '00177041'])).toEqual({ stdout: '00177041\tvalid\n', status: 0 });
+  });
+
+  it('reads stdin for validate with options before the command', async () => {
+    const result = cli(['-f', 'json', 'validate', 'ico'], '00177041\n');
+    expect(result.status).toBe(0);
+    expect(JSON.parse(result.stdout)).toEqual([{ value: '00177041', valid: true }]);
   });
 });

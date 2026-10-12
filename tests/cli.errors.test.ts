@@ -20,6 +20,8 @@ describe('usage errors exit 2 with stderr only', () => {
     ['camelCase identifier (kebab-case only)', ['birthNumber']],
     ['unknown identifier in validate', ['validate', 'foo', '1']],
     ['validate without identifier', ['validate']],
+    ['missing identifier', ['-n', '2']],
+    ['unexpected positional argument', ['ico', 'extra']],
     ['unknown option', ['ico', '--bogus']],
     ['option without value', ['ico', '--count']],
     ['repeated option', ['ico', '--count', '1', '--count', '2']],

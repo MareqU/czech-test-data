@@ -1,6 +1,6 @@
 // CLI `validate` command – docs/rules/cli.md section 4.
 import { describe, expect, it } from 'vitest';
-import { run } from '../src/cli/run.js';
+import { needsStdin, run } from '../src/cli/run.js';
 import {
   IDENTIFIERS,
   REFERENCE_DATE,
@@ -84,12 +84,43 @@ describe('validate details', () => {
   it('passes --reference-date to the validator', () => {
     const entry = IDENTIFIERS.find((e) => e.id === 'birth-number');
     if (entry === undefined) throw new Error('birth-number missing');
-    const value = '995231/1234';
-    for (const referenceDate of ['2000-01-01', '2099-01-01']) {
+    const value = '500101/4788';
+    const outputs = [
+      ['2000-01-01', `${value}\tinvalid\tfutureDate\n`],
+      ['2099-01-01', `${value}\tvalid\n`],
+    ] as const;
+    for (const [referenceDate, output] of outputs) {
       const expected = expectedValidation(entry, [value], referenceDate);
-      expect(run(['validate', 'birth-number', value, '--reference-date', referenceDate]).stdout).toBe(
-        renderValidated(expected, 'text'),
-      );
+      const { stdout } = run(['validate', 'birth-number', value, '--reference-date', referenceDate]);
+      expect(stdout).toBe(renderValidated(expected, 'text'));
+      expect(stdout).toBe(output);
     }
+  });
+});
+
+describe('needsStdin (section 4: stdin is read only when validate has no values)', () => {
+  it.each<readonly [string[], boolean]>([
+    [['validate', 'ico'], true],
+    [['-f', 'json', 'validate', 'ico'], true],
+    [['validate', 'ico', '-f', 'json'], true],
+    [['validate', 'ico', '--reference-date', '2024-01-01'], true],
+    [['validate', 'ico', '00177041'], false],
+    [['-f', 'json', 'validate', 'ico', '00177041'], false],
+    [['validate', 'ico', '--help'], false],
+    [['validate', 'ico', '-h'], false],
+    [['validate', '--help'], false],
+    [['--help'], false],
+    [['-h'], false],
+    [['--version'], false],
+    [['validate', 'ico', '--version'], false],
+    [[], false],
+    [['ico'], false],
+    [['birth-number', '-n', '2'], false],
+    [['validate', 'foo'], false],
+    [['validate'], false],
+    [['validate', 'ico', '--bogus'], false],
+    [['validate', 'ico', '--count', '2'], false],
+  ])('%j -> %s', (args, expected) => {
+    expect(needsStdin(args)).toBe(expected);
   });
 });
