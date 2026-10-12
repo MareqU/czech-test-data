@@ -133,4 +133,4 @@ or be moved into the support file's own sanity checks.
   table in `tests/cli.validate.test.ts`, e2e cases for open stdin and options before `validate`. Verified on the built
   CLI: with a never-closing stdin the fixed CLI exits at once, the previous build waited for the pipe.
 - **S1, S2 fixed** in tests (`500101/4788` with two reference dates; missing identifier, unexpected argument).
-- Nits left open for Marek.
+- Nits fixed on Marek's request: N1 comment in `run.ts`; N2 discriminated `ValidatedRecord`; N3 fixture-only test dropped, CR/LF quoting tested via `run`; N4 `generatorOptions` computed once, no array wrapping, phone generator call arguments checked with `vi.mock`. The `parse.ts`/`table.ts` option-name duplicate stays (note only).
