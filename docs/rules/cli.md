@@ -1,6 +1,6 @@
 # CLI (M5) – design proposal
 
-Status: **DRAFT**, waiting for Marek's approval (questions Q1–Q7 at the end).
+Status: **APPROVED** by Marek on 2026-10-12 (Q1–Q7 decided as recommended, see Decisions at the end).
 
 The CLI has no official source, so this document is the contract the test-writer tests against and the implementer
 implements, like `docs/rules/core.md` for M1. It only exposes the library; every value comes from the public API.
@@ -139,7 +139,7 @@ czech-test-data validate <identifier> [value...] [--reference-date D] [--format 
 
 Shell completion, colours, `--output FILE`, config files, NDJSON, `--list` commands (help covers it).
 
-## Open questions for Marek
+## Decisions (approved 2026-10-12: every recommendation below was accepted, alternatives rejected)
 
 1. **Q1 Identifier names:** kebab-case only (`birth-number`), as in the spec examples, while values and variant
    names stay API strings (`--from birthNumber`). Recommendation: yes.

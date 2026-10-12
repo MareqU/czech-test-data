@@ -43,7 +43,7 @@ export default defineConfig(
         {
           patterns: [
             { regex: '^node:', message: 'src/ must not depend on Node.js built-ins.' },
-            { regex: '/cli(\\.js)?$', message: 'The library must never load the CLI.' },
+            { regex: '/cli(\\.js|/.*)?$', message: 'The library must never load the CLI.' },
           ],
         },
       ],
@@ -68,7 +68,7 @@ export default defineConfig(
   },
   {
     // The CLI is a separate Node.js entry point; node:util parseArgs is its only "dependency".
-    files: ['src/cli.ts'],
+    files: ['src/cli.ts', 'src/cli/**/*.ts'],
     rules: {
       'no-restricted-imports': [
         'error',

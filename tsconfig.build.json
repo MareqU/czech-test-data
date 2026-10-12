@@ -8,5 +8,5 @@
   },
   "include": ["src"],
   // The CLI needs Node.js types; it is checked by tsconfig.json.
-  "exclude": ["src/cli.ts"]
+  "exclude": ["src/cli.ts", "src/cli"]
 }
