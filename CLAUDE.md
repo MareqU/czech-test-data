@@ -8,6 +8,8 @@ Full specification: `docs/spec.md`. Read it before starting any milestone.
 - `npm run build` – tsdown: library (ESM + CJS + types) and CLI (`dist/cli.mjs`, ESM only) into `dist/`,
   then publint and attw check the package
 - `npm test` – Vitest (unit + property-based tests with fast-check); `npm run test:watch`
+- `npm run test:cross` – cross-check of our validators against other npm libraries (dev dependencies only);
+  not in `check`, a new disagreement is investigated by hand and listed in `EXPECTED` with its reason
 - `npm run coverage` – coverage report; fails if any `src/**/validate*.ts` is below 100 % branches
 - `npm run lint` – ESLint (strict type-checked, complexity limits, TSDoc required on public API in `src/`;
   in `src/` bans `Math.random`, `Date.now`, `fetch`, `node:*` imports and importing the CLI)
