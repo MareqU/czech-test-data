@@ -1,44 +1,48 @@
-// Result cards of the generator and verdicts of the validator.
+// Filled-in values (one character per box), stamps and notes, for the generator and the validator.
 import type { IdentifierInfo } from './catalog.js';
 import { copyText, h } from './dom.js';
 import type { Row } from './generate.js';
 import type { Mode } from './state.js';
 
-// The badge already names the fault (an invalid variant fails with the reason of the same name), so the verdict
-// only says whether the value passes.
-function verdict(row: Row): HTMLElement {
-  return row.valid
-    ? h('span', { class: 'verdict ok' }, h('span', { 'aria-hidden': 'true' }, '✓ '), 'projde validací')
-    : h('span', { class: 'verdict bad' }, h('span', { 'aria-hidden': 'true' }, '✗ '), 'neprojde validací');
+const graphemes = new Intl.Segmenter('cs', { granularity: 'grapheme' });
+
+/** A value written into boxes, one character each; a button copies it. Spaces stay visible as empty boxes. */
+export function boxes(value: string, copyable: boolean): HTMLElement {
+  const style = `--n: ${String(Array.from(graphemes.segment(value)).length)}`;
+  if (!copyable) {
+    return h('span', { class: 'box-scroll' }, h('span', { class: 'boxes', style }, value));
+  }
+  const button = h('button', { type: 'button', class: 'boxes', style, title: 'Kopírovat', 'aria-label': `${value}, kopírovat` }, value);
+  button.addEventListener('click', () => {
+    void copyText(value, `Zkopírováno: ${value}`);
+  });
+  return h('span', { class: 'box-scroll' }, button);
 }
 
-function description(info: IdentifierInfo, mode: Mode, row: Row): HTMLElement[] {
-  if (row.variant !== undefined) {
-    const texts = mode === 'edge' ? info.edge : info.invalid;
-    const tags = [h('span', { class: 'badge' }, row.variant)];
-    if (info.disputed.includes(row.variant)) {
-      tags.push(h('span', { class: 'badge disputed', title: 'Platné jen podle některých výkladů pravidel.' }, 'sporné'));
-    }
-    return [...tags, h('span', { class: 'desc' }, texts[row.variant] ?? '')];
-  }
+/** The stamp of a validator verdict. */
+export function stamp(valid: boolean): HTMLElement {
+  return h('span', { class: valid ? 'stamp' : 'stamp bad' }, valid ? 'Platné' : 'Neplatné');
+}
+
+function note(info: IdentifierInfo, mode: Mode, row: Row): HTMLElement {
   // A random invalid variant is reported by the validator: its reason has the variant's name (core contract).
-  if (mode === 'invalid' && row.reason !== undefined) {
-    return [h('span', { class: 'badge' }, row.reason), h('span', { class: 'desc' }, info.invalid[row.reason] ?? '')];
+  const name = row.variant ?? (mode === 'invalid' ? row.reason : undefined);
+  if (name === undefined) {
+    return h('span', { class: 'note muted' }, mode === 'edge' ? 'Náhodná hraniční varianta.' : '');
   }
-  return mode === 'edge' ? [h('span', { class: 'desc muted' }, 'Náhodná hraniční varianta.')] : [];
+  const texts = mode === 'edge' ? info.edge : info.invalid;
+  const parts: (Node | string)[] = [h('code', { class: 'variant' }, name)];
+  if (info.disputed.includes(name)) {
+    parts.push(h('span', { class: 'disputed', title: 'Platné jen podle některých výkladů pravidel.' }, 'sporné'));
+  }
+  parts.push(h('span', {}, texts[name] ?? ''));
+  return h('span', { class: 'note' }, ...parts);
 }
 
-/** The generated values as cards; clicking a value copies it. */
+/** The generated values; clicking a value copies it. */
 export function renderResults(list: HTMLElement, info: IdentifierInfo, mode: Mode, rows: readonly Row[]): void {
   list.replaceChildren(
-    ...rows.map((row) => {
-      const value = h('button', { type: 'button', class: 'value', title: 'Kopírovat' }, row.value);
-      value.addEventListener('click', () => {
-        void copyText(row.value, `Zkopírováno: ${row.value}`);
-      });
-      const meta = h('div', { class: 'meta' }, ...description(info, mode, row), verdict(row));
-      return h('li', { class: `card kind-${mode}` }, value, meta);
-    }),
+    ...rows.map((row) => h('li', { class: `entry kind-${mode}` }, h('span', { class: 'filled' }, boxes(row.value, true), stamp(row.valid)), note(info, mode, row))),
   );
 }
 
@@ -46,18 +50,11 @@ export function renderResults(list: HTMLElement, info: IdentifierInfo, mode: Mod
 export function renderVerdicts(list: HTMLElement, info: IdentifierInfo, rows: readonly Row[]): void {
   list.replaceChildren(
     ...rows.map((row) => {
-      // `white-space: pre` and a background in CSS make leading or trailing spaces visible.
-      const shown = h('code', { class: 'input' }, row.value);
-      if (row.valid) {
-        return h('li', { class: 'verdict-row ok' }, shown, h('span', {}, '✓ platné'));
-      }
       const reason = row.reason ?? '';
-      return h(
-        'li',
-        { class: 'verdict-row bad' },
-        shown,
-        h('span', {}, '✗ ', h('code', {}, reason), ' – ', info.reasons[reason] ?? ''),
-      );
+      const text = row.valid
+        ? h('span', { class: 'note muted' }, 'Odpovídá pravidlům.')
+        : h('span', { class: 'note' }, h('code', { class: 'variant' }, reason), h('span', {}, info.reasons[reason] ?? ''));
+      return h('li', { class: 'entry kind-invalid' }, h('span', { class: 'filled' }, boxes(row.value, false), stamp(row.valid)), text);
     }),
   );
 }

@@ -3,101 +3,126 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>České testovací údaje – rodné číslo, IČO, DIČ, účet, IBAN a další</title>
+    <title>Testovací údaje pro české formuláře</title>
     <meta
       name="description"
-      content="Platná, hraniční a nevalidní česká testovací data: rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN a EIC. Každá chyba má jméno a validátor řekne proč."
+      content="Platné, hraniční a nevalidní česká testovací data: rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN a EIC. Každá chyba má jméno a validátor řekne proč."
     />
-    <meta name="theme-color" content="#4338ca" />
+    <meta name="theme-color" content="#e8eeec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c1311" media="(prefers-color-scheme: dark)" />
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234338ca'/%3E%3Cpath d='M9 17l4 4 10-10' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='26' height='26' fill='white' stroke='%230f6b5c' stroke-width='3'/%3E%3Cpath d='M9 9l14 14M23 9L9 23' stroke='%230f6b5c' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E"
     />
-    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
-    <a class="skip" href="#tool">Přeskočit na generátor</a>
-    <header class="hero">
-      <div class="wrap">
-        <nav class="topbar" aria-label="Odkazy">
-          <span class="brand">czech-test-data</span>
-          <span class="links">
+    <a class="skip" href="#tool">Přeskočit na vyplňování</a>
+    <div class="desk">
+      <article class="sheet">
+        <header class="sheet-head">
+          <div class="issuer">
+            <span class="issuer-name">czech-test-data</span>
+            <span class="issuer-sub">knihovna a příkazová řádka pro automatické testy</span>
+          </div>
+          <nav class="links" aria-label="Odkazy">
             <a href="https://github.com/MareqU/czech-test-data">GitHub</a>
             <a href="https://www.npmjs.com/package/czech-test-data">npm</a>
-          </span>
-        </nav>
-        <h1>Testovací data, která najdou chyby</h1>
-        <p class="lead">
-          Platná, hraniční i schválně chybná česká data pro ruční i automatické testy. Každá chyba má jméno
-          a validátor vám řekne, proč hodnota neprošla.
-        </p>
-        <p class="examples-title">Projde tohle vaším formulářem?</p>
-        <ul id="examples" class="examples"></ul>
-      </div>
-    </header>
+          </nav>
+          <div class="form-no" aria-hidden="true">Vzor<br /><strong>CTD 1</strong></div>
+        </header>
 
-    <main id="tool" class="wrap">
-      <section class="panel" aria-labelledby="pick-title">
-        <h2 id="pick-title" class="visually-hidden">Co generovat</h2>
-        <div id="identifiers" class="ids" role="tablist" aria-label="Identifikátor"></div>
-        <p id="hint" class="hint"></p>
-        <p id="warning" class="warning" hidden></p>
-
-        <div id="modes" class="modes" role="radiogroup" aria-label="Druh hodnot"></div>
-        <p id="mode-hint" class="mode-hint"></p>
-
-        <div id="controls" class="controls"></div>
-
-        <div class="actions">
-          <button id="regenerate" class="button primary" type="button">Nové hodnoty</button>
-          <button id="copy-all" class="button" type="button">Kopírovat vše</button>
-          <button id="copy-link" class="button" type="button">Kopírovat odkaz</button>
+        <div class="title-block">
+          <h1>Testovací údaje pro české formuláře</h1>
+          <p class="lead">
+            Platné, hraniční i schválně chybné hodnoty pro ruční i automatické testy. Každá chyba má jméno a validátor
+            řekne, proč hodnota neprošla.
+          </p>
         </div>
 
-        <p id="error" class="error" role="alert" hidden></p>
-        <ol id="results" class="results" aria-live="polite"></ol>
-        <p class="tip">Kliknutím na hodnotu ji zkopírujete. Odkaz vrátí přesně tytéž hodnoty.</p>
-      </section>
+        <section class="sample" aria-labelledby="sample-title">
+          <h2 id="sample-title" class="part-title"><span class="part-no">Ukázka</span>Projde tohle vaším formulářem?</h2>
+          <ul id="examples" class="sample-rows"></ul>
+        </section>
 
-      <section class="panel" aria-labelledby="validate-title">
-        <h2 id="validate-title">Ověřit hodnotu</h2>
-        <p class="hint">
-          Vložte jednu nebo víc hodnot, každou na řádek. Mezery se neořezávají – mezera navíc je také chyba.
-        </p>
-        <label class="visually-hidden" for="validate-input">Hodnoty k ověření</label>
-        <textarea id="validate-input" rows="3" spellcheck="false" autocomplete="off"></textarea>
-        <ol id="validate-results" class="verdicts" aria-live="polite"></ol>
-      </section>
+        <section id="tool" class="part" aria-labelledby="part1-title">
+          <h2 id="part1-title" class="part-title"><span class="part-no">Oddíl 1</span>Co vyplnit</h2>
 
-      <section class="panel" aria-labelledby="code-title">
-        <h2 id="code-title">Totéž v automatických testech</h2>
-        <p class="hint">
-          Knihovna pro TypeScript a JavaScript a příkazová řádka. Stejný seed dává stejné hodnoty jako tady.
-        </p>
-        <div class="snippet">
-          <div class="snippet-head"><span>TypeScript</span><button class="button small" type="button" data-copy="code">Kopírovat</button></div>
-          <pre><code id="code"></code></pre>
-        </div>
-        <div class="snippet">
-          <div class="snippet-head"><span>Příkazová řádka</span><button class="button small" type="button" data-copy="cli">Kopírovat</button></div>
-          <pre><code id="cli"></code></pre>
-        </div>
-        <p class="hint">Instalace: <code>npm install --save-dev czech-test-data</code></p>
-      </section>
-    </main>
+          <div class="row">
+            <span class="row-label" id="ids-label">Druh údaje</span>
+            <div id="identifiers" class="checks" role="radiogroup" aria-labelledby="ids-label"></div>
+          </div>
+          <p id="hint" class="hint"></p>
 
-    <footer class="footer">
-      <div class="wrap">
-        <p>
-          Vše běží ve vašem prohlížeči, nic se neodesílá. Data jsou jen pro testovací systémy: platné rodné číslo nebo
-          telefon může patřit skutečnému člověku.
-        </p>
-        <p>
-          Pravidla podle oficiálních zdrojů (zákon o evidenci obyvatel, ČNB, ČTÚ, OTE, ENTSO-E) –
-          <a href="https://github.com/MareqU/czech-test-data/tree/main/docs/rules">přehled pravidel</a>. Licence MIT.
-        </p>
-      </div>
-    </footer>
+          <div class="row">
+            <span class="row-label" id="modes-label">Hodnoty</span>
+            <div id="modes" class="checks" role="radiogroup" aria-labelledby="modes-label"></div>
+          </div>
+          <p id="mode-hint" class="hint"></p>
+
+          <div id="controls" class="controls"></div>
+        </section>
+
+        <section class="part" aria-labelledby="part2-title">
+          <h2 id="part2-title" class="part-title"><span class="part-no">Oddíl 2</span>Vyplněné hodnoty</h2>
+          <p id="warning" class="warning" hidden></p>
+          <div class="actions">
+            <button id="regenerate" class="button primary" type="button">Nové hodnoty</button>
+            <button id="copy-all" class="button" type="button">Kopírovat vše</button>
+            <button id="copy-link" class="button" type="button">Kopírovat odkaz</button>
+          </div>
+          <p id="error" class="error" role="alert" hidden></p>
+          <ol id="results" class="entries" aria-live="polite"></ol>
+          <p class="hint small">Kliknutím na hodnotu ji zkopírujete. Odkaz vrátí přesně tytéž hodnoty.</p>
+        </section>
+
+        <section class="part" aria-labelledby="part3-title">
+          <h2 id="part3-title" class="part-title"><span class="part-no">Oddíl 3</span>Ověření hodnoty</h2>
+          <p class="hint">
+            Vložte jednu nebo víc hodnot, každou na řádek. Mezery se neořezávají, mezera navíc je také chyba.
+          </p>
+          <label class="visually-hidden" for="validate-input">Hodnoty k ověření</label>
+          <textarea id="validate-input" rows="3" spellcheck="false" autocomplete="off"></textarea>
+          <ol id="validate-results" class="entries" aria-live="polite"></ol>
+        </section>
+
+        <section class="part" aria-labelledby="part4-title">
+          <h2 id="part4-title" class="part-title"><span class="part-no">Příloha</span>Totéž v automatických testech</h2>
+          <p class="hint">
+            Knihovna pro TypeScript a JavaScript a příkazová řádka. Stejný seed dává stejné hodnoty jako tady.
+          </p>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span>TypeScript</span>
+              <button class="button small" type="button" data-copy="code">Kopírovat</button>
+            </div>
+            <pre><code id="code"></code></pre>
+          </div>
+          <div class="snippet">
+            <div class="snippet-head">
+              <span>Příkazová řádka</span>
+              <button class="button small" type="button" data-copy="cli">Kopírovat</button>
+            </div>
+            <pre><code id="cli"></code></pre>
+          </div>
+          <p class="hint">Instalace: <code>npm install --save-dev czech-test-data</code></p>
+        </section>
+
+        <footer class="notice">
+          <h2 class="notice-title">Poučení</h2>
+          <ol>
+            <li>Vše běží ve vašem prohlížeči, nic se neodesílá.</li>
+            <li>
+              Údaje jsou jen pro testovací systémy. Platné rodné číslo nebo telefon může patřit skutečnému člověku; na
+              vygenerovaná čísla nevolejte.
+            </li>
+            <li>
+              Pravidla vycházejí z oficiálních zdrojů (zákon o evidenci obyvatel, ČNB, ČTÚ, OTE, ENTSO-E),
+              <a href="https://github.com/MareqU/czech-test-data/tree/main/docs/rules">přehled pravidel</a>. Licence MIT.
+            </li>
+          </ol>
+        </footer>
+      </article>
+    </div>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

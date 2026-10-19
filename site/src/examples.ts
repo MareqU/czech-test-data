@@ -1,13 +1,15 @@
-// The hero examples: real values that break typical forms, each one opens the generator on that variant.
+// The sample at the top: a short filled-in form with real values that break typical forms. Each row opens the
+// generator on that variant.
 import { createCz } from 'czech-test-data';
 import { h } from './dom.js';
+import { boxes, stamp } from './results.js';
 import type { State } from './state.js';
 
-/** A fixed seed, so the hero shows the same values on every visit. */
+/** A fixed seed, so the sample shows the same values on every visit. */
 const EXAMPLE_SEED = 2026;
 
 interface Example {
-  readonly title: string;
+  readonly field: string;
   readonly text: string;
   readonly valid: boolean;
   readonly patch: Pick<State, 'id' | 'mode' | 'variant'>;
@@ -18,51 +20,50 @@ const cz = createCz({ seed: EXAMPLE_SEED, referenceDate: '2026-01-01' });
 
 const EXAMPLES: readonly Example[] = [
   {
-    title: 'IČO s nulou na začátku',
-    text: 'Platné. Kdo ukládá IČO jako číslo, nulu ztratí.',
+    field: 'IČO',
+    text: 'Začíná nulou. Kdo ukládá IČO jako číslo, nulu ztratí.',
     valid: true,
     patch: { id: 'ico', mode: 'edge', variant: 'leadingZeros' },
     value: () => cz.ico.edge('leadingZeros'),
   },
   {
-    title: 'Rodné číslo s měsícem +20',
-    text: 'Platné od roku 2004, přesto ho řada formulářů odmítne.',
+    field: 'Rodné číslo',
+    text: 'Měsíc zvýšený o 20 je platný od roku 2004, přesto ho řada formulářů odmítne.',
     valid: true,
     patch: { id: 'birthNumber', mode: 'edge', variant: 'month+20' },
     value: () => cz.birthNumber.edge('month+20'),
   },
   {
-    title: 'Mobil z řady 71x',
-    text: 'Mobilní teprve od roku 2022, starší knihovny ho neznají.',
+    field: 'Telefon',
+    text: 'Řada 71x je mobilní teprve od roku 2022, starší knihovny ji neznají.',
     valid: true,
     patch: { id: 'phone', mode: 'edge', variant: 'newMobileRange' },
     value: () => cz.phone.edge('newMobileRange'),
   },
   {
-    title: 'Účet ze samých nul',
-    text: 'Neplatný, ale projde naivní kontrolou mod 11.',
+    field: 'Číslo účtu',
+    text: 'Samé nuly projdou naivní kontrolou mod 11, přitom takový účet neexistuje.',
     valid: false,
     patch: { id: 'bankAccount', mode: 'invalid', variant: 'zeroNumber' },
     value: () => cz.bankAccount.invalid('zeroNumber'),
   },
 ];
 
-/** Renders the example cards; `open` switches the generator to the example's variant. */
+/** Renders the sample rows; `open` switches the generator to the example's variant. */
 export function renderExamples(list: HTMLElement, open: (patch: Example['patch']) => void): void {
   list.replaceChildren(
     ...EXAMPLES.map((example) => {
-      const button = h(
+      const row = h(
         'button',
-        { type: 'button', class: `example ${example.valid ? 'is-valid' : 'is-invalid'}` },
-        h('span', { class: 'example-value' }, example.value()),
-        h('span', { class: 'example-title' }, example.title),
-        h('span', { class: 'example-text' }, example.text),
-        h('span', { class: 'example-cta' }, 'Vygenerovat další →'),
+        { type: 'button', class: 'sample-row' },
+        h('span', { class: 'sample-label' }, example.field),
+        h('span', { class: 'filled' }, boxes(example.value(), false), stamp(example.valid)),
+        h('span', { class: 'sample-text' }, example.text, ' ', h('span', { class: 'sample-cta' }, 'Vygenerovat další takové →')),
       );
-      button.addEventListener('click', () => {
+      row.addEventListener('click', () => {
         open(example.patch);
       });
-      return h('li', {}, button);
+      return h('li', {}, row);
     }),
   );
 }

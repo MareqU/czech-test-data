@@ -23,59 +23,67 @@ export const MODES: Readonly<Record<Mode, { readonly label: string; readonly hin
   },
 };
 
-/** Identifier tabs. */
+/** A form tick box acting as a radio button; `extraClass` styles it, `children` is its label. */
+function check(checked: boolean, extraClass: string, onPick: () => void, ...children: (Node | string)[]): HTMLButtonElement {
+  const button = h(
+    'button',
+    { type: 'button', role: 'radio', class: `check ${extraClass}`.trim(), 'aria-checked': String(checked) },
+    ...children,
+  );
+  button.addEventListener('click', onPick);
+  return button;
+}
+
+/** The identifier tick boxes. */
 export function renderIdentifiers(container: HTMLElement, state: State, update: Update): void {
   container.replaceChildren(
-    ...IDENTIFIERS.map((info) => {
-      const selected = info.id === state.id;
-      const tab = h('button', { type: 'button', role: 'tab', class: 'id', 'aria-selected': String(selected) }, info.label);
-      tab.addEventListener('click', () => {
+    ...IDENTIFIERS.map((info) =>
+      check(info.id === state.id, '', () => {
         update((current) => withIdentifier(current, info.id), 'controls');
-      });
-      return tab;
-    }),
+      }, info.label),
+    ),
   );
 }
 
-/** The valid / edge / invalid switch. */
+/** The valid / edge / invalid tick boxes. */
 export function renderModes(container: HTMLElement, state: State, update: Update): void {
   container.replaceChildren(
-    ...(Object.keys(MODES) as Mode[]).map((mode) => {
-      const checked = mode === state.mode;
-      const button = h(
-        'button',
-        { type: 'button', role: 'radio', class: `mode mode-${mode}`, 'aria-checked': String(checked) },
-        MODES[mode].label,
-      );
-      button.addEventListener('click', () => {
+    ...(Object.keys(MODES) as Mode[]).map((mode) =>
+      check(mode === state.mode, `check-${mode}`, () => {
         update((current) => withMode(current, mode), 'controls');
-      });
-      return button;
-    }),
+      }, MODES[mode].label),
+    ),
   );
 }
 
-function variantChip(state: State, update: Update, value: string, label: string): HTMLButtonElement {
-  const chip = h('button', { type: 'button', class: 'chip', 'aria-pressed': String(state.variant === value) }, label);
-  chip.addEventListener('click', () => {
+function variantCheck(info: IdentifierInfo, state: State, update: Update, value: string): HTMLButtonElement {
+  const named = value !== 'all' && value !== 'random';
+  const label: (Node | string)[] = named ? [value] : [value === 'all' ? 'všechny varianty' : 'náhodná'];
+  if (info.disputed.includes(value)) {
+    label.push(h('span', { class: 'tag' }, 'sporné'));
+  }
+  return check(state.variant === value, named ? 'mono' : '', () => {
     update((current) => ({ ...current, variant: value }), 'controls');
-  });
-  return chip;
+  }, ...label);
 }
 
 function variantPicker(info: IdentifierInfo, state: State, update: Update): HTMLElement {
   const texts = state.mode === 'edge' ? info.edge : info.invalid;
-  const chips = [
-    variantChip(state, update, 'all', 'Všechny varianty'),
-    variantChip(state, update, 'random', 'Náhodná'),
-    ...Object.keys(texts).map((name) =>
-      variantChip(state, update, name, info.disputed.includes(name) ? `${name} (sporné)` : name),
-    ),
-  ];
-  const selected = texts[state.variant];
+  const checks = ['all', 'random', ...Object.keys(texts)].map((value) => variantCheck(info, state, update, value));
   const description =
-    selected ?? (state.variant === 'random' ? 'Každá hodnota z náhodně vybrané varianty.' : 'Od každé varianty zvolený počet hodnot.');
-  return h('fieldset', { class: 'variants' }, h('legend', {}, 'Varianta'), h('div', { class: 'chips' }, ...chips), h('p', { class: 'variant-hint' }, description));
+    texts[state.variant] ??
+    (state.variant === 'random' ? 'Každá hodnota z náhodně vybrané varianty.' : 'Od každé varianty zvolený počet hodnot.');
+  return h(
+    'fieldset',
+    { class: 'variants' },
+    h('legend', {}, 'Varianta'),
+    h(
+      'div',
+      { class: 'variant-body' },
+      h('div', { class: 'checks', role: 'radiogroup', 'aria-label': 'Varianta' }, ...checks),
+      h('p', { class: 'variant-hint' }, description),
+    ),
+  );
 }
 
 function optionField(option: OptionInfo, state: State, update: Update): HTMLElement {
@@ -153,7 +161,7 @@ export function renderControls(container: HTMLElement, state: State, update: Upd
     state.mode === 'valid'
       ? info.options.length > 0
         ? h('div', { class: 'fields' }, ...info.options.map((option) => optionField(option, state, update)))
-        : h('p', { class: 'variant-hint' }, 'Tento identifikátor nemá žádné volby.')
+        : h('p', { class: 'fields variant-hint' }, 'Tento údaj nemá žádné volby.')
       : variantPicker(info, state, update);
   container.replaceChildren(specific, commonFields(info, state, update));
   syncDisabled(container, state);

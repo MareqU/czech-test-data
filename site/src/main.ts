@@ -1,4 +1,14 @@
 // Entry of the page: holds the state, keeps it in the URL and renders everything from it.
+// Fonts are bundled (no request to a font service), in line with "nothing leaves the browser".
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-sans-condensed/500.css';
+import '@fontsource/ibm-plex-sans-condensed/600.css';
+import '@fontsource/ibm-plex-sans-condensed/700.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+import './style.css';
 import { createCz } from 'czech-test-data';
 import { infoOf } from './catalog.js';
 import { MODES, renderControls, renderIdentifiers, renderModes, syncDisabled } from './controls.js';
@@ -52,7 +62,6 @@ function renderControlsAll(): void {
   warning.textContent = info.warning ?? '';
   warning.hidden = info.warning === undefined;
   byId('mode-hint').textContent = MODES[state.mode].hint;
-  document.body.dataset.mode = state.mode;
   renderControls(byId('controls'), state, update);
 }
 
@@ -91,7 +100,7 @@ function wireActions(): void {
 
 renderExamples(byId('examples'), (patch) => {
   update((current) => ({ ...withMode({ ...current, id: patch.id, options: {} }, patch.mode), variant: patch.variant }), 'controls');
-  byId('tool').scrollIntoView({ behavior: 'smooth' });
+  byId('tool').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 });
 wireActions();
 // The URL changes only after the first change, so a plain visit keeps a clean address.
