@@ -92,6 +92,8 @@ export interface Cz {
  *
  * Same package major version + same seed + same sequence of calls = same output; for date-dependent
  * variants also the same `referenceDate` (docs/rules/core.md section 2).
+ * A minor version may add variants, which can change `edge()` and `invalid()` without a variant name and the
+ * values after them (amendment A5); calls with a variant name stay stable.
  *
  * @example
  * ```ts

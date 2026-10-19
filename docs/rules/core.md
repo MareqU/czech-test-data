@@ -53,6 +53,12 @@ contract the test-writer tests against and the implementer implements. Identifie
 - Consequence: `createBirthNumber({ seed: 42 })` yields exactly the same values as `cz.birthNumber` of
   `createCz({ seed: 42 })`, regardless of other identifiers used on `cz`.
 - Changing any output for a given seed and call sequence is a **breaking change** (major version).
+- **Exception for new variants (amendment A5):** a minor version may add edge or invalid variants. That may change
+  the output of calls without a variant name (`edge()`, `invalid()`), of the CLI's `all`, and of every later call of
+  the same identifier after such a call. Calls with a variant name and plain generation stay stable, and so do all
+  values drawn before the first unnamed call. Bundled data updates (e.g. the ČNB bank codes) may change validator
+  results in a minor version, never generator output (docs/rules/bankAccount.md section 9 "Frozen constants" and decision 14). Error message texts are
+  not part of the contract.
 - Snapshot tests pin the first outputs for seeds `0`, `1`, `42` and `4294967295`.
 
 ## 3. Entry points and API shape
@@ -270,6 +276,11 @@ docs/rules/<id>.md
   3. `hasNonDigit(value)` in `src/core/letters.ts` (true if `value` contains anything but `0–9`), moved from
      `src/ico/validate.ts`. ico, dic and ean use it; dic no longer imports from `src/ico/` for it.
   Closes review nits ean N1/N2, iban N2, eic N2.
+- **A5 – New variants in minor versions (2026-10-19, approved by Marek the same day, before v1.0.0):** section 2
+  now allows adding variants in a minor version; only unnamed calls, `all` and the values after an unnamed call may
+  change. Also approved: disputed variants (dic `lowercasePrefix`, iban `lowercase`) stay in `edgeVariants`, in
+  unnamed `edge()` and in `all`, and the README says so; the variant names for "another country" (`foreignPrefix`,
+  `wrongCountry`, `wrongCountryCode`, `wrongPrefix`) stay as approved per identifier.
 - **Q5 – PRNG algorithm:** SplitMix32 variant above. The author of mulberry32 wrote (10 Nov 2022, link in
   section 1) that mulberry32 "isn't equidistributed … and actually can't produce about 1/3 of all possible
   `uint32_t` numbers"; the SplitMix32 variant produces every 32-bit value exactly once per period.

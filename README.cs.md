@@ -189,7 +189,10 @@ platný účet nemusí v bance existovat. Každý identifikátor má validátor 
 - `createCz({ seed })` přijímá celé číslo od 0 do 2³² − 1. Bez seedu se použije náhodný a je dostupný jako
   `cz.seed`, takže ho můžete zalogovat a selhaný běh zopakovat.
 - Stejná hlavní verze balíčku + stejný seed + stejné pořadí volání = stejné hodnoty. Změna výstupu pro stejný seed je
-  breaking change (nová hlavní verze).
+  breaking change (nová hlavní verze), s jedinou výjimkou: v minor verzi mohou přibýt hraniční nebo nevalidní
+  varianty. To může změnit, co vrátí `edge()` a `invalid()` bez názvu varianty a `all` v CLI, a také všechny další
+  hodnoty téhož identifikátoru. Když variantu pojmenujete, například `cz.ico.edge('leadingZeros')`, hodnoty zůstanou
+  stejné.
 - Každý identifikátor má vlastní proud: další volání `cz.phone()` nezmění, co vrátí `cz.ico()`.
 - Pravidla závislá na datu (například budoucí datum narození) používají `referenceDate`, výchozí je dnešek v UTC
   a je dostupný jako `cz.referenceDate`. Ve snapshot testech ho zafixujte:
@@ -210,9 +213,9 @@ validateIco('25596641'); // { valid: true }
 ```
 
 Vstupní body: `czech-test-data/birthNumber`, `/ico`, `/dic`, `/bankAccount`, `/iban`, `/phone`, `/postalCode`,
-`/ean`, `/eic`. Balíček má `"sideEffects": false`, takže bundlery odstraní nepoužité identifikátory i z hlavního
-vstupu. Rozpočty velikosti hlídá CI: každý identifikátor má nejvýš 2 kB (minifikováno + gzip) nad sdíleným jádrem
-o velikosti 2,5 kB.
+`/ean`, `/eic`. Použijte je, když záleží na velikosti bundlu: `createCz` obsahuje všech devět identifikátorů (asi
+8 kB, minifikováno + gzip), jeden podimport má nejvýš 2 kB nad sdíleným jádrem o velikosti 2,5 kB. Tyto rozpočty
+hlídá CI.
 
 ## CLI
 
@@ -243,7 +246,7 @@ Návratový kód: 0, když jsou všechny hodnoty platné, 1, když je aspoň jed
 
 Názvy v CLI jsou v kebab case (`birth-number`, `bank-account`, `postal-code`), v knihovně v camel case.
 Varianty označené jako **sporné** jsou podle některých výkladů pravidel platné a podle jiných ne; použijte je, jen
-pokud je má vaše aplikace přijímat.
+pokud je má vaše aplikace přijímat. Jsou součástí `edgeVariants`, náhodného `edge()` bez názvu i `--edge all` v CLI.
 
 ### Rodné číslo – `birthNumber`
 
@@ -341,7 +344,9 @@ Pravidla, oficiální zdroje a známé vzorky každého identifikátoru jsou v [
 - **PSČ** mají správný tvar, ale většina z nich v seznamu České pošty neexistuje.
 - **Kódy EIC** jsou testovací data, ne kódy přidělené skutečným odběrným místům. Nepoužívejte je ve skutečné výměně dat.
 - **Kódy bank** jsou přibalený snapshot číselníku ČNB (verze 255, platná od 1. 10. 2026). Knihovna nikdy nejde
-  na síť, takže novější kódy bank budou až do dalšího vydání `unknownBankCode`.
+  na síť, takže novější kódy bank budou až do dalšího vydání `unknownBankCode`. Aktualizované kódy bank vycházejí
+  v minor verzích: mění výsledky validátoru, nikdy vygenerované hodnoty.
+- **Chybové hlášky** (texty vyhozených chyb a hlášek CLI) nejsou součástí API a mohou se změnit v jakékoli verzi.
 
 ## Licence
 

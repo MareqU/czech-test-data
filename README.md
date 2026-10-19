@@ -187,7 +187,9 @@ from `czech-test-data/ico`.
 - `createCz({ seed })` takes an integer from 0 to 2³² − 1. Without a seed, a random one is used and exposed as
   `cz.seed`, so you can log it and reproduce a failing run.
 - Same package major version + same seed + same sequence of calls = same values. A change of output for the same
-  seed is a breaking change (major version).
+  seed is a breaking change (major version), with one exception: a minor version may add edge or invalid variants.
+  That can change what `edge()` and `invalid()` without a variant name and the CLI's `all` return, and every later
+  value of the same identifier. Name the variant, as in `cz.ico.edge('leadingZeros')`, and the values stay stable.
 - Each identifier has its own stream: extra `cz.phone()` calls do not change what `cz.ico()` returns.
 - Date-dependent rules (future birth dates, for example) use `referenceDate`, by default today in UTC and exposed
   as `cz.referenceDate`. Pin it in snapshot tests: `createCz({ seed: 42, referenceDate: '2026-01-01' })`.
@@ -207,9 +209,8 @@ validateIco('25596641'); // { valid: true }
 ```
 
 Entry points: `czech-test-data/birthNumber`, `/ico`, `/dic`, `/bankAccount`, `/iban`, `/phone`, `/postalCode`,
-`/ean`, `/eic`. The package is marked `"sideEffects": false`, so bundlers also drop unused identifiers from the
-main entry. Size budgets are enforced in CI: each identifier is at most 2 kB min+gzip on top of a 2.5 kB shared
-core.
+`/ean`, `/eic`. Import from them when bundle size matters: `createCz` contains all nine identifiers (about 8 kB
+min+gzip), while one subpath is at most 2 kB on top of a 2.5 kB shared core. These budgets are enforced in CI.
 
 ## CLI
 
@@ -240,7 +241,8 @@ Exit code: 0 when all values are valid, 1 when at least one is invalid, 2 on a u
 
 CLI names are in kebab case (`birth-number`, `bank-account`, `postal-code`), library names in camel case.
 Variants marked **disputed** are valid by some readings of the rules and invalid by others; use them only if your
-application is meant to accept them.
+application is meant to accept them. They are included in `edgeVariants`, in `edge()` without a name and in the CLI's
+`--edge all`.
 
 ### Birth number (rodné číslo) – `birthNumber`
 
@@ -340,7 +342,9 @@ The rules, official sources and known samples of every identifier are in [`docs/
 - **Postal codes** are well-formed, but most of them do not exist in the Česká pošta list.
 - **EIC codes** are test data, not codes allocated to real supply points. Do not use them in real data exchange.
 - **Bank codes** are a bundled snapshot of the ČNB list (version 255, valid from 2026-10-01). The library never
-  goes online, so newer bank codes count as `unknownBankCode` until the next release.
+  goes online, so newer bank codes count as `unknownBankCode` until the next release. Updated bank codes come in
+  minor versions: they change validator results, never generated values.
+- **Error messages** (texts of thrown errors and CLI messages) are not part of the API and may change in any version.
 
 ## License
 
