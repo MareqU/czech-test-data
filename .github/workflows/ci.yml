@@ -55,3 +55,24 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+
+  site:
+    name: Web (site/)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            site/package-lock.json
+      - run: npm ci
+      # The site uses the package like a user does (file:.. dependency), so it needs the built dist/.
+      - run: npm run build
+      - run: npm ci
+        working-directory: site
+      # Types, lint (repo config), tests incl. code and CLI snippets against dist/, production build.
+      - run: npm run check
+        working-directory: site

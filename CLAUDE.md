@@ -17,6 +17,8 @@ Full specification: `docs/spec.md`. Read it before starting any milestone.
 - `npm run knip` – unused files, exports and dependencies
 - `npm run size` – size budget from `.size-limit.ts` (run after `build`)
 - `npm run check` – all of the above, same as CI; runs before `npm publish`
+- `site/` – web tool for manual testers (Vite + TS, Czech), its own package using the library via `file:..`;
+  `npm run check` inside `site/` after a root build. See `site/README.md`. Not part of the published package.
 
 Validator files must be named `validate*.ts` so the 100 % branch threshold applies to them.
 New public entry points go into `tsdown.config.ts` `entry`; the build then updates `exports` in package.json

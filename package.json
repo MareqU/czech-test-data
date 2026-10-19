@@ -84,7 +84,7 @@
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:cross": "vitest run --config vitest.cross.config.ts",
     "coverage": "vitest run --coverage",
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-pattern site/",
     "typecheck": "tsc -p tsconfig.build.json && tsc",
     "knip": "knip",
     "check": "npm run typecheck && npm run lint && npm run knip && npm run coverage && npm run build && npm run test:e2e && npm run size",
