@@ -1,5 +1,9 @@
 # czech-test-data
 
+[![npm](https://img.shields.io/npm/v/czech-test-data)](https://www.npmjs.com/package/czech-test-data)
+[![CI](https://github.com/MareqU/czech-test-data/actions/workflows/ci.yml/badge.svg)](https://github.com/MareqU/czech-test-data/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/npm/l/czech-test-data)](LICENSE)
+
 **English** · [Česky](README.cs.md)
 
 Valid, edge-case and invalid Czech test data for automated tests: rodné číslo (birth number), IČO, DIČ,
@@ -13,8 +17,6 @@ bank account, IBAN, phone number, PSČ (postal code), electricity EAN and gas EI
 - **Library and CLI** in one package. TypeScript types included, ESM and CommonJS.
 
 License plates (SPZ) and VIN are planned for v1.1.
-
-> **Status:** under development, not published on npm yet.
 
 > **Warning:** a randomly generated valid birth number (rodné číslo) or phone number may belong to a real
 > person. No fictional phone range exists in Czechia, so never call or text generated numbers. Use the generated
