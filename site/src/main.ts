@@ -1,13 +1,22 @@
 // Entry of the page: holds the state, keeps it in the URL and renders everything from it.
 // Fonts are bundled (no request to a font service), in line with "nothing leaves the browser".
-import '@fontsource/ibm-plex-sans/400.css';
-import '@fontsource/ibm-plex-sans/500.css';
-import '@fontsource/ibm-plex-sans/600.css';
-import '@fontsource/ibm-plex-sans-condensed/500.css';
-import '@fontsource/ibm-plex-sans-condensed/600.css';
-import '@fontsource/ibm-plex-sans-condensed/700.css';
-import '@fontsource/ibm-plex-mono/500.css';
-import '@fontsource/ibm-plex-mono/600.css';
+// Only the Latin subsets: Czech needs latin-ext, and the other scripts would only grow the CSS.
+import '@fontsource/ibm-plex-sans/latin-400.css';
+import '@fontsource/ibm-plex-sans/latin-ext-400.css';
+import '@fontsource/ibm-plex-sans/latin-500.css';
+import '@fontsource/ibm-plex-sans/latin-ext-500.css';
+import '@fontsource/ibm-plex-sans/latin-600.css';
+import '@fontsource/ibm-plex-sans/latin-ext-600.css';
+import '@fontsource/ibm-plex-sans-condensed/latin-500.css';
+import '@fontsource/ibm-plex-sans-condensed/latin-ext-500.css';
+import '@fontsource/ibm-plex-sans-condensed/latin-600.css';
+import '@fontsource/ibm-plex-sans-condensed/latin-ext-600.css';
+import '@fontsource/ibm-plex-sans-condensed/latin-700.css';
+import '@fontsource/ibm-plex-sans-condensed/latin-ext-700.css';
+import '@fontsource/ibm-plex-mono/latin-500.css';
+import '@fontsource/ibm-plex-mono/latin-ext-500.css';
+import '@fontsource/ibm-plex-mono/latin-600.css';
+import '@fontsource/ibm-plex-mono/latin-ext-600.css';
 import './style.css';
 import { createCz } from 'czech-test-data';
 import { infoOf } from './catalog.js';
