@@ -16,7 +16,9 @@ Full specification: `docs/spec.md`. Read it before starting any milestone.
 - `npm run typecheck` – `tsc` twice: `tsconfig.build.json` (library, no Node types) and `tsconfig.json` (everything)
 - `npm run knip` – unused files, exports and dependencies
 - `npm run size` – size budget from `.size-limit.ts` (run after `build`)
-- `npm run check` – all of the above, same as CI; runs before `npm publish`
+- `npm run check` – all of the above, same as CI; runs before `npm publish` and `npm stage publish`
+- Release: push tag `vX.Y.Z` → `release.yml` stages the version on npm (trusted publishing, provenance);
+  Marek approves it with 2FA (`npm stage approve <stage-id>` or Staged Packages on npmjs.com)
 
 Validator files must be named `validate*.ts` so the 100 % branch threshold applies to them.
 New public entry points go into `tsdown.config.ts` `entry`; the build then updates `exports` in package.json
