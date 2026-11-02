@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   publish:
-    name: Publish to npm with provenance
+    name: Stage on npm with provenance
     runs-on: ubuntu-latest
     environment: npm
     permissions:
@@ -31,5 +31,7 @@ jobs:
             exit 1
           fi
       - run: npm ci
+      # Staged, not published: the version goes live only after a maintainer approves it with 2FA
+      # (`npm stage approve <stage-id>` or Staged Packages on npmjs.com). Needs npm CLI >= 11.15.
       # prepublishOnly runs the full check (types, lint, knip, coverage, build).
-      - run: npm publish --provenance --access public
+      - run: npm stage publish --provenance --access public
