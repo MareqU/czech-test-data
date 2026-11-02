@@ -1,5 +1,9 @@
 # czech-test-data
 
+[![npm](https://img.shields.io/npm/v/czech-test-data)](https://www.npmjs.com/package/czech-test-data)
+[![CI](https://github.com/MareqU/czech-test-data/actions/workflows/ci.yml/badge.svg)](https://github.com/MareqU/czech-test-data/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/npm/l/czech-test-data)](LICENSE)
+
 [English](README.md) · **Česky**
 
 Platná, hraniční a nevalidní česká testovací data pro automatické testy: rodné číslo, IČO, DIČ, číslo účtu, IBAN,
@@ -15,8 +19,6 @@ telefonní číslo, PSČ, EAN odběrného místa elektřiny a EIC odběrného m�
 - **Knihovna i CLI** v jednom balíčku. Typy pro TypeScript, ESM i CommonJS.
 
 SPZ a VIN jsou plánované pro v1.1.
-
-> **Stav:** ve vývoji, zatím není na npm.
 
 > **Upozornění:** náhodně vygenerované platné rodné číslo nebo telefonní číslo může patřit skutečnému člověku.
 > V Česku neexistuje fiktivní rozsah telefonních čísel, takže na vygenerovaná čísla nikdy nevolejte ani nepište SMS.
