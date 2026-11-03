@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { createCz } from 'czech-test-data';
 import { describe, expect, it } from 'vitest';
 import { LLMS_COMMANDS, renderLlms } from '../build/llms.js';
-import { cellHtml, escapeHtml, renderPages, USAGE } from '../build/pages.js';
+import { cellHtml, escapeHtml, renderPages, renderRobots, renderSitemap, SITE, USAGE } from '../build/pages.js';
 import { IDENTIFIERS } from '../src/catalog.js';
 import { generateRows, validateLines } from '../src/generate.js';
 import type { Row } from '../src/generate.js';
@@ -243,6 +243,24 @@ describe('pages', () => {
         expect(paths.has(target), `${page.path}: ${href}`).toBe(true);
       }
     }
+  });
+});
+
+describe('site address', () => {
+  const pages = renderPages();
+
+  it('gives every page its canonical address on the site, the same for sharing (og:url)', () => {
+    expect(pages.map((page) => page.url)).toEqual([SITE, ...IDENTIFIERS.map((info) => `${SITE}${info.slug}/`)]);
+    for (const page of pages) {
+      expect(page.html).toContain(`<link rel="canonical" href="${page.url}" />`);
+      expect(page.html).toContain(`<meta property="og:url" content="${page.url}" />`);
+    }
+  });
+
+  it('lists every page in the sitemap, which robots.txt points to', () => {
+    const sitemap = renderSitemap(pages);
+    expect([...sitemap.matchAll(/<loc>([^<]+)<\/loc>/gu)].map(([, loc]) => loc)).toEqual(pages.map((page) => page.url));
+    expect(renderRobots()).toContain(`Sitemap: ${SITE}sitemap.xml`);
   });
 });
 
