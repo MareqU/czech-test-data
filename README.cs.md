@@ -34,6 +34,7 @@ SPZ a VIN jsou plánované pro v1.1.
 - [Seed a reprodukovatelnost](#seed-a-reprodukovatelnost)
 - [Import jednoho identifikátoru](#import-jednoho-identifikátoru)
 - [CLI](#cli)
+- [Pro AI agenty](#pro-ai-agenty)
 - [Identifikátory](#identifikátory)
 - [Omezení](#omezení)
 
@@ -243,6 +244,23 @@ Volby generátoru se píšou v kebab case: `--gender`, `--birth-date`, `--bank-c
 
 `validate` čte hodnoty z argumentů, nebo ze standardního vstupu po jedné na řádek, a ke každé vypíše výsledek.
 Návratový kód: 0, když jsou všechny hodnoty platné, 1, když je aspoň jedna nevalidní, 2 při chybném použití.
+
+## Pro AI agenty
+
+Programovací agenti (Claude Code, Cursor, Codex a další) si česká čísla rádi vymýšlejí a vymyšlená čísla
+neprojdou kontrolním součtem. Pošlete agenta na tenhle balíček:
+
+- **Skill:** zkopírujte [`skills/czech-test-data/SKILL.md`](skills/czech-test-data/SKILL.md) do projektu, pro
+  Claude Code jako `.claude/skills/czech-test-data/SKILL.md`. Agent z něj ví, kdy balíček použít a jak.
+- **AGENTS.md nebo jiný soubor s pravidly:** přidejte řádek, třeba
+
+  ```markdown
+  Czech test data (rodné číslo, IČO, DIČ, bank account, IBAN, phone, PSČ, EAN, EIC): never make it up, generate it
+  with `npx czech-test-data <identifier>` (see `--help`) and check values with `npx czech-test-data validate`.
+  ```
+
+- **Webový nástroj** má `/llms.txt` s příkazy a názvy všech variant a na úvodní stránce jsou ukázkové hodnoty
+  přímo v HTML, takže je uvidí i agent, který stránku jen stáhne.
 
 ## Identifikátory
 

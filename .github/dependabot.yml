@@ -18,6 +18,19 @@ updates:
       - dependency-name: '@types/node'
         update-types:
           - 'version-update:semver-major'
+  - package-ecosystem: npm
+    directory: /site
+    schedule:
+      interval: weekly
+    groups:
+      site-dependencies:
+        patterns: ['*']
+    ignore:
+      # Same TypeScript line as the library (typescript-eslint support).
+      - dependency-name: typescript
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
   - package-ecosystem: github-actions
     directory: /
     schedule:

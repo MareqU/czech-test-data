@@ -32,6 +32,7 @@ License plates (SPZ) and VIN are planned for v1.1.
 - [Seeds and reproducibility](#seeds-and-reproducibility)
 - [Importing one identifier](#importing-one-identifier)
 - [CLI](#cli)
+- [For AI agents](#for-ai-agents)
 - [Identifiers](#identifiers)
 - [Limitations](#limitations)
 
@@ -238,6 +239,23 @@ Generator options are written in kebab case: `--gender`, `--birth-date`, `--bank
 
 `validate` reads values from the arguments, or from stdin one per line, and prints each value with its result.
 Exit code: 0 when all values are valid, 1 when at least one is invalid, 2 on a usage error.
+
+## For AI agents
+
+Coding agents (Claude Code, Cursor, Codex and others) tend to make up Czech identifiers, and made-up numbers fail
+their checksums. Point the agent at this package instead:
+
+- **Skill:** copy [`skills/czech-test-data/SKILL.md`](skills/czech-test-data/SKILL.md) into your project, for
+  Claude Code as `.claude/skills/czech-test-data/SKILL.md`. It tells the agent when to use the package and how.
+- **AGENTS.md or another rules file:** add a line such as
+
+  ```markdown
+  Czech test data (rodné číslo, IČO, DIČ, bank account, IBAN, phone, PSČ, EAN, EIC): never make it up, generate it
+  with `npx czech-test-data <identifier>` (see `--help`) and check values with `npx czech-test-data validate`.
+  ```
+
+- **The web tool** serves `/llms.txt` with the commands and every variant name, and its home page has sample
+  values in the HTML, so an agent that only fetches pages sees real data.
 
 ## Identifiers
 
