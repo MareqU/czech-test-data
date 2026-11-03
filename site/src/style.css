@@ -1,0 +1,1010 @@
+/*
+ * Layout concept: one column, one big value. A clean page with a single accent (the blue of the Czech flag);
+ * green and red appear only as verdicts. System fonts: they render Czech well and load instantly.
+ */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f5f6f8;
+  --text: #16181d;
+  --muted: #5d6470;
+  --line: #e3e5ea;
+  --accent: #11457e;
+  --accent-soft: #e9eff7;
+  --on-accent: #ffffff;
+  --ok: #17784b;
+  --bad: #c0331f;
+  --warn: #8a5a00;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #0f1115;
+    --surface: #181b21;
+    --text: #eceef2;
+    --muted: #a2a8b4;
+    --line: #2a2e37;
+    --accent: #84b4ff;
+    --accent-soft: #1a2638;
+    --on-accent: #0f1115;
+    --ok: #55d394;
+    --bad: #ff8070;
+    --warn: #f2b45a;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* `hidden` must win over the display of any component (e.g. the flex kit offer). */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 0.18em;
+}
+
+code,
+pre,
+textarea {
+  font-family: var(--mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  padding: 8px 12px;
+  background: var(--bg);
+  z-index: 10;
+}
+
+.skip:focus {
+  top: 12px;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Header: name, npm and GitHub, and the identifier pages as one scrollable row */
+.top {
+  border-bottom: 1px solid var(--line);
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 14px 6px;
+}
+
+.brand {
+  font: 600 0.95rem var(--mono);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.top-links {
+  display: flex;
+  gap: 16px;
+  font-size: 0.92rem;
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 4px 8px;
+}
+
+/* Phones: the pages do not fit one row; fade the right edge so it reads as "there is more". */
+@media (max-width: 640px) {
+  .nav {
+    padding-right: 40px;
+    mask-image: linear-gradient(to right, #000 calc(100% - 40px), transparent);
+  }
+}
+
+.nav a {
+  flex: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.93rem;
+  white-space: nowrap;
+}
+
+.nav a:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.nav a[aria-current='page'] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+main {
+  display: grid;
+  gap: 40px;
+  padding-block: 32px 48px;
+}
+
+/* Intro */
+.intro {
+  display: grid;
+  gap: 10px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 6vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+body[data-id] h1 {
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+}
+
+.lead {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--muted);
+  max-width: 62ch;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+
+.hint {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Segmented switches */
+.generator {
+  display: grid;
+  gap: 18px;
+}
+
+.seg {
+  display: inline-flex;
+  justify-self: start;
+  padding: 3px;
+  gap: 2px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.seg-wrap {
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+.seg-item {
+  flex: none;
+  font: inherit;
+  font-size: 0.95rem;
+  padding: 7px 14px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.seg-item:hover {
+  color: var(--text);
+}
+
+.seg-item[aria-checked='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+/* The big value */
+.stage {
+  display: grid;
+  gap: 8px;
+  padding-block: 8px;
+  min-width: 0;
+}
+
+.big-value {
+  justify-self: start;
+  max-width: 100%;
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: clamp(1.35rem, calc((min(100vw, 760px) - 40px) / (var(--len, 10) * 0.62)), 4.25rem);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  background: none;
+  border: none;
+  padding: 0.1em 0;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  cursor: copy;
+  text-decoration: underline dashed transparent;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 2px;
+  transition: text-decoration-color 0.15s ease;
+}
+
+.big-value:hover {
+  text-decoration-color: var(--accent);
+}
+
+.verdict {
+  margin: 0;
+  font-weight: 600;
+}
+
+.verdict.ok {
+  color: var(--ok);
+}
+
+.verdict.bad {
+  color: var(--bad);
+}
+
+.explain {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+  font-size: 1.12rem;
+  max-width: 60ch;
+}
+
+.variant-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+
+.stage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.pos {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.button {
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.button:hover {
+  border-color: var(--accent);
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  min-width: 7rem;
+}
+
+.button.small {
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  border-radius: 7px;
+}
+
+/* One call under the big value: the same data in a test */
+.in-tests {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.in-tests code {
+  color: var(--text);
+}
+
+.in-tests a {
+  white-space: nowrap;
+}
+
+/* Home: why the library; the package name and commands never break at their hyphens */
+.package-name,
+.reasons code {
+  white-space: nowrap;
+}
+
+.reasons {
+  margin: 0 0 16px;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 6px;
+}
+
+.warning {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.warning::before {
+  content: '⚠ ';
+  color: var(--warn);
+}
+
+.error {
+  margin: 0;
+  color: var(--bad);
+}
+
+/* Picker: variant chips (edge, invalid) or generator options (valid), always visible */
+.picker {
+  min-width: 0;
+}
+
+/* Phones: one scrollable row, faded at the right edge so it reads as "there is more". */
+.chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 2px;
+  padding-right: 32px;
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
+@media (min-width: 640px) {
+  .chips {
+    flex-wrap: wrap;
+    overflow: visible;
+    mask-image: none;
+  }
+}
+
+.chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 0.92rem;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--accent);
+}
+
+.chip[aria-checked='true'] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--warn);
+}
+
+/* Generator options and the advanced fields */
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 12px 16px;
+  align-items: end;
+}
+
+@media (max-width: 420px) {
+  .fields {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.advanced {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.advanced summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.advanced .hint {
+  margin-top: 10px;
+  font-size: 0.92rem;
+}
+
+.advanced .fields {
+  padding-top: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+  font-size: 0.88rem;
+  color: var(--muted);
+  min-width: 0;
+}
+
+.field.small input {
+  width: 7rem;
+}
+
+.field input,
+.field select,
+textarea {
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-height: 42px;
+  width: 100%;
+}
+
+.field :disabled {
+  opacity: 0.45;
+}
+
+.field.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.field.checkbox input {
+  width: 18px;
+  min-height: 0;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+/* Sections below the generator */
+.block {
+  display: grid;
+  gap: 14px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+  min-width: 0;
+}
+
+.list-head {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  padding-block: 10px;
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+
+.item:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.item .note {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 0.93rem;
+}
+
+.item .note:empty {
+  display: none;
+}
+
+.explain .name {
+  font-size: 0.85em;
+  color: var(--muted);
+}
+
+.value {
+  font: 600 1.05rem var(--mono);
+  color: var(--text);
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  white-space: pre;
+  overflow-x: auto;
+  max-width: 100%;
+  cursor: copy;
+}
+
+.value:hover {
+  color: var(--accent);
+}
+
+.input {
+  font-weight: 600;
+  white-space: pre;
+  background: var(--surface);
+  border-radius: 4px;
+  padding: 1px 6px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.mark {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mark.ok {
+  color: var(--ok);
+}
+
+.mark.bad {
+  color: var(--bad);
+}
+
+.name {
+  color: var(--text);
+  font-size: 0.88rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Form-check kit: the offer under the generator, and the table */
+.kit-callout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 16px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: var(--accent-soft);
+}
+
+.kit-callout p {
+  margin: 0;
+  max-width: 52ch;
+}
+
+.kit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.kit-scroll {
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.kit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.93rem;
+}
+
+.kit-table th {
+  text-align: left;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.kit-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.kit-table .value {
+  font-size: 0.98rem;
+}
+
+.kit-text {
+  color: var(--muted);
+}
+
+/* Phones: each row becomes a card (value and expected outcome on top, variant and text below). */
+@media (max-width: 640px) {
+  .kit-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .kit-table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2px 12px;
+    padding-block: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .kit-table td {
+    padding: 0;
+    border: none;
+    min-width: 0;
+  }
+
+  .kit-table td:nth-child(2),
+  .kit-table td:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .kit-table td:nth-child(4) {
+    grid-row: 1;
+    grid-column: 2;
+  }
+}
+
+/* Code */
+.snippet {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.snippet-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 6px 4px 12px;
+  background: var(--surface);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.snippet pre {
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+/* Home: the directory */
+.dir {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0 24px;
+}
+
+@media (min-width: 640px) {
+  .dir {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dir-link {
+  display: grid;
+  gap: 2px;
+  padding-block: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.dir-link:hover strong {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.dir-link span {
+  color: var(--muted);
+  font-size: 0.93rem;
+}
+
+/* Footer and toast */
+.foot {
+  border-top: 1px solid var(--line);
+  padding-block: 20px 40px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.foot p {
+  margin: 0 0 8px;
+  max-width: 72ch;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 12px);
+  max-width: calc(100% - 32px);
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 0.92rem;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .big-value {
+    transition: none;
+  }
+}
+
+/* Home: every identifier at once, values ready to copy. Wider than the other pages, so a 24-character IBAN
+   fits its column on one line. */
+body:not([data-id]) .wrap {
+  max-width: 1000px;
+}
+
+.overview-head .button {
+  white-space: nowrap;
+}
+
+.overview {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.overview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.overview-head .hint {
+  margin: 0;
+}
+
+.overview-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.overview-table th,
+.overview-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.overview-table thead th {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.overview-table thead th span {
+  font-weight: 400;
+}
+
+.overview-table tbody th {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.overview-table tbody th a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.overview-table tbody th a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.cell-value {
+  display: block;
+  font: 600 1rem var(--mono);
+  color: var(--text);
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  text-align: left;
+  cursor: copy;
+  white-space: nowrap;
+}
+
+.cell-value code {
+  font: inherit;
+  color: inherit;
+}
+
+.cell-value:hover {
+  color: var(--accent);
+}
+
+.cell-title {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.cell.bad .cell-title {
+  color: var(--bad);
+}
+
+.overview-table .cell-kit {
+  padding-right: 0;
+  text-align: right;
+}
+
+.cell-kit [aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Phones: one card per identifier, the three values under its name */
+@media (max-width: 640px) {
+  .overview-table thead {
+    display: none;
+  }
+
+  .overview-table tr,
+  .overview-table th,
+  .overview-table td {
+    display: block;
+  }
+
+  .overview-table tr {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .overview-table th,
+  .overview-table td {
+    border: 0;
+    padding: 4px 0;
+  }
+
+  .overview-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+}
+
+/* Kit: JSON for tests first, the Excel exports as quieter links */
+.kit-excel {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.link-button {
+  font: inherit;
+  color: var(--accent);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.kit-values summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.95rem;
+  padding: 4px 0;
+}
+
+.kit-values[open] summary {
+  margin-bottom: 8px;
+}
