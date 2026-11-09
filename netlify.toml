@@ -1,0 +1,7 @@
+# The web tool (site/) on Netlify, custom domain testovacidata.cz (set in the Netlify site's domain settings).
+# Production deploys come from main; the Node version comes from .nvmrc.
+[build]
+  # The site uses the package like a user does (file:.. dependency), so the library has to be built first.
+  # CI (ci.yml, job "Web (site/)") runs the site's checks on the pull request, so the deploy only builds.
+  command = "npm ci && npm run build && npm ci --prefix site && npm run build --prefix site"
+  publish = "site/dist"

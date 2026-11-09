@@ -18,6 +18,9 @@ telefonní číslo, PSČ, EAN odběrného místa elektřiny a EIC odběrného m�
   k síti.
 - **Knihovna i CLI** v jednom balíčku. Typy pro TypeScript, ESM i CommonJS.
 
+Testujete ručně? Webový nástroj [testovacidata.cz](https://testovacidata.cz/) vygeneruje stejné hodnoty přímo
+v prohlížeči, ke každé variantě řekne, co testuje, a připraví sadu pro ověření jednoho pole formuláře.
+
 SPZ a VIN jsou plánované pro v1.1.
 
 > **Upozornění:** náhodně vygenerované platné rodné číslo nebo telefonní číslo může patřit skutečnému člověku.
