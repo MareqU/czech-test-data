@@ -1,7 +1,7 @@
 // Static HTML of every page: the home page and one page per identifier, all from src/catalog.ts. The Vite plugin
 // (build/plugin.ts) writes them before the dev server or the build starts; they are generated, never edited.
 // Titles, descriptions, headings and intro texts are in the HTML itself, so search engines see them without JS.
-// Links are relative (./ico/, ../), so the site works from any path, e.g. GitHub Pages under /czech-test-data/.
+// Links are relative (./ico/, ../), so the site works from any path; canonical URLs point to SITE.
 import { createCz } from 'czech-test-data';
 import { IDENTIFIERS } from '../src/catalog.js';
 import { buildOverview } from '../src/overview.js';
@@ -16,9 +16,13 @@ export interface Page {
   readonly path: string;
   readonly title: string;
   readonly h1: string;
+  /** Canonical address, e.g. `https://testovacidata.cz/ico/`. */
+  readonly url: string;
   readonly html: string;
 }
 
+/** Where the site is deployed (Netlify with a custom domain, netlify.toml). */
+export const SITE = 'https://testovacidata.cz/';
 const REPOSITORY = 'https://github.com/MareqU/czech-test-data';
 const NPM = 'https://www.npmjs.com/package/czech-test-data';
 const ICON =
@@ -32,6 +36,8 @@ export function escapeHtml(text: string): string {
 interface Layout {
   /** `./` on the home page, `../` on an identifier page: the way back to the site root. */
   readonly root: string;
+  /** Canonical address of the page. */
+  readonly url: string;
   readonly title: string;
   readonly description: string;
   readonly current?: IdentifierInfo;
@@ -69,7 +75,7 @@ function footer(root: string): string {
     </footer>`;
 }
 
-function layout({ root, title, description, current, main, script }: Layout): string {
+function layout({ root, url, title, description, current, main, script }: Layout): string {
   const dataId = current === undefined ? '' : ` data-id="${current.id}"`;
   // Czech typography for every text of the page (not attributes, not code): see src/typography.ts.
   return czHtml(`<!doctype html>
@@ -79,6 +85,13 @@ function layout({ root, title, description, current, main, script }: Layout): st
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}" />
+    <link rel="canonical" href="${url}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="cs_CZ" />
+    <meta property="og:site_name" content="Česká testovací data" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:title" content="${escapeHtml(title)}" />
+    <meta property="og:description" content="${escapeHtml(description)}" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="${ICON}" />
@@ -285,13 +298,14 @@ ${overview(referenceDate)}
 ${library()}`;
   const html = layout({
     root: './',
+    url: SITE,
     script: 'home',
     title: HOME_TITLE,
     description:
       'Generátor českých testovacích dat: rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN a EIC. Platné, hraniční i neplatné hodnoty s vysvětlením.',
     main,
   });
-  return { name: 'index', path: 'index.html', title: HOME_TITLE, h1: HOME_H1, html };
+  return { name: 'index', path: 'index.html', title: HOME_TITLE, h1: HOME_H1, url: SITE, html };
 }
 
 function identifierPage(info: IdentifierInfo): Page {
@@ -301,11 +315,27 @@ function identifierPage(info: IdentifierInfo): Page {
       </div>
 ${generator()}
 ${identifierSections()}`;
-  const html = layout({ root: '../', script: 'main', title: info.page.title, description: info.page.description, current: info, main });
-  return { name: info.slug, path: `${info.slug}/index.html`, title: info.page.title, h1: info.page.h1, html };
+  const url = `${SITE}${info.slug}/`;
+  const html = layout({ root: '../', url, script: 'main', title: info.page.title, description: info.page.description, current: info, main });
+  return { name: info.slug, path: `${info.slug}/index.html`, title: info.page.title, h1: info.page.h1, url, html };
 }
 
 /** Every page of the site; `referenceDate` ("today") dates the values written into the home page. */
 export function renderPages(referenceDate = createCz().referenceDate): Page[] {
   return [homePage(referenceDate), ...IDENTIFIERS.map(identifierPage)];
+}
+
+/** /sitemap.xml: every page by its canonical address. */
+export function renderSitemap(pages: readonly Page[]): string {
+  const urls = pages.map((page) => `  <url><loc>${page.url}</loc></url>`).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>
+`;
+}
+
+/** /robots.txt: everything may be crawled; points to the sitemap. */
+export function renderRobots(): string {
+  return `User-agent: *\nAllow: /\n\nSitemap: ${SITE}sitemap.xml\n`;
 }

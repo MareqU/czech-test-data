@@ -16,6 +16,9 @@ bank account, IBAN, phone number, PSČ (postal code), electricity EAN and gas EI
 - **Small.** Zero runtime dependencies, tree-shakeable, under 10 kB min+gzip for everything, no network access.
 - **Library and CLI** in one package. TypeScript types included, ESM and CommonJS.
 
+Testing by hand? The web tool [testovacidata.cz](https://testovacidata.cz/) (in Czech) generates the same values in
+the browser, explains every variant and prepares a form-check kit for one field.
+
 License plates (SPZ) and VIN are planned for v1.1.
 
 > **Warning:** a randomly generated valid birth number (rodné číslo) or phone number may belong to a real

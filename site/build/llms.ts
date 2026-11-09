@@ -2,6 +2,7 @@
 // numbers that fail their checksums. Generated from src/catalog.ts like the pages, so every variant is listed.
 import { IDENTIFIERS } from '../src/catalog.js';
 import type { IdentifierInfo } from '../src/catalog.js';
+import { SITE } from './pages.js';
 
 const REPOSITORY = 'https://github.com/MareqU/czech-test-data';
 
@@ -73,6 +74,7 @@ ${IDENTIFIERS.map(identifier).join('\n\n')}
 
 ## Links
 
+- [Web tool](${SITE}) (Czech): every identifier with valid, edge and invalid values to copy, and a form-check kit
 - [README](${REPOSITORY}#readme): full API, options of every generator, examples for Playwright, Cypress and Vitest
 - [Agent skill](${REPOSITORY}/blob/main/skills/czech-test-data/SKILL.md): instructions to copy into your project
 - [npm](https://www.npmjs.com/package/czech-test-data)
