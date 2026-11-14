@@ -345,11 +345,11 @@ Inputs are JS string literals, so spaces are visible.
 | --- | --- | --- |
 | `'TMBJR8NX4PY123456'` | `badChecksum` | 6 → 4 |
 | `'TMBJR8NXXPY123456'` | `badChecksum` | 6 → `X` |
-| `'TMBJR8NX3PY123465'` | `badChecksum` | last two digits swapped, expected `4` |
+| `'TMBJR8NX3PY123465'` | `badChecksum` | last two digits swapped, expected `7` |
 | `'1G4AH59H55G118341'` | `badChecksum` | official US sample, 4 → 5 |
 | `'TMBZZZ5JZ8B012345'` | `badChecksum` | constructed legacy-European shape, filler `Z` in position 9 |
 | `'TM1VM11233A000001'` | `badChecksum` | constructed Czech *úřední číslo* shape (3.4), expected `7` |
-| `'TMBJR8NX5PY1234S6'` | `nonNumericSerial` | `S` in position 16, check digit recomputed (`S = 412`, `r = 5`) |
+| `'TMBJR8NX8PY1234S6'` | `nonNumericSerial` | `S` in position 16, check digit recomputed (`S = 404`, `r = 8`) |
 | `'TMBJR8NX3PY1234S6'` | `nonNumericSerial` | same with the old check digit: serial before checksum |
 | `'TMBJR8NX3PYI23456'` | `forbiddenLetter` | `I` for `1` |
 | `'TMBJR8NX3OY123456'` | `forbiddenLetter` | `O` in position 10 |
