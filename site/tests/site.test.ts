@@ -7,6 +7,7 @@ import { createCz } from 'czech-test-data';
 import { describe, expect, it } from 'vitest';
 import { LLMS_COMMANDS, renderLlms } from '../build/llms.js';
 import { cellHtml, escapeHtml, renderPages, renderRobots, renderSitemap, SITE, USAGE } from '../build/pages.js';
+import { dataPath, prerender, PRERENDER_SEED, renderData } from '../build/prerender.js';
 import { IDENTIFIERS } from '../src/catalog.js';
 import { generateRows, validateLines } from '../src/generate.js';
 import type { Row } from '../src/generate.js';
@@ -19,6 +20,7 @@ import { parseState, serializeState, variantPosition } from '../src/state.js';
 import type { State } from '../src/state.js';
 
 const DEFAULTS = { seed: 7, referenceDate: '2026-10-19' };
+const DATA_FILES = new Set(IDENTIFIERS.map(dataPath));
 const CLI = fileURLToPath(new URL('../../dist/cli.mjs', import.meta.url));
 const CACHE = fileURLToPath(new URL('../node_modules/.cache/snippets/', import.meta.url));
 mkdirSync(CACHE, { recursive: true });
@@ -235,11 +237,12 @@ describe('pages', () => {
       const root = page.path === 'index.html' ? './' : '../';
       for (const [, href = ''] of page.html.matchAll(/href="(\.{1,2}\/[^"?#]*)/gu)) {
         expect(href.startsWith(root), `${page.path}: ${href}`).toBe(true);
-        // Besides the pages there is one generated file: /llms.txt (build/llms.ts).
-        const target = href.endsWith('.txt') ? href.slice(root.length) : `${href.slice(root.length)}index.html`;
-        if (target === 'llms.txt') {
+        // Besides the pages there are generated files: /llms.txt and the kits in /data/ (build/plugin.ts).
+        const file = href.slice(root.length);
+        if (file === 'llms.txt' || DATA_FILES.has(file)) {
           continue;
         }
+        const target = `${file}index.html`;
         expect(paths.has(target), `${page.path}: ${href}`).toBe(true);
       }
     }
@@ -450,6 +453,44 @@ describe('kit JSON for data-driven tests', () => {
         expect(item.variant === null).toBe(item.kind === 'valid');
         expect(item.description).not.toContain('\u00a0');
       }
+    }
+  });
+});
+
+describe('prerendered data for agents', () => {
+  const date = '2026-11-14';
+
+  it('writes the default values, the library call and the snippets into every identifier page', () => {
+    const pages = renderPages(date);
+    for (const info of IDENTIFIERS) {
+      const html = pages.find((page) => page.path === `${info.slug}/index.html`)?.html ?? '';
+      const s = parseState('', { seed: PRERENDER_SEED, referenceDate: date }, info.id);
+      const rows = rowsOf(s);
+      expect(html, info.id).toContain(`id="big-value" class="big-value" type="button" title="Kliknutím zkopírujete">${escapeHtml(rows[0]?.value ?? '?')}</button>`);
+      expect(html, info.id).toContain('✓ Projde validací');
+      expect(html, info.id).toContain(`<code id="big-code">${escapeHtml(prerender(info, date)?.call ?? '?')}</code>`);
+      expect(html, info.id).toContain(`<code id="code">${escapeHtml(codeSnippet(s))}</code>`);
+      expect(html, info.id).toContain(`<code id="cli">${escapeHtml(cliSnippet(s))}</code>`);
+      for (const row of rows) {
+        expect(html, info.id).toContain(`>${escapeHtml(row.value)}</button>`);
+      }
+      expect(html, info.id).toContain(`<link rel="alternate" type="application/json" href="../${dataPath(info)}"`);
+    }
+  });
+
+  it('publishes every kit as static JSON, the same as the page export for the prerender seed', () => {
+    for (const info of IDENTIFIERS) {
+      const s: State = { ...parseState('', { seed: PRERENDER_SEED, referenceDate: date }, info.id), kit: true };
+      const outcome = buildKit(s);
+      expect(renderData(info, date)).toBe(toJson(s, 'error' in outcome ? [] : outcome.rows));
+      const cases = JSON.parse(renderData(info, date)) as unknown[];
+      expect(cases.length, info.id).toBeGreaterThan(3);
+    }
+  });
+
+  it('lists the static JSON of every identifier in llms.txt by its full address', () => {
+    for (const info of IDENTIFIERS) {
+      expect(renderLlms()).toContain(`(${SITE}${dataPath(info)})`);
     }
   });
 });

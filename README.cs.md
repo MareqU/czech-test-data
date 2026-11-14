@@ -262,8 +262,10 @@ neprojdou kontrolním součtem. Pošlete agenta na tenhle balíček:
   with `npx czech-test-data <identifier>` (see `--help`) and check values with `npx czech-test-data validate`.
   ```
 
-- **Webový nástroj** má `/llms.txt` s příkazy a názvy všech variant a na úvodní stránce jsou ukázkové hodnoty
-  přímo v HTML, takže je uvidí i agent, který stránku jen stáhne.
+- **Webový nástroj** má [`/llms.txt`](https://testovacidata.cz/llms.txt) s příkazy a názvy všech variant a sadu
+  pro ověření formuláře každého údaje jako statický JSON, třeba
+  [`/data/ico.json`](https://testovacidata.cz/data/ico.json). Jeho stránky mají ukázkové hodnoty přímo v HTML,
+  takže je uvidí i agent, který stránku jen stáhne.
 
 ## Identifikátory
 
