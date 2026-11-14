@@ -21,7 +21,7 @@ telefonní číslo, PSČ, EAN odběrného místa elektřiny, EIC odběrného mí
 Testujete ručně? Webový nástroj [testovacidata.cz](https://testovacidata.cz/) vygeneruje stejné hodnoty přímo
 v prohlížeči, ke každé variantě řekne, co testuje, a připraví sadu pro ověření jednoho pole formuláře.
 
-SPZ je plánovaná pro v1.1.
+SPZ je plánovaná pro některou z dalších verzí.
 
 > **Upozornění:** náhodně vygenerované platné rodné číslo nebo telefonní číslo může patřit skutečnému člověku.
 > V Česku neexistuje fiktivní rozsah telefonních čísel, takže na vygenerovaná čísla nikdy nevolejte ani nepište SMS.
