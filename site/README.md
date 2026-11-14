@@ -12,7 +12,7 @@ Czech only. Everything runs in the browser; nothing is sent anywhere. No framewo
 - `/` – overview table of all identifiers (`src/home.ts`, `src/overview.ts`), the kit of one identifier on demand,
   the library on npm. Its values are written into the HTML at build time, so agents and search engines without
   JavaScript see real data; the script draws a fresh seed on load.
-- `/rodne-cislo/`, `/ico/`, `/dic/`, `/cislo-uctu/`, `/iban/`, `/telefon/`, `/psc/`, `/ean/`, `/eic/` – one page
+- `/rodne-cislo/`, `/ico/`, `/dic/`, `/cislo-uctu/`, `/iban/`, `/telefon/`, `/psc/`, `/ean/`, `/eic/`, `/vin/` – one page
   per identifier with its own title, description, h1 and intro in the HTML (texts in `src/catalog.ts`, `page`), and
   the values of its default state (seed 1) prerendered, replaced by the script on load.
 

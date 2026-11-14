@@ -10,6 +10,7 @@ import type { IbanEdgeVariant, IbanInvalidVariant, IbanReason } from 'czech-test
 import type { IcoEdgeVariant, IcoInvalidVariant, IcoReason } from 'czech-test-data/ico';
 import type { PhoneEdgeVariant, PhoneInvalidVariant, PhoneReason } from 'czech-test-data/phone';
 import type { PostalCodeEdgeVariant, PostalCodeInvalidVariant, PostalCodeReason } from 'czech-test-data/postalCode';
+import type { VinEdgeVariant, VinInvalidVariant, VinReason } from 'czech-test-data/vin';
 
 /** Library id of an identifier, as on `createCz()`. */
 export type IdentifierId =
@@ -21,7 +22,8 @@ export type IdentifierId =
   | 'phone'
   | 'postalCode'
   | 'ean'
-  | 'eic';
+  | 'eic'
+  | 'vin';
 
 interface OptionBase {
   /** Library option name, also the URL parameter. */
@@ -639,6 +641,54 @@ const eic: IdentifierInfo = {
   kit: KIT_PLAIN,
 };
 
+const vin: IdentifierInfo = {
+  id: 'vin',
+  cli: 'vin',
+  label: 'VIN',
+  slug: 'vin',
+  short: 'VIN',
+  page: {
+    title: 'Generátor VIN – platné i neplatné VIN pro testy',
+    description: 'Identifikační číslo vozidla (VIN, 17 znaků) pro testy, s kontrolním znakem i bez, včetně neplatných VIN a vysvětlení.',
+    h1: 'Generátor VIN',
+    intro: 'VIN má 17 znaků bez písmen I, O a Q a na 9. pozici kontrolní znak. EU ho vyžaduje u všech nově registrovaných vozidel od července 2026, starší evropská auta ho ale často nemají. Formulář, který je musí přijmout, nesmí kontrolní znak vyžadovat.',
+  },
+  hint: 'Identifikační číslo vozidla: 17 znaků bez I, O a Q, na 9. pozici kontrolní znak (mod 11, X za 10).',
+  sample: 'TMBFJDU91L5083775',
+  warning: 'Vygenerované VIN začíná kódem Škody TMB a může se shodovat se skutečným autem. Používejte ho jen v testovacích systémech.',
+  dateDependent: false,
+  options: [],
+  edge: {
+    checkDigitX: 'Kontrolní znak vyšel 10, takže se píše X. Formulář, který na 9. pozici čeká číslici, ho odmítne.',
+    smallManufacturer: 'Malovýrobce: 9 na třetí pozici a písmena v pořadovém čísle. Platí, i když vypadá podezřele.',
+    noModelYear: 'Na 10. pozici 0 místo kódu modelového roku. V EU je to v pořádku, americké validátory to odmítnou.',
+  } satisfies Record<VinEdgeVariant, string>,
+  invalid: {
+    badChecksum: 'Kontrolní znak na 9. pozici nesedí. U starších evropských aut to může být normální, u nových je to chyba.',
+    wrongLength: '16 nebo 18 znaků místo 17. Typicky jeden znak chybí nebo přebývá při přepisu.',
+    forbiddenLetter: 'Obsahuje I, O nebo Q, která se ve VIN nepoužívají, protože se pletou s 1 a 0.',
+    nonNumericSerial: 'Písmeno v posledních čtyřech znacích, kde musí být jen číslice.',
+  } satisfies Record<VinInvalidVariant, string>,
+  titles: {
+    checkDigitX: 'Kontrolní X',
+    smallManufacturer: 'Malovýrobce',
+    noModelYear: 'Bez modelového roku',
+    badChecksum: 'Špatný kontrolní znak',
+    wrongLength: 'Špatná délka',
+    forbiddenLetter: 'Zakázané písmeno',
+    nonNumericSerial: 'Písmeno na konci',
+  } satisfies Record<VinEdgeVariant | VinInvalidVariant, string>,
+  reasons: {
+    badFormat: 'Nepovolené znaky, například malá písmena, mezery nebo pomlčky.',
+    wrongLength: 'Jiný počet znaků než 17.',
+    forbiddenLetter: 'Obsahuje písmeno I, O nebo Q.',
+    nonNumericSerial: 'Poslední čtyři znaky nejsou jen číslice.',
+    badChecksum: 'Kontrolní znak na 9. pozici nesedí (u starších evropských VIN běžné).',
+  } satisfies Record<VinReason, string>,
+  disputed: [],
+  kit: KIT_PLAIN,
+};
+
 /** All identifiers in the order of the page. */
 export const IDENTIFIERS: readonly IdentifierInfo[] = [
   birthNumber,
@@ -650,6 +700,7 @@ export const IDENTIFIERS: readonly IdentifierInfo[] = [
   postalCode,
   ean,
   eic,
+  vin,
 ];
 
 /** The identifier with this id; `IDENTIFIERS` covers every `IdentifierId`. */
