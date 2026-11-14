@@ -808,6 +808,12 @@ textarea {
   max-width: 72ch;
 }
 
+.foot .foot-author {
+  margin-bottom: 14px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
 .toast {
   position: fixed;
   left: 50%;
