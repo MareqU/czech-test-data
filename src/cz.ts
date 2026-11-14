@@ -26,6 +26,9 @@ import type { PhoneGenerator, PhoneReason } from './phone/index.js';
 import { validatePostalCode } from './postalCode/index.js';
 import { postalCode } from './postalCode/identifier.js';
 import type { PostalCodeGenerator, PostalCodeReason } from './postalCode/index.js';
+import { validateVin } from './vin/index.js';
+import { vin } from './vin/identifier.js';
+import type { VinGenerator, VinReason } from './vin/index.js';
 import { resolveSettings } from './core/settings.js';
 import type { SettingsOptions, ValidationResult } from './core/types.js';
 
@@ -54,6 +57,8 @@ export interface CzValidators {
   readonly phone: (value: string) => ValidationResult<PhoneReason>;
   /** Validates a postal code (PSČ); the date plays no role, `referenceDate` is only passed on. Never throws. */
   readonly postalCode: (value: string) => ValidationResult<PostalCodeReason>;
+  /** Validates a VIN (identifikační číslo vozidla); the date plays no role, `referenceDate` is only passed on. Never throws. */
+  readonly vin: (value: string) => ValidationResult<VinReason>;
 }
 
 /**
@@ -82,6 +87,8 @@ export interface Cz {
   readonly phone: PhoneGenerator;
   /** Postal codes (poštovní směrovací číslo, PSČ); the same values as `createPostalCode` with the same settings. */
   readonly postalCode: PostalCodeGenerator;
+  /** VINs (identifikační číslo vozidla); the same values as `createVin` with the same settings. */
+  readonly vin: VinGenerator;
   /** Validators by identifier. */
   readonly validate: CzValidators;
 }
@@ -122,6 +129,7 @@ export function createCz(options?: SettingsOptions): Cz {
     ico: ico.create(settings),
     phone: phone.create(settings),
     postalCode: postalCode.create(settings),
+    vin: vin.create(settings),
     validate: Object.freeze({
       bankAccount: (value: string) => validateBankAccount(value, { referenceDate }),
       birthNumber: (value: string) => validateBirthNumber(value, { referenceDate }),
@@ -132,6 +140,7 @@ export function createCz(options?: SettingsOptions): Cz {
       ico: (value: string) => validateIco(value, { referenceDate }),
       phone: (value: string) => validatePhone(value, { referenceDate }),
       postalCode: (value: string) => validatePostalCode(value, { referenceDate }),
+      vin: (value: string) => validateVin(value, { referenceDate }),
     }),
   };
 }

@@ -8,6 +8,7 @@ import { createIban, validateIban } from '../iban/index.js';
 import { createIco, validateIco } from '../ico/index.js';
 import { createPhone, validatePhone } from '../phone/index.js';
 import { createPostalCode, validatePostalCode } from '../postalCode/index.js';
+import { createVin, validateVin } from '../vin/index.js';
 import type { SettingsOptions, ValidationResult, ValidatorOptions } from '../index.js';
 
 /** Generator options as the CLI passes them on: the library checks names and values itself. */
@@ -55,4 +56,5 @@ export const IDENTIFIERS: readonly CliIdentifier[] = [
   { id: 'postal-code', czech: 'PSČ', create: (s) => loose(createPostalCode(s)), validate: validatePostalCode, options: {} },
   { id: 'ean', czech: 'EAN odběrného místa', create: (s) => loose(createEan(s)), validate: validateEan, options: { distributor: 'distributor' } },
   { id: 'eic', czech: 'EIC kód odběrného místa plynu', create: (s) => loose(createEic(s)), validate: validateEic, options: {} },
+  { id: 'vin', czech: 'identifikační číslo vozidla (VIN)', create: (s) => loose(createVin(s)), validate: validateVin, options: {} },
 ];
