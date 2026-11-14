@@ -81,6 +81,10 @@
       "import": "./dist/postalCode/index.js",
       "require": "./dist/postalCode/index.cjs"
     },
+    "./vin": {
+      "import": "./dist/vin/index.js",
+      "require": "./dist/vin/index.cjs"
+    },
     "./package.json": "./package.json"
   },
   "bin": {

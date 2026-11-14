@@ -9,6 +9,7 @@ import { createIban, validateIban } from '../../src/iban/index.js';
 import { createIco, validateIco } from '../../src/ico/index.js';
 import { createPhone, validatePhone } from '../../src/phone/index.js';
 import { createPostalCode, validatePostalCode } from '../../src/postalCode/index.js';
+import { createVin, validateVin } from '../../src/vin/index.js';
 import type { SettingsOptions, ValidationResult, ValidatorOptions } from '../../src/index.js';
 
 export const SEED = 42;
@@ -133,6 +134,12 @@ export const IDENTIFIERS: readonly CliIdentifier[] = [
     id: 'eic',
     create: (s) => lib(createEic(s)),
     validate: validateEic,
+    helpOptions: [],
+  },
+  {
+    id: 'vin',
+    create: (s) => lib(createVin(s)),
+    validate: validateVin,
     helpOptions: [],
   },
 ];

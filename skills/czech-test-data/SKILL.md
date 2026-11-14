@@ -1,6 +1,6 @@
 ---
 name: czech-test-data
-description: Generate valid, edge-case and invalid Czech test data – rodné číslo (birth number), IČO, DIČ, bank account (číslo účtu), IBAN, phone number, PSČ (postal code), electricity EAN, gas EIC – and validate such values. Use whenever a test, fixture, seed script, mock or form needs a Czech identifier; never make one up by hand.
+description: Generate valid, edge-case and invalid Czech test data – rodné číslo (birth number), IČO, DIČ, bank account (číslo účtu), IBAN, phone number, PSČ (postal code), electricity EAN, gas EIC, VIN – and validate such values. Use whenever a test, fixture, seed script, mock or form needs a Czech identifier; never make one up by hand.
 ---
 
 # Czech test data
@@ -19,7 +19,7 @@ npx czech-test-data bank-account --invalid badChecksumNumber --seed 42
 npx czech-test-data ico --help                            # options and variant names of one identifier
 ```
 
-Identifiers: `birth-number`, `ico`, `dic`, `bank-account`, `iban`, `phone`, `postal-code`, `ean`, `eic`.
+Identifiers: `birth-number`, `ico`, `dic`, `bank-account`, `iban`, `phone`, `postal-code`, `ean`, `eic`, `vin`.
 Pass `--seed N` when the values end up in a fixture or a test, so they can be generated again.
 
 ## Validate values

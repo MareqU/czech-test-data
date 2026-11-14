@@ -7,7 +7,7 @@
 [English](README.md) · **Česky**
 
 Platná, hraniční a nevalidní česká testovací data pro automatické testy: rodné číslo, IČO, DIČ, číslo účtu, IBAN,
-telefonní číslo, PSČ, EAN odběrného místa elektřiny a EIC odběrného místa plynu.
+telefonní číslo, PSČ, EAN odběrného místa elektřiny, EIC odběrného místa plynu a VIN.
 
 - **Pojmenované hraniční a nevalidní varianty.** Z `ico.invalid('badChecksum')` je jasné, co test ověřuje; z náhodného
   řetězce ne.
@@ -21,7 +21,7 @@ telefonní číslo, PSČ, EAN odběrného místa elektřiny a EIC odběrného m�
 Testujete ručně? Webový nástroj [testovacidata.cz](https://testovacidata.cz/) vygeneruje stejné hodnoty přímo
 v prohlížeči, ke každé variantě řekne, co testuje, a připraví sadu pro ověření jednoho pole formuláře.
 
-SPZ a VIN jsou plánované pro v1.1.
+SPZ je plánovaná pro v1.1.
 
 > **Upozornění:** náhodně vygenerované platné rodné číslo nebo telefonní číslo může patřit skutečnému člověku.
 > V Česku neexistuje fiktivní rozsah telefonních čísel, takže na vygenerovaná čísla nikdy nevolejte ani nepište SMS.
@@ -219,8 +219,8 @@ validateIco('25596641'); // { valid: true }
 ```
 
 Vstupní body: `czech-test-data/birthNumber`, `/ico`, `/dic`, `/bankAccount`, `/iban`, `/phone`, `/postalCode`,
-`/ean`, `/eic`. Použijte je, když záleží na velikosti bundlu: `createCz` obsahuje všech devět identifikátorů (asi
-8 kB, minifikováno + gzip), jeden podimport má nejvýš 2 kB nad sdíleným jádrem o velikosti 2,5 kB. Tyto rozpočty
+`/ean`, `/eic`, `/vin`. Použijte je, když záleží na velikosti bundlu: `createCz` obsahuje všech deset identifikátorů
+(asi 8,5 kB, minifikováno + gzip), jeden podimport má nejvýš 2 kB nad sdíleným jádrem o velikosti 2,5 kB. Tyto rozpočty
 hlídá CI.
 
 ## CLI
@@ -358,6 +358,20 @@ Poštovní směrovací číslo, 5 číslic ve tvaru `123 45`.
 - Hraniční: `checkCharacterDigit`, `lds`.
 - Nevalidní: `badChecksum`, `wrongLength`, `wrongPrefix`, `dashCheckCharacter`.
 - Další důvody: `badFormat`.
+
+### Identifikační číslo vozidla (VIN) – `vin`
+
+17 znaků `0-9 A-Z` bez `I`, `O`, `Q`; kontrolní znak na 9. pozici (mod 11, `X` za 10), povinný v USA a podle nařízení
+(EU) 2021/535 u každého vozidla nově registrovaného v EU od 7. 7. 2026. Generovaná VIN mají kód výrobce Škody `TMB`
+a vždy platný kontrolní znak.
+
+- Volby: žádné.
+- Hraniční: `checkDigitX`, `smallManufacturer`, `noModelYear`.
+- Nevalidní: `badChecksum`, `wrongLength`, `forbiddenLetter`, `nonNumericSerial`.
+- Další důvody: `badFormat`.
+- **Starší evropská VIN** často platný kontrolní znak nemají, protože ho EU dřív nevyžadovala. Validátor kontroluje
+  kontrolní znak jako poslední, takže aplikace, která je musí přijímat, může důvod `badChecksum` brát jako platný.
+  Kód výrobce ani modelový rok se nekontrolují; `00000000000000000` projde.
 
 Pravidla, oficiální zdroje a známé vzorky každého identifikátoru jsou v [`docs/rules/`](docs/rules/) (anglicky).
 
