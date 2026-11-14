@@ -27,6 +27,16 @@ export interface Page {
 export const SITE = 'https://testovacidata.cz/';
 const REPOSITORY = 'https://github.com/MareqU/czech-test-data';
 const NPM = 'https://www.npmjs.com/package/czech-test-data';
+const AUTHOR = { name: 'Marek Urbaník', url: 'https://marekurbanik.com' };
+// Who made the site, for search engines (schema.org); the footer says the same to people.
+const STRUCTURED_DATA = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Česká testovací data',
+  url: SITE,
+  inLanguage: 'cs',
+  creator: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url, sameAs: ['https://github.com/MareqU'] },
+});
 const ICON =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2311457e'/%3E%3Cpath d='M9 17l4.5 4.5L23 11' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
 
@@ -68,6 +78,7 @@ function header(root: string, current: IdentifierInfo | undefined): string {
 function footer(root: string): string {
   return `<footer class="foot">
       <div class="wrap">
+        <p class="foot-author">Vytvořil <a href="${AUTHOR.url}">${AUTHOR.name}</a>.</p>
         <p>Vše běží ve vašem prohlížeči, nic se neodesílá. Data jsou jen pro testovací systémy: platné rodné číslo nebo
         telefon může patřit skutečnému člověku, tak na vygenerovaná čísla nevolejte.</p>
         <p>Pravidla podle oficiálních zdrojů (zákon o evidenci obyvatel, ČNB, ČTÚ, OTE, ENTSO-E),
@@ -89,6 +100,7 @@ function layout({ root, url, title, description, current, main, script, head = '
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}" />
+    <meta name="author" content="${AUTHOR.name}" />
     <link rel="canonical" href="${url}" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="cs_CZ" />
@@ -98,7 +110,8 @@ function layout({ root, url, title, description, current, main, script, head = '
     <meta property="og:description" content="${escapeHtml(description)}" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)" />
-    <link rel="icon" href="${ICON}" />${head}
+    <link rel="icon" href="${ICON}" />
+    <script type="application/ld+json">${STRUCTURED_DATA}</script>${head}
     <script type="module" src="/src/${script}.ts"></script>
   </head>
   <body${dataId}>
