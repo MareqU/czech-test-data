@@ -18,7 +18,7 @@ Hlavní rozdíl proti existujícím nástrojům: všechny české identifikátor
 
 **Mimo rozsah v1:**
 
-- SPZ a VIN (v1.1, až po ověření pravidel v oficiálních zdrojích).
+- SPZ a VIN (VIN vyšlo ve v1.1.0, SPZ později; obojí až po ověření pravidel v oficiálních zdrojích).
 - Integrace s Fakerem. Knihovna je záměrně nezávislá.
 - Jména a adresy (pokrývá je česká lokalizace Fakeru).
 - Webová stránka (nanejvýš později jako demo a dokumentace).
@@ -163,8 +163,8 @@ Odhad pro práci po večerech a o víkendech: zhruba 5–7 víkendů do vydání
 
 **M7 · v1.1**
 
-- [x] VIN podle stejné linky (2026-11-14, `docs/rules/vin.md`).
-- [ ] SPZ podle stejné linky.
+- [x] VIN podle stejné linky (2026-11-14, `docs/rules/vin.md`), vydáno ve v1.1.0.
+- [ ] SPZ podle stejné linky (další minor verze).
 
 ## Architektura agentů
 
@@ -220,5 +220,5 @@ Strojově v CI (reviewer jen ověří, že prošlo):
 - [x] Licence: MIT (soubor `LICENSE` v repu a `"license": "MIT"` v package.json).
 - [x] Česká lokalizace Fakeru: jména, adresy, telefony, názvy firem; žádné identifikátory. Knihovna jde bez Fakeru.
 - [ ] Ověření pravidel každého identifikátoru v oficiálním zdroji před implementací.
-- [ ] v1.1: SPZ (VIN hotové 2026-11-14); později případně číslo datové schránky.
+- [ ] SPZ (VIN vyšlo ve v1.1.0, 2026-11-14); později případně číslo datové schránky.
 - [ ] Webová stránka jen jako demo a dokumentace, ne samostatný produkt; webových generátorů už existuje dost.

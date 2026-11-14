@@ -19,7 +19,7 @@ bank account, IBAN, phone number, PSČ (postal code), electricity EAN, gas EIC a
 Testing by hand? The web tool [testovacidata.cz](https://testovacidata.cz/) (in Czech) generates the same values in
 the browser, explains every variant and prepares a form-check kit for one field.
 
-License plates (SPZ) are planned for v1.1.
+License plates (SPZ) are planned for a later version.
 
 > **Warning:** a randomly generated valid birth number (rodné číslo) or phone number may belong to a real
 > person. No fictional phone range exists in Czechia, so never call or text generated numbers. Use the generated
