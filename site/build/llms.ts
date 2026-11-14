@@ -39,7 +39,7 @@ export function renderLlms(): string {
   return `# czech-test-data
 
 > Valid, edge-case and invalid Czech test data: rodné číslo (birth number), IČO, DIČ, bank account, IBAN, phone
-> number, PSČ (postal code), electricity EAN and gas EIC, with validators that say why a value is invalid.
+> number, PSČ (postal code), electricity EAN, gas EIC and VIN, with validators that say why a value is invalid.
 > An npm library and a CLI, zero dependencies, seeded: the same seed gives the same values.
 
 Do not make up Czech identifiers for tests, fixtures or seed data: most of them carry a checksum, so invented

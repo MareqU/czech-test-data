@@ -303,7 +303,7 @@ await page.fill('#ico', cz.ico.edge('leadingZeros'));`;
 
 const HOME_TITLE = 'Testovací data pro české formuláře – rodné číslo, IČO, DIČ, účet, IBAN';
 const HOME_H1 = 'Česká testovací data na jednom místě';
-const HOME_LEAD = 'Rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN a EIC. Platná, hraniční i schválně chybná, a u každého víte proč.';
+const HOME_LEAD = 'Rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN, EIC a VIN. Platná, hraniční i schválně chybná, a u každého víte proč.';
 
 function homePage(referenceDate: string): Page {
   const main = `      <div class="intro">
@@ -318,7 +318,7 @@ ${library()}`;
     script: 'home',
     title: HOME_TITLE,
     description:
-      'Generátor českých testovacích dat: rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN a EIC. Platné, hraniční i neplatné hodnoty s vysvětlením.',
+      'Generátor českých testovacích dat: rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN, EIC a VIN. Platné, hraniční i neplatné hodnoty s vysvětlením.',
     main,
   });
   return { name: 'index', path: 'index.html', title: HOME_TITLE, h1: HOME_H1, url: SITE, html };
