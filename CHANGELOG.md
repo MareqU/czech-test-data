@@ -4,7 +4,9 @@ All notable changes to this package. The project follows [semantic versioning](h
 determinism contract from the README: a change of output for the same seed is a major version, except that a minor
 version may add edge or invalid variants.
 
-## Unreleased
+## 1.1.0
+
+Minor release: one new identifier. The output of every existing identifier is unchanged for the same seed.
 
 ### Added
 
