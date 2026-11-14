@@ -1,6 +1,6 @@
 # vin (VIN, identifikační číslo vozidla, vehicle identification number)
 
-Status: **DRAFT**, waiting for Marek's approval (section 10) · researched 2026-11-14 · rules-researcher
+Status: **APPROVED by Marek on 2026-11-14** (section 10) · researched 2026-11-14 · rules-researcher
 
 Czech meaning: *VIN* (*identifikační číslo silničního vozidla*, zákon č. 56/2001 Sb.) is the 17-character code that the
 manufacturer marks on a road vehicle (chassis, a plate and behind the windscreen). It identifies one vehicle for its
@@ -440,7 +440,7 @@ Secondary (**UNVERIFIED**):
 
 ---
 
-## 8. Placement and size (proposal)
+## 8. Placement and size
 
 ### 8.1 Check digit and shared code
 
@@ -472,7 +472,7 @@ roughly **0.9–1.1 kB for SPZ**, which is also planned for v1.1. If that is too
 
 ---
 
-## 9. Generator and variants contract (proposal)
+## 9. Generator and variants contract
 
 ### Options
 
@@ -495,12 +495,13 @@ to `checkChar(v)`.
 
 **Plain `generate()`:** `vds` = 5 × `ALPHABET[int(0, 32)]` (left to right); `y = YEAR_CODES[int(0, 29)]`;
 `tail = digits(7)` (position 11 plant digit, as Škoda's 0–9 plant codes, then a 6-digit serial).
-Result `withCheck(WMI + vds + '?' + y + tail)`.
+Result `withCheck(WMI + vds + '0' + y + tail)`. The placeholder in position 9 must be an alphabet character (any one
+gives the same check digit, its weight is 0); review N4, 2026-11-14.
 
 **Edge variants:**
 - `checkDigitX`: repeat `v = generate()` until `v[8] === 'X'` (probability 1/11 per try).
 - `smallManufacturer`: `vds` and `y` as plain; `plant = digits(1)`; `code = LETTERS[int(0, 22)] + LETTERS[int(0, 22)]
-  + digits(1)` (positions 12–14); `serial = digits(3)`; result `withCheck(SMALL_WMI + vds + '?' + y + plant + code + serial)`.
+  + digits(1)` (positions 12–14); `serial = digits(3)`; result `withCheck(SMALL_WMI + vds + '0' + y + plant + code + serial)`.
 - `noModelYear`: `v = generate()`; result `withCheck(v` with position 10 = `'0')`.
 
 **Invalid variants:**

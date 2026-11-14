@@ -8,6 +8,7 @@ import { CHECK, FORBIDDEN, LETTERS, generate, withCheck } from './generate.js';
 /** Names of the invalid variants (neplatné varianty VIN); each is also a reason code of the validator. */
 export type VinInvalidVariant = 'badChecksum' | 'wrongLength' | 'forbiddenLetter' | 'nonNumericSerial';
 
+// Order frozen: replaceDigitWithLetter draws among these positions (determinism contract).
 const ALL_POSITIONS: readonly number[] = Array.from({ length: 17 }, (_, index) => index);
 const SERIAL_POSITIONS: readonly number[] = [13, 14, 15, 16];
 

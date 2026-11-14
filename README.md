@@ -7,7 +7,7 @@
 **English** · [Česky](README.cs.md)
 
 Valid, edge-case and invalid Czech test data for automated tests: rodné číslo (birth number), IČO, DIČ,
-bank account, IBAN, phone number, PSČ (postal code), electricity EAN and gas EIC.
+bank account, IBAN, phone number, PSČ (postal code), electricity EAN, gas EIC and VIN.
 
 - **Named edge and invalid variants.** `ico.invalid('badChecksum')` says what your test checks; a random string does not.
 - **Validators that say why.** `{ valid: false, reason: 'badChecksum' }`, and every invalid variant fails with
@@ -19,7 +19,7 @@ bank account, IBAN, phone number, PSČ (postal code), electricity EAN and gas EI
 Testing by hand? The web tool [testovacidata.cz](https://testovacidata.cz/) (in Czech) generates the same values in
 the browser, explains every variant and prepares a form-check kit for one field.
 
-License plates (SPZ) and VIN are planned for v1.1.
+License plates (SPZ) are planned for v1.1.
 
 > **Warning:** a randomly generated valid birth number (rodné číslo) or phone number may belong to a real
 > person. No fictional phone range exists in Czechia, so never call or text generated numbers. Use the generated
@@ -215,7 +215,7 @@ validateIco('25596641'); // { valid: true }
 ```
 
 Entry points: `czech-test-data/birthNumber`, `/ico`, `/dic`, `/bankAccount`, `/iban`, `/phone`, `/postalCode`,
-`/ean`, `/eic`. Import from them when bundle size matters: `createCz` contains all nine identifiers (about 8 kB
+`/ean`, `/eic`, `/vin`. Import from them when bundle size matters: `createCz` contains all ten identifiers (about 8.5 kB
 min+gzip), while one subpath is at most 2 kB on top of a 2.5 kB shared core. These budgets are enforced in CI.
 
 ## CLI
@@ -355,6 +355,20 @@ valid as well.
 - Edge: `checkCharacterDigit`, `lds`.
 - Invalid: `badChecksum`, `wrongLength`, `wrongPrefix`, `dashCheckCharacter`.
 - Other reasons: `badFormat`.
+
+### Vehicle identification number (VIN, identifikační číslo vozidla) – `vin`
+
+17 characters `0-9 A-Z` without `I`, `O`, `Q`; check digit in position 9 (mod 11, `X` for 10), required in the US and,
+under Regulation (EU) 2021/535, for every vehicle newly registered in the EU from 7 July 2026. Generated VINs use
+Škoda's manufacturer code `TMB` and always carry a valid check digit.
+
+- Options: none.
+- Edge: `checkDigitX`, `smallManufacturer`, `noModelYear`.
+- Invalid: `badChecksum`, `wrongLength`, `forbiddenLetter`, `nonNumericSerial`.
+- Other reasons: `badFormat`.
+- **Older European VINs** often have no valid check digit, because the EU did not require one before. The validator
+  checks the check digit last, so an application that must accept them can treat the reason `badChecksum` as valid.
+  The manufacturer code and the model year are not checked; `00000000000000000` passes.
 
 The rules, official sources and known samples of every identifier are in [`docs/rules/`](docs/rules/).
 

@@ -4,6 +4,15 @@ All notable changes to this package. The project follows [semantic versioning](h
 determinism contract from the README: a change of output for the same seed is a major version, except that a minor
 version may add edge or invalid variants.
 
+## Unreleased
+
+### Added
+
+- Vehicle identification number (VIN, identifikační číslo vozidla) – `vin`: generator (Škoda WMI `TMB`, valid
+  check digit), edge variants `checkDigitX`, `smallManufacturer`, `noModelYear`, invalid variants `badChecksum`,
+  `wrongLength`, `forbiddenLetter`, `nonNumericSerial`, validator with reason codes (check digit per
+  Regulation (EU) 2021/535 and 49 CFR 565), subpath `czech-test-data/vin`, CLI `vin`.
+
 ## 1.0.0
 
 First stable release.

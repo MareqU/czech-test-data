@@ -15,12 +15,13 @@ const SMALL_WMI = 'TM9';
 
 /** The 23 letters a VIN may contain: A–Z without I, O, Q (49 CFR 565.13(g)). Order frozen. */
 export const LETTERS = 'ABCDEFGHJKLMNPRSTUVWXYZ';
+// Order frozen: the generator draws by index (determinism contract).
 const ALPHABET = `${LETTERS}0123456789`;
 // The 30 model year codes of 49 CFR 565.15(d), Table VII; every code is a valid year in some cycle, so the
-// generator does not depend on the date. The EU does not regulate position 10.
+// generator does not depend on the date. The EU does not regulate position 10. Order frozen.
 const YEAR_CODES = 'ABCDEFGHJKLMNPRSTVWXY123456789';
 
-/** Check characters by remainder: `X` stands for 10 (2021/535 Section C). */
+/** Check characters by remainder: `X` stands for 10 (2021/535 Section C). Order frozen. */
 export const CHECK = '0123456789X';
 /** Letters no VIN contains. */
 export const FORBIDDEN = 'IOQ';
@@ -56,6 +57,8 @@ function drawChars(random: Random, chars: string, count: number): string {
 export function generate(random: Random): string {
   const vds = drawChars(random, ALPHABET, 5);
   const year = drawChars(random, YEAR_CODES, 1);
+  // `0` holds position 9 until withCheck fills it: it must be an alphabet character (checkChar maps anything else
+  // to a wrong value); any one gives the same result, because position 9 weighs 0.
   return withCheck(`${WMI}${vds}0${year}${random.digits(7)}`);
 }
 

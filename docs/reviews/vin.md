@@ -110,3 +110,14 @@ None.
    check digit `5` is also wrong (the correct one is `8`). The value is the one from the uncorrected rules note
    that 4bdf130 fixed. The test is correct (serial comes before checksum), but the label hides the second fault.
    Line 56 already covers "same with a wrong check digit", so this row is redundant or needs that label.
+
+## Resolution (2026-11-14, approved by Marek)
+
+- S1 fixed by the main session: README and README.cs (VIN section with the legacy European VIN note, entry points,
+  "ten identifiers", v1.1 line), CHANGELOG (Unreleased), `skills/czech-test-data/SKILL.md`, `docs/spec.md`
+  checkboxes. `site/src/catalog.ts` (web page for VIN) is a separate step after the merge.
+- S2 fixed: rules header APPROVED, §8/§9 no longer "(proposal)".
+- N4 fixed in rules §9 (`'0'` placeholder, note) and as a comment in `src/vin/generate.ts`.
+- N5 fixed: "Order frozen" comments on `ALPHABET`, `YEAR_CODES`, `CHECK`, `ALL_POSITIONS` / `SERIAL_POSITIONS`.
+- N3 (`generate` wrapper) and N6 (test sample label) left as they are: code and test changes outside the main
+  session's comment-only fixes, no effect on behaviour.
