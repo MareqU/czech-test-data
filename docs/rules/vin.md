@@ -516,7 +516,7 @@ Result `withCheck(WMI + vds + '?' + y + tail)`.
 
 ---
 
-## 10. Recommendations for Marek (please approve or change per number)
+## 10. Decisions (approved 2026-11-14: every recommendation below was accepted, alternatives rejected; check digit policy 3(a) strict)
 
 1. **Scope** = 17-character ISO 3779 VINs only; pre-1981, other lengths, chassis numbers out of scope (`wrongLength`).
    Recommendation: **yes**.
@@ -546,16 +546,16 @@ Result `withCheck(WMI + vds + '?' + y + tail)`.
 
 ---
 
-## Open questions for Marek
+## Open questions for Marek (answered 2026-11-14)
 
-A. Can you (or the main session) download the md.gov.cz RTFs in section 6 item 7 by hand (CAPTCHA)? They would confirm
+A. **Answer:** not done; `TM1` stays out of scope as UNVERIFIED (decision 10). Original question: can you (or the main session) download the md.gov.cz RTFs in section 6 item 7 by hand (CAPTCHA)? They would confirm
    `TM1` and the *úřední číslo* layout verbatim.
-B. Do Czech registers or your target apps put the *úřední číslo* into the VIN field? If yes, decision 10 may need an
+B. **Answer:** assumed no; decision 10 stands. Original question: do Czech registers or your target apps put the *úřední číslo* into the VIN field? If yes, decision 10 may need an
    edge variant and a policy exception, which the strict check digit (decision 3a) would reject.
-C. Do you have a primary source (CoC, recall notice, type-approval document) for Hyundai Nošovice `TMA`/`TMC` or Tatra
+C. **Answer:** no; the generator stays `TMB`-only (decision 9). Original question: do you have a primary source (CoC, recall notice, type-approval document) for Hyundai Nošovice `TMA`/`TMC` or Tatra
    `TMT`? Without one, the generator stays `TMB`-only.
-D. Should obvious placeholders (`00000000000000000`, `11111111111111111`) be rejected? They pass every rule in the law;
+D. **Answer:** accept, document only (the recommendation). Original question: should obvious placeholders (`00000000000000000`, `11111111111111111`) be rejected? They pass every rule in the law;
    rejecting them would need a new, non-official reason. Recommendation: accept, document only.
-E. Budget: vin (~1 kB) plus SPZ in v1.1 may exceed the 10 kB whole-library limit (1.98 kB left). Raise the limit for
+E. **Answer:** no change now; vin fits the current budget, the whole-library limit is revisited with SPZ. Original question: vin (~1 kB) plus SPZ in v1.1 may exceed the 10 kB whole-library limit (1.98 kB left). Raise the limit for
    v1.1, or keep vin to the minimal variant set?
-F. Commit: this agent had no shell access, so `docs/rules/vin.md` is written but **not committed** on `m7-vin`.
+F. **Answer:** committed by the main session (7da8042). Original note: this agent had no shell access, so `docs/rules/vin.md` is written but **not committed** on `m7-vin`.
