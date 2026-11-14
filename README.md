@@ -257,8 +257,10 @@ their checksums. Point the agent at this package instead:
   with `npx czech-test-data <identifier>` (see `--help`) and check values with `npx czech-test-data validate`.
   ```
 
-- **The web tool** serves `/llms.txt` with the commands and every variant name, and its home page has sample
-  values in the HTML, so an agent that only fetches pages sees real data.
+- **The web tool** serves [`/llms.txt`](https://testovacidata.cz/llms.txt) with the commands and every variant
+  name, and every identifier's form-check kit as static JSON, for example
+  [`/data/ico.json`](https://testovacidata.cz/data/ico.json). Its pages carry sample values in the HTML, so an agent
+  that only fetches pages sees real data.
 
 ## Identifiers
 

@@ -3,6 +3,7 @@
 import { IDENTIFIERS } from '../src/catalog.js';
 import type { IdentifierInfo } from '../src/catalog.js';
 import { SITE } from './pages.js';
+import { dataPath, PRERENDER_SEED } from './prerender.js';
 
 const REPOSITORY = 'https://github.com/MareqU/czech-test-data';
 
@@ -71,6 +72,17 @@ cz.validate.ico('06541186'); // { valid: true } or { valid: false, reason: 'badC
 Disputed variants are valid by some readings of the rules only.
 
 ${IDENTIFIERS.map(identifier).join('\n\n')}
+
+## Static data (no JavaScript needed)
+
+Every identifier's form-check kit as JSON: plain valid values, every edge and every undisputed invalid variant
+once. An array of \`{ "id", "value", "valid", "kind", "variant", "description" }\`; \`valid\` is whether a form
+should accept the value, \`description\` is Czech. Fixed values (seed ${String(PRERENDER_SEED)}), regenerated on every deploy with
+that day as "today"; for fresh or reproducible values use the CLI.
+
+${IDENTIFIERS.map((info) => `- [${info.label}](${SITE}${dataPath(info)})`).join('\n')}
+
+The pages of the web tool also carry these values in their HTML.
 
 ## Links
 
