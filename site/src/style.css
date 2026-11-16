@@ -1014,3 +1014,26 @@ body:not([data-id]) .wrap {
 .kit-values[open] summary {
   margin-bottom: 8px;
 }
+
+/* Identifier pages: how it works and frequent questions (static text from build/about.ts) */
+.about p {
+  margin: 0;
+  max-width: 68ch;
+}
+
+.faq {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.faq dt {
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.faq dd {
+  margin: 0;
+  color: var(--muted);
+  max-width: 68ch;
+}
