@@ -139,3 +139,29 @@ export const ABOUT = {
     ],
   },
 } satisfies Record<IdentifierId, About>;
+
+/** The home page: what the tool is, and questions about the site as a whole. */
+export const HOME_ABOUT: Omit<About, 'source'> = {
+  how: [
+    'Generátor testovacích dat vytváří české údaje, které vypadají a kontrolují se jako skutečné: rodná čísla, IČO, DIČ, čísla účtů, IBAN, telefonní čísla, PSČ, EAN a EIC odběrných míst a VIN. Hodí se pro ruční testování formulářů, testovací databáze i automatické testy.',
+    'Kromě platných hodnot umí hraniční případy, které jsou platné, ale formuláře je často odmítají (rodné číslo s měsícem +20, IČO s nulou na začátku), a schválně chybné hodnoty s pojmenovanou chybou. U každé hodnoty víte, co přesně testujete a jak by měl formulář zareagovat.',
+  ],
+  faq: [
+    [
+      'Jsou vygenerovaná data skutečná?',
+      'Jsou platná podle oficiálních pravidel, ale generátor je nebere z žádného registru. Platné rodné číslo, telefon nebo VIN se proto může shodovat se skutečnou osobou nebo autem. Používejte je jen v testovacích systémech.',
+    ],
+    [
+      'Odesílají se někam data, která zadám nebo vygeneruji?',
+      'Ne. Všechno běží ve vašem prohlížeči, generování i ověřování. Stránka nic neodesílá ani neukládá.',
+    ],
+    [
+      'Jak data použiji v automatických testech?',
+      'Stejné hodnoty vrací knihovna czech-test-data pro JavaScript a TypeScript a její příkazová řádka. Se stejným seedem dostanete při každém běhu testu stejná data.',
+    ],
+    [
+      'Co je sada pro ověření formuláře?',
+      'Seznam všech hodnot, které stojí za to vyzkoušet v jednom poli formuláře: platné, hraniční i chybné, a u každé, jestli ji má formulář přijmout, nebo odmítnout. Stáhnete ji jako JSON pro automatické testy nebo jako tabulku pro Excel.',
+    ],
+  ],
+};

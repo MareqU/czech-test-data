@@ -7,7 +7,8 @@ import { IDENTIFIERS } from '../src/catalog.js';
 import { buildOverview } from '../src/overview.js';
 import type { Cell } from '../src/overview.js';
 import { czHtml } from '../src/typography.js';
-import { ABOUT } from './about.js';
+import { ABOUT, HOME_ABOUT } from './about.js';
+import type { About } from './about.js';
 import { dataPath, prerender, PRERENDER_SEED } from './prerender.js';
 import type { Prerendered } from './prerender.js';
 import type { IdentifierInfo } from '../src/catalog.js';
@@ -340,20 +341,16 @@ function webApplication(name: string, url: string, description: string): Record<
   };
 }
 
-/** "Jak to funguje" and the FAQ of an identifier page (texts in build/about.ts). */
-function aboutSections(info: IdentifierInfo): string {
-  const about = ABOUT[info.id];
+/** "Jak to funguje" (or another heading) and the FAQ; texts in build/about.ts, `note` closes the first section. */
+function aboutMarkup(about: Omit<About, 'source'>, heading: string, note = ''): string {
   const how = about.how.map((text) => `<p>${escapeHtml(text)}</p>`).join('\n        ');
   const faq = about.faq
     .map(([question, answer]) => `<dt>${escapeHtml(question)}</dt>\n          <dd>${escapeHtml(answer)}</dd>`)
     .join('\n          ');
-  const [label, url] = about.source;
   return `
       <section class="block about" aria-labelledby="about-title">
-        <h2 id="about-title">Jak to funguje</h2>
-        ${how}
-        <p class="hint">Zdroj: <a href="${url}">${escapeHtml(label)}</a>. Všechna pravidla s odkazy:
-        <a href="${REPOSITORY}/blob/main/docs/rules/${info.id}.md">docs/rules/${info.id}.md</a>.</p>
+        <h2 id="about-title">${heading}</h2>
+        ${how}${note}
       </section>
 
       <section class="block about" aria-labelledby="faq-title">
@@ -364,17 +361,31 @@ function aboutSections(info: IdentifierInfo): string {
       </section>`;
 }
 
-/** JSON-LD of an identifier page: the tool and its FAQ. */
-function identifierJsonLd(info: IdentifierInfo, url: string): string {
-  const faq = {
+/** "Jak to funguje" and the FAQ of an identifier page, with its official source. */
+function aboutSections(info: IdentifierInfo): string {
+  const [label, url] = ABOUT[info.id].source;
+  const note = `
+        <p class="hint">Zdroj: <a href="${url}">${escapeHtml(label)}</a>. Všechna pravidla s odkazy:
+        <a href="${REPOSITORY}/blob/main/docs/rules/${info.id}.md">docs/rules/${info.id}.md</a>.</p>`;
+  return aboutMarkup(ABOUT[info.id], 'Jak to funguje', note);
+}
+
+/** schema.org FAQPage of a list of questions. */
+function faqPage(faq: About['faq']): Record<string, unknown> {
+  return {
     '@type': 'FAQPage',
-    mainEntity: ABOUT[info.id].faq.map(([question, answer]) => ({
+    mainEntity: faq.map(([question, answer]) => ({
       '@type': 'Question',
       name: question,
       acceptedAnswer: { '@type': 'Answer', text: answer },
     })),
   };
-  return jsonLd({ '@context': 'https://schema.org', '@graph': [webApplication(info.page.h1, url, info.page.description), faq] });
+}
+
+/** JSON-LD of an identifier page: the tool and its FAQ. */
+function identifierJsonLd(info: IdentifierInfo, url: string): string {
+  const graph = [webApplication(info.page.h1, url, info.page.description), faqPage(ABOUT[info.id].faq)];
+  return jsonLd({ '@context': 'https://schema.org', '@graph': graph });
 }
 
 const HOME_DESCRIPTION =
@@ -386,7 +397,8 @@ function homePage(referenceDate: string): Page {
         <p class="lead">${HOME_LEAD}</p>
       </div>
 ${overview(referenceDate)}
-${library()}`;
+${library()}
+${aboutMarkup(HOME_ABOUT, 'Co je generátor testovacích dat')}`;
   const html = layout({
     root: './',
     url: SITE,
@@ -394,7 +406,10 @@ ${library()}`;
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
     main,
-    head: jsonLd({ '@context': 'https://schema.org', ...webApplication('Generátor testovacích dat', SITE, HOME_DESCRIPTION) }),
+    head: jsonLd({
+      '@context': 'https://schema.org',
+      '@graph': [webApplication('Generátor testovacích dat', SITE, HOME_DESCRIPTION), faqPage(HOME_ABOUT.faq)],
+    }),
   });
   return { name: 'index', path: 'index.html', title: HOME_TITLE, h1: HOME_H1, url: SITE, html };
 }

@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createCz } from 'czech-test-data';
 import { describe, expect, it } from 'vitest';
-import { ABOUT } from '../build/about.js';
+import { ABOUT, HOME_ABOUT } from '../build/about.js';
 import { LLMS_COMMANDS, renderLlms } from '../build/llms.js';
 import { cellHtml, escapeHtml, renderPages, renderRobots, renderSitemap, SITE, USAGE } from '../build/pages.js';
 import { dataPath, prerender, PRERENDER_SEED, renderData } from '../build/prerender.js';
@@ -534,8 +534,23 @@ describe('search engines', () => {
       expect(graph[0]?.url).toBe(`${SITE}${info.slug}/`);
       expect(graph[1]?.mainEntity?.map((question) => question.name)).toEqual(ABOUT[info.id].faq.map(([question]) => question));
     }
+  });
+
+  it('describes the home page as a free web application with its FAQ in JSON-LD', () => {
     const home = pages.find((page) => page.path === 'index.html')?.html ?? '';
-    expect(jsonLdOf(home)).toMatchObject({ '@type': 'WebApplication', url: SITE, isAccessibleForFree: true });
+    const homeGraph = jsonLdOf(home)['@graph'] as { '@type': string; url?: string; mainEntity?: unknown[] }[];
+    expect(homeGraph.map((node) => node['@type'])).toEqual(['WebApplication', 'FAQPage']);
+    expect(homeGraph[0]?.url).toBe(SITE);
+    expect(homeGraph[1]?.mainEntity).toHaveLength(HOME_ABOUT.faq.length);
+  });
+
+  it('explains the tool on the home page and answers its questions', () => {
+    const home = pages.find((page) => page.path === 'index.html')?.html ?? '';
+    expect(home).toContain('<h2 id="about-title">Co je generátor testovacích dat</h2>');
+    expect(HOME_ABOUT.faq.length).toBeGreaterThanOrEqual(3);
+    for (const [question] of HOME_ABOUT.faq) {
+      expect(home).toContain(`<dt>${czHtml(escapeHtml(question))}</dt>`);
+    }
   });
 });
 
