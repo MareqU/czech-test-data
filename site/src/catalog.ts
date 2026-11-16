@@ -112,8 +112,8 @@ const birthNumber: IdentifierInfo = {
   slug: 'rodne-cislo',
   short: 'Rodné číslo',
   page: {
-    title: 'Generátor rodného čísla – platná, hraniční i neplatná RČ',
-    description: 'Vygenerujte platné, hraniční i schválně chybné rodné číslo pro testy: měsíc +20, narození před rokem 1954, 29. února. Validátor řekne, co je špatně.',
+    title: 'Generátor rodného čísla (RČ) – platná i neplatná rodná čísla',
+    description: 'Rodné číslo zdarma a hned: muž, žena, zvolené datum narození, i hraniční a neplatná RČ pro testy (měsíc +20, před rokem 1954). Kliknutím zkopírujete.',
     h1: 'Generátor rodného čísla',
     intro: 'Rodné číslo má víc výjimek, než si většina formulářů myslí. Devět číslic u lidí narozených před rokem 1954, měsíc zvýšený o 20 nebo 70, nula místo kontrolní číslice. Tady je dostanete všechny, i s vysvětlením.',
   },
