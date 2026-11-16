@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createCz } from 'czech-test-data';
 import { describe, expect, it } from 'vitest';
+import { ABOUT, HOME_ABOUT } from '../build/about.js';
 import { LLMS_COMMANDS, renderLlms } from '../build/llms.js';
 import { cellHtml, escapeHtml, renderPages, renderRobots, renderSitemap, SITE, USAGE } from '../build/pages.js';
 import { dataPath, prerender, PRERENDER_SEED, renderData } from '../build/prerender.js';
@@ -491,6 +492,64 @@ describe('prerendered data for agents', () => {
   it('lists the static JSON of every identifier in llms.txt by its full address', () => {
     for (const info of IDENTIFIERS) {
       expect(renderLlms()).toContain(`(${SITE}${dataPath(info)})`);
+    }
+  });
+});
+
+describe('search engines', () => {
+  const pages = renderPages('2026-11-16');
+
+  /** The page's own JSON-LD (the last block; the first is the site-wide WebSite data). */
+  function jsonLdOf(html: string): Record<string, unknown> {
+    const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gsu)];
+    return JSON.parse(blocks.at(-1)?.[1] ?? 'null') as Record<string, unknown>;
+  }
+
+  it('says "Generátor" in the title of every page', () => {
+    for (const page of pages) {
+      expect(page.title, page.path).toMatch(/^Generátor /u);
+    }
+  });
+
+  it('explains every identifier and answers at least three questions, with an official https source', () => {
+    for (const info of IDENTIFIERS) {
+      const about = ABOUT[info.id];
+      const html = pages.find((page) => page.path === `${info.slug}/index.html`)?.html ?? '';
+      expect(about.how.length, info.id).toBeGreaterThan(0);
+      expect(about.faq.length, info.id).toBeGreaterThanOrEqual(3);
+      expect(about.source[1], info.id).toMatch(/^https:\/\//u);
+      expect(html, info.id).toContain('<h2 id="about-title">Jak to funguje</h2>');
+      expect(html, info.id).toContain(`<a href="${about.source[1]}">`);
+      for (const [question] of about.faq) {
+        expect(html, info.id).toContain(`<dt>${czHtml(escapeHtml(question))}</dt>`);
+      }
+    }
+  });
+
+  it('describes every identifier page as a free web application with its FAQ in JSON-LD', () => {
+    for (const info of IDENTIFIERS) {
+      const html = pages.find((page) => page.path === `${info.slug}/index.html`)?.html ?? '';
+      const graph = jsonLdOf(html)['@graph'] as { '@type': string; mainEntity?: { name: string }[]; url?: string }[];
+      expect(graph.map((node) => node['@type']), info.id).toEqual(['WebApplication', 'FAQPage']);
+      expect(graph[0]?.url).toBe(`${SITE}${info.slug}/`);
+      expect(graph[1]?.mainEntity?.map((question) => question.name)).toEqual(ABOUT[info.id].faq.map(([question]) => question));
+    }
+  });
+
+  it('describes the home page as a free web application with its FAQ in JSON-LD', () => {
+    const home = pages.find((page) => page.path === 'index.html')?.html ?? '';
+    const homeGraph = jsonLdOf(home)['@graph'] as { '@type': string; url?: string; mainEntity?: unknown[] }[];
+    expect(homeGraph.map((node) => node['@type'])).toEqual(['WebApplication', 'FAQPage']);
+    expect(homeGraph[0]?.url).toBe(SITE);
+    expect(homeGraph[1]?.mainEntity).toHaveLength(HOME_ABOUT.faq.length);
+  });
+
+  it('explains the tool on the home page and answers its questions', () => {
+    const home = pages.find((page) => page.path === 'index.html')?.html ?? '';
+    expect(home).toContain('<h2 id="about-title">Co je generátor testovacích dat</h2>');
+    expect(HOME_ABOUT.faq.length).toBeGreaterThanOrEqual(3);
+    for (const [question] of HOME_ABOUT.faq) {
+      expect(home).toContain(`<dt>${czHtml(escapeHtml(question))}</dt>`);
     }
   });
 });

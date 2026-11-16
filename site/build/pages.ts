@@ -7,6 +7,8 @@ import { IDENTIFIERS } from '../src/catalog.js';
 import { buildOverview } from '../src/overview.js';
 import type { Cell } from '../src/overview.js';
 import { czHtml } from '../src/typography.js';
+import { ABOUT, HOME_ABOUT } from './about.js';
+import type { About } from './about.js';
 import { dataPath, prerender, PRERENDER_SEED } from './prerender.js';
 import type { Prerendered } from './prerender.js';
 import type { IdentifierInfo } from '../src/catalog.js';
@@ -314,9 +316,80 @@ export const USAGE = `import { createCz } from 'czech-test-data';
 const cz = createCz({ seed: 42 });
 await page.fill('#ico', cz.ico.edge('leadingZeros'));`;
 
-const HOME_TITLE = 'Testovací data pro české formuláře – rodné číslo, IČO, DIČ, účet, IBAN';
+const HOME_TITLE = 'Generátor testovacích dat – rodné číslo, IČO, DIČ, číslo účtu, IBAN, VIN';
 const HOME_H1 = 'Česká testovací data na jednom místě';
 const HOME_LEAD = 'Rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN, EIC a VIN. Platná, hraniční i schválně chybná, a u každého víte proč.';
+
+/** JSON-LD for a <script> element: `<` escaped, so no text can end the element early. */
+export function jsonLd(data: unknown): string {
+  return `\n    <script type="application/ld+json">${JSON.stringify(data).replaceAll('<', '\\u003c')}</script>`;
+}
+
+/** schema.org description of the tool: a free web application in Czech (next to the site-wide WebSite data). */
+function webApplication(name: string, url: string, description: string): Record<string, unknown> {
+  return {
+    '@type': 'WebApplication',
+    name,
+    url,
+    description,
+    inLanguage: 'cs',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'CZK' },
+    creator: { '@type': 'Person', name: AUTHOR.name, url: AUTHOR.url },
+  };
+}
+
+/** "Jak to funguje" (or another heading) and the FAQ; texts in build/about.ts, `note` closes the first section. */
+function aboutMarkup(about: Omit<About, 'source'>, heading: string, note = ''): string {
+  const how = about.how.map((text) => `<p>${escapeHtml(text)}</p>`).join('\n        ');
+  const faq = about.faq
+    .map(([question, answer]) => `<dt>${escapeHtml(question)}</dt>\n          <dd>${escapeHtml(answer)}</dd>`)
+    .join('\n          ');
+  return `
+      <section class="block about" aria-labelledby="about-title">
+        <h2 id="about-title">${heading}</h2>
+        ${how}${note}
+      </section>
+
+      <section class="block about" aria-labelledby="faq-title">
+        <h2 id="faq-title">Časté otázky</h2>
+        <dl class="faq">
+          ${faq}
+        </dl>
+      </section>`;
+}
+
+/** "Jak to funguje" and the FAQ of an identifier page, with its official source. */
+function aboutSections(info: IdentifierInfo): string {
+  const [label, url] = ABOUT[info.id].source;
+  const note = `
+        <p class="hint">Zdroj: <a href="${url}">${escapeHtml(label)}</a>. Všechna pravidla s odkazy:
+        <a href="${REPOSITORY}/blob/main/docs/rules/${info.id}.md">docs/rules/${info.id}.md</a>.</p>`;
+  return aboutMarkup(ABOUT[info.id], 'Jak to funguje', note);
+}
+
+/** schema.org FAQPage of a list of questions. */
+function faqPage(faq: About['faq']): Record<string, unknown> {
+  return {
+    '@type': 'FAQPage',
+    mainEntity: faq.map(([question, answer]) => ({
+      '@type': 'Question',
+      name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer },
+    })),
+  };
+}
+
+/** JSON-LD of an identifier page: the tool and its FAQ. */
+function identifierJsonLd(info: IdentifierInfo, url: string): string {
+  const graph = [webApplication(info.page.h1, url, info.page.description), faqPage(ABOUT[info.id].faq)];
+  return jsonLd({ '@context': 'https://schema.org', '@graph': graph });
+}
+
+const HOME_DESCRIPTION =
+  'Generátor českých testovacích dat: rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN, EIC a VIN. Platné, hraniční i neplatné hodnoty s vysvětlením.';
 
 function homePage(referenceDate: string): Page {
   const main = `      <div class="intro">
@@ -324,15 +397,19 @@ function homePage(referenceDate: string): Page {
         <p class="lead">${HOME_LEAD}</p>
       </div>
 ${overview(referenceDate)}
-${library()}`;
+${library()}
+${aboutMarkup(HOME_ABOUT, 'Co je generátor testovacích dat')}`;
   const html = layout({
     root: './',
     url: SITE,
     script: 'home',
     title: HOME_TITLE,
-    description:
-      'Generátor českých testovacích dat: rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN, EIC a VIN. Platné, hraniční i neplatné hodnoty s vysvětlením.',
+    description: HOME_DESCRIPTION,
     main,
+    head: jsonLd({
+      '@context': 'https://schema.org',
+      '@graph': [webApplication('Generátor testovacích dat', SITE, HOME_DESCRIPTION), faqPage(HOME_ABOUT.faq)],
+    }),
   });
   return { name: 'index', path: 'index.html', title: HOME_TITLE, h1: HOME_H1, url: SITE, html };
 }
@@ -344,9 +421,10 @@ function identifierPage(info: IdentifierInfo, referenceDate: string): Page {
         <p class="lead">${escapeHtml(info.page.intro)}</p>
       </div>
 ${generator(info, pre)}
-${identifierSections(pre)}`;
+${identifierSections(pre)}
+${aboutSections(info)}`;
   const url = `${SITE}${info.slug}/`;
-  const head = `\n    <link rel="alternate" type="application/json" href="../${dataPath(info)}" title="Sada pro ověření formuláře (JSON)" />`;
+  const head = `\n    <link rel="alternate" type="application/json" href="../${dataPath(info)}" title="Sada pro ověření formuláře (JSON)" />${identifierJsonLd(info, url)}`;
   const html = layout({ root: '../', url, script: 'main', title: info.page.title, description: info.page.description, current: info, main, head });
   return { name: info.slug, path: `${info.slug}/index.html`, title: info.page.title, h1: info.page.h1, url, html };
 }
