@@ -317,7 +317,7 @@ const cz = createCz({ seed: 42 });
 await page.fill('#ico', cz.ico.edge('leadingZeros'));`;
 
 const HOME_TITLE = 'Generátor testovacích dat – rodné číslo, IČO, DIČ, číslo účtu, IBAN, VIN';
-const HOME_H1 = 'Česká testovací data na jednom místě';
+const HOME_H1 = 'Generátor českých testovacích dat na jednom místě';
 const HOME_LEAD = 'Rodné číslo, IČO, DIČ, číslo účtu, IBAN, telefon, PSČ, EAN, EIC a VIN. Platná, hraniční i schválně chybná, a u každého víte proč.';
 
 /** JSON-LD for a <script> element: `<` escaped, so no text can end the element early. */
